@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -38,7 +38,7 @@ jobs:
         with:
           personal_token: ${{ secrets.GH_PAT }}
           external_repository: nfap9/nfap9.github.io
-          publish_branch: main
+          publish_branch: master
           publish_dir: ./dist
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
