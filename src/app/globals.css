@@ -2,16 +2,81 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
+  --font-display: var(--font-display), "Noto Serif SC", "PingFang SC", "Microsoft YaHei", serif;
+  --font-body: var(--font-body), "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  --color-bg-default: var(--bg-default);
+  --color-bg-card: var(--bg-card);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-inverse: var(--bg-inverse);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-glow: var(--primary-glow);
+
+  --color-amber-accent: var(--amber-accent);
+  --color-amber-subtle: var(--amber-subtle);
+}
+
+:root {
+  --bg-default: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.72);
+  --bg-elevated: rgba(255, 255, 255, 0.92);
+  --bg-inverse: #0f172a;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #f8fafc;
+
+  --border-default: rgba(226, 232, 240, 0.8);
+  --border-strong: rgba(203, 213, 225, 0.9);
+
+  --primary: #0ea5e9;
+  --primary-hover: #0284c7;
+  --primary-subtle: #e0f2fe;
+  --primary-glow: rgba(14, 165, 233, 0.28);
+
+  --amber-accent: #f59e0b;
+  --amber-subtle: #fffbeb;
+
+  --shiki-bg: #0f172a;
+  --shiki-fg: #e2e8f0;
+}
+
+.dark {
+  --bg-default: #020617;
+  --bg-card: rgba(15, 23, 42, 0.62);
+  --bg-elevated: rgba(15, 23, 42, 0.88);
+  --bg-inverse: #f8fafc;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  --border-default: rgba(51, 65, 85, 0.6);
+  --border-strong: rgba(71, 85, 105, 0.8);
+
+  --primary: #38bdf8;
+  --primary-hover: #7dd3fc;
+  --primary-subtle: rgba(14, 165, 233, 0.16);
+  --primary-glow: rgba(56, 189, 248, 0.22);
+
+  --amber-accent: #fbbf24;
+  --amber-subtle: rgba(251, 191, 36, 0.12);
+
+  --shiki-bg: #0b1120;
+  --shiki-fg: #e2e8f0;
 }
 
 @layer base {
@@ -21,20 +86,206 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-800 antialiased;
+    @apply bg-bg-default text-text-primary antialiased;
+    font-family: var(--font-body);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  ::selection {
+    background-color: var(--primary-subtle);
+    color: var(--text-primary);
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
   }
 }
 
 @layer components {
-  .prose pre {
-    @apply bg-gray-900 text-gray-100;
+  .glass {
+    @apply bg-bg-card backdrop-blur-xl border border-border-default;
+    box-shadow: 0 4px 24px -4px rgba(2, 8, 20, 0.06);
+  }
+
+  .dark .glass {
+    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.35);
+  }
+
+  .glass-elevated {
+    @apply bg-bg-elevated backdrop-blur-2xl border border-border-strong;
+    box-shadow: 0 8px 32px -8px rgba(2, 8, 20, 0.1);
+  }
+
+  .dark .glass-elevated {
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.45);
+  }
+
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--primary), rgba(56, 189, 248, 0.4), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .gradient-border:hover::before {
+    opacity: 1;
+  }
+
+  .dark .gradient-border::before {
+    background: linear-gradient(135deg, var(--primary), rgba(56, 189, 248, 0.25), transparent 60%);
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 40px -12px var(--primary-glow);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .prose {
+    --tw-prose-body: var(--text-secondary);
+    --tw-prose-headings: var(--text-primary);
+    --tw-prose-lead: var(--text-secondary);
+    --tw-prose-links: var(--primary);
+    --tw-prose-bold: var(--text-primary);
+    --tw-prose-counters: var(--text-muted);
+    --tw-prose-bullets: var(--text-muted);
+    --tw-prose-hr: var(--border-strong);
+    --tw-prose-quotes: var(--text-secondary);
+    --tw-prose-quote-borders: var(--border-strong);
+    --tw-prose-captions: var(--text-muted);
+    --tw-prose-kbd: var(--text-primary);
+    --tw-prose-kbd-shadows: 229 231 235;
+    --tw-prose-code: var(--text-primary);
+    --tw-prose-pre-code: var(--shiki-fg);
+    --tw-prose-pre-bg: var(--shiki-bg);
+    --tw-prose-th-borders: var(--border-strong);
+    --tw-prose-td-borders: var(--border-default);
+  }
+
+  .prose a {
+    @apply font-medium underline-offset-4 decoration-primary/30 hover:decoration-primary transition-all;
   }
 
   .prose code {
-    @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+    @apply px-1.5 py-0.5 rounded-md text-sm font-medium;
+    background-color: var(--primary-subtle);
+    color: var(--primary-hover);
+  }
+
+  .prose pre {
+    @apply rounded-xl border border-border-strong overflow-hidden;
+    background-color: var(--shiki-bg);
   }
 
   .prose pre code {
-    @apply bg-transparent text-inherit p-0;
+    @apply bg-transparent text-inherit p-0 font-normal;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-primary/40 italic;
+    background: linear-gradient(90deg, var(--primary-subtle), transparent);
+    padding: 1rem 1.25rem;
+    border-radius: 0 0.75rem 0.75rem 0;
+  }
+
+  .prose img {
+    @apply rounded-xl border border-border-default;
+  }
+
+  .prose table {
+    @apply rounded-xl border border-border-default overflow-hidden;
+  }
+
+  .prose thead {
+    @apply bg-bg-elevated;
+  }
+
+  .prose th,
+  .prose td {
+    @apply px-4 py-3;
+  }
+
+  .shiki {
+    @apply p-4 overflow-x-auto text-sm leading-relaxed;
+    background-color: var(--shiki-bg) !important;
+  }
+
+  .shiki code {
+    @apply bg-transparent p-0 font-mono;
+    color: inherit;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out both;
+  }
+
+  .animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .animate-stagger > *:nth-child(2) { animation-delay: 60ms; }
+  .animate-stagger > *:nth-child(3) { animation-delay: 120ms; }
+  .animate-stagger > *:nth-child(4) { animation-delay: 180ms; }
+  .animate-stagger > *:nth-child(5) { animation-delay: 240ms; }
+  .animate-stagger > *:nth-child(6) { animation-delay: 300ms; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
