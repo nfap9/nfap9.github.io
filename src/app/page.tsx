@@ -24,8 +24,7 @@ export default async function HomePage() {
             />
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">shen 的博客</h1>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">个人成长 & 前端技术</p>
-          <p className="text-gray-500 mb-8">记录每一步的成长</p>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">极客技术 & 知识库</p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link
               href="/blog"
