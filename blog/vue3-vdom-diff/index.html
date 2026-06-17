@@ -1,0 +1,339 @@
+<!DOCTYPE html><!--slGIBmhmlh2zcRWfp35sq--><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/shenLogo.png"/><link rel="stylesheet" href="/_next/static/css/6d85209af33e5687.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-4e6bf084ac60582b.js"/><script src="/_next/static/chunks/4bd1b696-c023c6e3521b1417.js" async=""></script><script src="/_next/static/chunks/255-2aa030c9ba2867e3.js" async=""></script><script src="/_next/static/chunks/main-app-19f6093270bc3273.js" async=""></script><link rel="icon" type="image/png" href="/shenLogo.png"/><title>Vue3 虚拟 DOM 与 Diff 算法 | shen 的博客</title><meta name="description" content="深入 Vue3 源码，解析虚拟 DOM 的实现机制与核心 Diff 算法的执行流程"/><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script></head><body class="min-h-screen flex flex-col"><div hidden=""><!--$--><!--/$--></div><header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex items-center justify-between h-14"><a href="/" class="flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors"><img src="/shenLogo.png" alt="Logo" class="w-8 h-8 rounded-full"/><span>shen</span></a><nav class="flex items-center gap-6"><a href="/" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">主页</a><a href="/blog" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">文章</a><a href="/notes" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">笔记</a><a href="/kb" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">知识库</a><a href="https://github.com/nfap9" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">GitHub</a></nav></div></div></header><main class="flex-1"><article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12"><div class="mb-8"><span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4">Vue</span><h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Vue3 虚拟 DOM 与 Diff 算法</h1><div class="flex flex-wrap items-center gap-4 text-sm text-gray-500"><time dateTime="2025-03-28T00:00:00.000Z">发布于 <!-- -->2025年3月28日</time></div><div class="flex flex-wrap gap-2 mt-4"><a href="/tags/vue3" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->vue3</a><a href="/tags/虚拟DOM" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->虚拟DOM</a><a href="/tags/diff" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->diff</a><a href="/tags/源码" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->源码</a><a href="/tags/渲染器" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->渲染器</a></div></div><div class="prose prose-lg max-w-none"><p>Vue3 中虚拟 DOM 的实现在 <code>runtime-core/src/renderer.ts</code> 文件中。其中包含虚拟 DOM 更新流程和核心的 Diff 算法。</p>
+<p><code>renderer.ts</code> 中的关键实现是 <code>baseCreateRenderer</code>，<code>baseCreateRenderer</code> 返回 <code>render</code>、<code>hydrate</code>（SSR 相关）、<code>createApp</code>。</p>
+<p><code>createApp</code> 中可以看到常用的方法：<code>use</code>、<code>mixin</code>、<code>component</code>、<code>directive</code>、<code>mount</code>、<code>onUnmount</code>、<code>unmount</code>、<code>provide</code>。这些都非常熟悉不再赘述。</p>
+<p><code>baseCreateRenderer</code> 中最核心的是 <strong>Patch</strong> 方法。我们从这个方法可以了解到整个虚拟DOM挂载和更新的流程；</p>
+<hr>
+<h2>一、Patch 递归</h2>
+<p><strong>Patch 方法是 Diff 算法入口</strong>，通过递归对 VNode "打补丁" 更新 DOM。<code>patch</code> 会接受新旧节点，判断两个 VNode 的关系并执行相应操作：</p>
+<ol>
+<li><strong>相同节点</strong>（<code>n1 === n2</code>）→ 直接返回</li>
+<li><strong>类型不同</strong> → 卸载旧树，挂载新树</li>
+<li><strong>按 <code>type</code> 分发处理</strong>：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>处理函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Text</code></td>
+<td><code>processText</code></td>
+<td>文本节点</td>
+</tr>
+<tr>
+<td><code>Comment</code></td>
+<td><code>processCommentNode</code></td>
+<td>注释节点</td>
+</tr>
+<tr>
+<td><code>Static</code></td>
+<td><code>mountStaticNode</code> / <code>patchStaticNode</code></td>
+<td>编译优化后的静态节点</td>
+</tr>
+<tr>
+<td><code>Fragment</code></td>
+<td><code>processFragment</code></td>
+<td>片段</td>
+</tr>
+<tr>
+<td>Element</td>
+<td><code>processElement</code> → <code>mountElement</code> / <code>patchElement</code></td>
+<td>普通元素</td>
+</tr>
+<tr>
+<td>Component</td>
+<td><code>processComponent</code> → <code>mountComponent</code> / <code>updateComponent</code></td>
+<td>组件</td>
+</tr>
+<tr>
+<td>Teleport</td>
+<td>调用 Teleport 自身的 process</td>
+<td>传送门</td>
+</tr>
+<tr>
+<td>Suspense</td>
+<td>调用 Suspense 自身的 process</td>
+<td>异步组件</td>
+</tr>
+</tbody>
+</table>
+<h3>patchFlag 优化</h3>
+<p><strong>patchFlag</strong> 是在生成 VNode 阶段产生的，它标记了元素哪些部分是动态的，用来在 Diff 中进行性能优化。</p>
+<h3>流程图</h3>
+<pre><code class="language-mermaid">graph TD
+    A["patch(n1, n2)"] --> B{"n1 === n2?"}
+    B -->|是| Z["节点没变，不需要更新"]
+    B -->|否| C{"同类型?"}
+
+    C -->|否| D["unmount旧节点&#x3C;br/>n1 = null"]
+    D --> E
+
+    C -->|是| E{"根据 n2.type 分支"}
+
+    E -->|Element| J{"首次挂载?"}
+
+    J -->|是| J1["挂载新元素"]
+    J -->|否| J2["匹配旧元素"]
+
+    J2 --> J3{"有动态子元素?"}
+    J3 -->|否| J5["patchChildren 全量 diff"]
+    J3 -->|是| J4["patchBlockChildren 只遍历动态节点"]
+</code></pre>
+<hr>
+<h2>二、Diff 核心</h2>
+<p>Diff 算法是降低 DOM 渲染频率以提升 Vue 性能的算法。算法的思想是降低真实DOM的增删操作，尽量复用旧的节点。</p>
+<p>在 Patch 递归过程中只能处理单节点嵌套，而消耗大量性能的多子节点更新最终会在 <code>patchChildren</code> 中处理。</p>
+<h3>两种情形</h3>
+<ul>
+<li><strong>有 key</strong>：进行头尾匹配，再对中间无序区间进行最长递增子序列进行节点移动性能优化</li>
+<li><strong>无 key</strong>：按索引一一对比，多余旧节点卸载，多余新节点挂载</li>
+</ul>
+<p>其中对于有 key 属性的子节点处理就是整个 Diff 性能优化最核心的地方。</p>
+<h3>有 key 的 Diff 流程</h3>
+<ol>
+<li><strong>从头同步</strong>：双指针从开头向中间移动，逐个比对，相同则 patch</li>
+<li><strong>从尾同步</strong>：双指针从结尾向中间移动，逐个比对，相同则 patch</li>
+<li><strong>处理剩余</strong>：
+<ul>
+<li>旧节点先遍历完 → 剩余新节点挂载</li>
+<li>新节点先匹配完 → 剩余旧节点卸载</li>
+</ul>
+</li>
+<li><strong>乱序处理</strong>：构建新节点 key → index 映射，遍历旧节点匹配更新，通过最长递增子序列计算最少移动</li>
+</ol>
+<p><strong>伪代码</strong>：</p>
+<pre><code>function patchKeyedChildren(旧列表, 新列表):
+    i = 0                    // 起始指针
+    e1 = 旧列表.length - 1   // 旧列表末尾
+    e2 = 新列表.length - 1   // 新列表末尾
+
+    // 1. 头同步：从头逐个比对，相同则 patch，指针后移
+    while i &#x3C;= e1 &#x26;&#x26; i &#x3C;= e2 &#x26;&#x26; 旧列表[i] 与 新列表[i] 类型相同:
+        patch(旧列表[i], 新列表[i])
+        i++
+
+    // 2. 尾同步：从尾逐个比对，相同则 patch，末尾前移
+    while i &#x3C;= e1 &#x26;&#x26; i &#x3C;= e2 &#x26;&#x26; 旧列表[e1] 与 新列表[e2] 类型相同:
+        patch(旧列表[e1], 新列表[e2])
+        e1--; e2--
+
+    // 3. 剩余处理
+    if i > e1:                // 旧节点遍历完，新节点还有
+        挂载剩余新节点
+    else if i > e2:          // 新节点匹配完，旧节点还有
+        卸载剩余旧节点
+    else:
+        // 4. 乱序部分
+        建立 新列表 key → index 的映射表
+
+        遍历旧列表:
+            根据 key 在映射表中查找对应新节点
+            if 找到:
+                patch 该节点
+                记录"新节点位置 → 旧节点位置"的对应关系
+                判断是否需要移动（位置递减 = 需要移动）
+            else:
+                卸载该旧节点
+
+        计算最长递增子序列（基于记录的对应关系）
+
+        从后向前遍历新列表:
+            if 从未匹配过:
+                挂载该新节点
+            else if 需要移动且不在递增序列中:
+                移动该节点到正确位置
+</code></pre>
+<p><strong>核心思想</strong>：通过最长递增子序列找出不需要移动的节点，只移动必须移动的节点，最小化 DOM 操作。</p>
+<hr>
+<h2>三、组件更新</h2>
+<p>组件更新流程分为两种触发方式：<strong>内部状态变化</strong> 和 <strong>父组件更新</strong>。</p>
+<h3>触发方式</h3>
+<table>
+<thead>
+<tr>
+<th>触发方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内部状态变化</td>
+<td>组件自己的响应式数据变化，触发 <code>instance.update()</code></td>
+</tr>
+<tr>
+<td>父组件更新</td>
+<td>父组件传入新的 VNode，触发 patch</td>
+</tr>
+</tbody>
+</table>
+<h3>核心流程</h3>
+<pre><code class="language-mermaid">graph TD
+    A["组件状态变化"] --> B["instance.update()"]
+    B --> C["componentUpdateFn"]
+    C --> D{"shouldUpdateComponent?"}
+
+    D -->|是| E["updateComponentPreRender"]
+    D -->|否| F["复用旧 VNode"]
+
+    E --> G["renderComponentRoot 渲染新 VNode"]
+    G --> H["patch prevTree, nextTree"]
+    H --> I["Diff 比对 + DOM 更新"]
+
+    F --> J[结束]
+    I --> J
+</code></pre>
+<h4>1. <code>updateComponent</code> - 判断是否需要更新</h4>
+<pre><code>function updateComponent(旧VNode, 新VNode):
+    从 新VNode 获取组件实例
+
+    if 应该更新(旧VNode, 新VNode):
+        if 是异步组件且未解析完成:
+            只更新 props 和 slots
+        else:
+            缓存新 VNode
+            触发组件的响应式 effect（执行渲染函数）
+    else:
+        直接复用旧 VNode 的 DOM 元素
+</code></pre>
+<h4>2. <code>componentUpdateFn</code> - 渲染 effect 核心</h4>
+<pre><code>function componentUpdateFn():
+    if 未挂载:
+        执行挂载流程
+    else:
+        // 更新流程
+        if 有待处理的 VNode:
+            更新组件的 props 和 slots
+
+        执行 beforeUpdate 生命周期钩子
+
+        // 渲染
+        新子树 = 执行组件的 render 函数（生成新 VNode）
+        旧子树 = 当前保存的子树
+
+        // 比对
+        patch(旧子树, 新子树)
+
+        执行 updated 生命周期钩子
+</code></pre>
+<h4>3. <code>updateComponentPreRender</code> - 更新组件内部状态</h4>
+<pre><code>function updateComponentPreRender(组件实例, 新VNode):
+    更新组件实例的 vnode 引用
+    清空待处理的 next
+    更新 props
+    更新 slots
+    刷新前置队列中的回调
+</code></pre>
+<h3>生命周期顺序</h3>
+<pre><code>beforeUpdate → 渲染新 VNode → patch → updated
+</code></pre>
+<hr>
+<h2>四、Fragment &#x26; Teleport 等特殊 VNode 的处理</h2>
+<h3>Fragment</h3>
+<p>Fragment 用于处理多个根节点的情况，如模板编译产生的 <code>&#x3C;>&#x3C;/></code> 或 <code>v-for</code> 生成的片段。</p>
+<p><strong>特点</strong>：没有单个 DOM 元素作为根，需要用两个锚点（startAnchor/endAnchor）包裹。</p>
+<h4>语义化描述</h4>
+<pre><code>function processFragment(旧VNode, 新VNode, 容器, 锚点):
+    // 创建两个锚点标记片段边界
+    创建片段起始锚点
+    创建片段结束锚点
+
+    if 首次挂载:
+        将两个锚点插入容器
+        遍历子节点逐个挂载到两个锚点之间
+    else:
+        if 是稳定片段且有动态子节点:
+            只 patch 动态子节点（快速路径）
+        else:
+            全量比对子节点列表
+</code></pre>
+<h4>两种更新路径</h4>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>条件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>快速路径</td>
+<td><code>STABLE_FRAGMENT</code> + <code>dynamicChildren</code></td>
+<td>子节点顺序不变，只更新动态节点</td>
+</tr>
+<tr>
+<td>全量路径</td>
+<td>其他情况</td>
+<td>调用 <code>patchChildren</code> 全量比对</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3>Teleport</h3>
+<p>Teleport 用于将子节点渲染到当前组件 DOM 树以外的位置，如 Modal、Toast 等场景。</p>
+<p><strong>核心概念</strong>：</p>
+<ul>
+<li><code>to</code>：目标容器，可以是 CSS 选择器或 DOM 元素</li>
+<li><code>disabled</code>：是否禁用 teleport</li>
+<li><code>targetAnchor</code>：<code>to</code> 容器中的插入锚点</li>
+</ul>
+<h4>语义化描述</h4>
+<pre><code>function processTeleport(旧VNode, 新VNode, 容器, 锚点):
+    if 首次挂载:
+        // 1. 在原始位置插入占位锚点
+        创建 teleport start 锚点
+        创建 teleport end 锚点
+
+        // 2. 挂载到目标容器
+        if 未禁用:
+            解析目标容器
+            将子节点挂载到目标容器中
+
+    else:
+        // 更新流程
+        复用旧 VNode 的锚点引用
+
+        // 1. 处理子节点更新
+        if 有动态子节点:
+            快速路径 patch
+        else:
+            全量比对子节点
+
+        // 2. 处理目标容器变化
+        if 禁用状态变化:
+            移动到对应容器（主容器或目标容器）
+        else if 目标容器变化:
+            移动到新的目标容器
+</code></pre>
+<h4>三种移动类型</h4>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TOGGLE</code></td>
+<td>enabled ↔ disabled 状态切换</td>
+</tr>
+<tr>
+<td><code>TARGET_CHANGE</code></td>
+<td>目标容器（<code>to</code> prop）变化</td>
+</tr>
+<tr>
+<td><code>GLOBAL</code></td>
+<td>未知原因需要全局移动</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3>Suspense</h3>
+<p>Suspense 用于处理异步组件加载状态，展示加载中/失败等 fallback UI。</p>
+<p>（详见 <code>packages/runtime-core/src/components/Suspense.ts</code>）</p>
+</div><div class="mt-12 pt-8 border-t border-gray-200"><a href="/blog" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>返回文章列表</a></div></article><!--$--><!--/$--></main><footer class="border-t border-gray-200 bg-white"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6"><div class="flex flex-col sm:flex-row items-center justify-between gap-4"><p class="text-sm text-gray-500">© <!-- -->2026<!-- --> shen. 个人博客</p><div class="flex items-center gap-4"><a href="https://github.com/nfap9" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg></a></div></div></div></footer><script src="/_next/static/chunks/webpack-4e6bf084ac60582b.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[9766,[],\"\"]\n3:I[8924,[],\"\"]\n8:I[7150,[],\"\"]\n:HL[\"/_next/static/css/6d85209af33e5687.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"slGIBmhmlh2zcRWfp35sq\",\"p\":\"\",\"c\":[\"\",\"blog\",\"vue3-vdom-diff\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"vue3-vdom-diff\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/6d85209af33e5687.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"children\":[[\"$\",\"head\",null,{\"children\":[\"$\",\"link\",null,{\"rel\":\"icon\",\"type\":\"image/png\",\"href\":\"/shenLogo.png\"}]}],[\"$\",\"body\",null,{\"className\":\"min-h-screen flex flex-col\",\"children\":[[\"$\",\"header\",null,{\"className\":\"sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex items-center justify-between h-14\",\"children\":[[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors\",\"children\":[[\"$\",\"img\",null,{\"src\":\"/shenLogo.png\",\"alt\":\"Logo\",\"className\":\"w-8 h-8 rounded-full\"}],[\"$\",\"span\",null,{\"children\":\"shen\"}]]}],[\"$\",\"nav\",null,{\"className\":\"flex items-center gap-6\",\"children\":[[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"主页\"}],[\"$\",\"a\",null,{\"href\":\"/blog\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"文章\"}],[\"$\",\"a\",null,{\"href\":\"/notes\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"笔记\"}],[\"$\",\"a\",null,{\"href\":\"/kb\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"知识库\"}],[\"$\",\"a\",null,{\"href\":\"https://github.com/nfap9\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"GitHub\"}]]}]]}]}]}],[\"$\",\"main\",null,{\"className\":\"flex-1\",\"children\":[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"div\",null,{\"className\":\"min-h-[60vh] flex items-center justify-center px-4\",\"children\":[\"$\",\"div\",null,{\"className\":\"text-center\",\"children\":[[\"$\",\"h1\",null,{\"className\":\"text-6xl font-bold text-gray-900 mb-4\",\"children\":\"404\"}],[\"$\",\"p\",null,{\"className\":\"text-xl text-gray-600 mb-8\",\"children\":\"页面找不到了\"}],[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"inline-flex items-center px-6 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors\",\"children\":\"返回首页\"}]]}]}],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"footer\",null,{\"className\":\"border-t border-gray-200 bg-white\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex flex-col sm:flex-row items-center justify-between gap-4\",\"children\":[[\"$\",\"p\",null,{\"className\":\"text-sm text-gray-500\",\"children\":[\"© \",2026,\" shen. 个人博客\"]}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4\",\"children\":[\"$\",\"a\",null,{\"href\":\"https://github.com/nfap9\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"className\":\"text-gray-400 hover:text-gray-600 transition-colors\",\"children\":[\"$\",\"svg\",null,{\"className\":\"w-5 h-5\",\"fill\":\"currentColor\",\"viewBox\":\"0 0 24 24\",\"aria-hidden\":\"true\",\"children\":[\"$\",\"path\",null,{\"fillRule\":\"evenodd\",\"d\":\"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z\",\"clipRule\":\"evenodd\"}]}]}]}]]}]}]}]]}]]}]]}],{\"children\":[\"blog\",\"$L4\",{\"children\":[[\"slug\",\"vue3-vdom-diff\",\"d\"],\"$L5\",{\"children\":[\"__PAGE__\",\"$L6\",{},null,false]},null,false]},null,false]},null,false],\"$L7\",false]],\"m\":\"$undefined\",\"G\":[\"$8\",[]],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"a:I[4431,[],\"OutletBoundary\"]\nc:I[5278,[],\"AsyncMetadataOutlet\"]\ne:I[4431,[],\"ViewportBoundary\"]\n10:I[4431,[],\"MetadataBoundary\"]\n11:\"$Sreact.suspense\"\n4:[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]\n5:[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]\n6:[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$Lb\",[\"$\",\"$Lc\",null,{\"promise\":\"$@d\"}]]}]]}]\n7:[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$Le\",null,{\"children\":\"$Lf\"}],null],[\"$\",\"$L10\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$11\",null,{\"fallback\":null,\"children\":\"$L12\"}]}]}]]}]\n"])</script><script>self.__next_f.push([1,"f:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\nb:null\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"mb-8\",\"children\":[[\"$\",\"span\",null,{\"className\":\"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4\",\"children\":\"Vue\"}],[\"$\",\"h1\",null,{\"className\":\"text-3xl sm:text-4xl font-bold text-gray-900 mb-4\",\"children\":\"Vue3 虚拟 DOM 与 Diff 算法\"}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap items-center gap-4 text-sm text-gray-500\",\"children\":[[\"$\",\"time\",null,{\"dateTime\":\"2025-03-28T00:00:00.000Z\",\"children\":[\"发布于 \",\"2025年3月28日\"]}],\"$undefined\"]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"a\",\"vue3\",{\"href\":\"/tags/vue3\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"vue3\"]}],[\"$\",\"a\",\"虚拟DOM\",{\"href\":\"/tags/虚拟DOM\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"虚拟DOM\"]}],[\"$\",\"a\",\"diff\",{\"href\":\"/tags/diff\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"diff\"]}],[\"$\",\"a\",\"源码\",{\"href\":\"/tags/源码\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"源码\"]}],[\"$\",\"a\",\"渲染器\",{\"href\":\"/tags/渲染器\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"渲染器\"]}]]}]]}],\"$L13\",[\"$\",\"div\",null,{\"className\":\"mt-12 pt-8 border-t border-gray-200\",\"children\":[\"$\",\"a\",null,{\"href\":\"/blog\",\"className\":\"inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors\",\"children\":[[\"$\",\"svg\",null,{\"className\":\"w-4 h-4 mr-2\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"viewBox\":\"0 0 24 24\",\"children\":[\"$\",\"path\",null,{\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"strokeWidth\":2,\"d\":\"M10 19l-7-7m0 0l7-7m-7 7h18\"}]}],\"返回文章列表\"]}]}]]}]\n"])</script><script>self.__next_f.push([1,"d:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"Vue3 虚拟 DOM 与 Diff 算法 | shen 的博客\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"深入 Vue3 源码，解析虚拟 DOM 的实现机制与核心 Diff 算法的执行流程\"}]],\"error\":null,\"digest\":\"$undefined\"}\n12:\"$d:metadata\"\n"])</script><script>self.__next_f.push([1,"14:T2da0,"])</script><script>self.__next_f.push([1,"\u003cp\u003eVue3 中虚拟 DOM 的实现在 \u003ccode\u003eruntime-core/src/renderer.ts\u003c/code\u003e 文件中。其中包含虚拟 DOM 更新流程和核心的 Diff 算法。\u003c/p\u003e\n\u003cp\u003e\u003ccode\u003erenderer.ts\u003c/code\u003e 中的关键实现是 \u003ccode\u003ebaseCreateRenderer\u003c/code\u003e，\u003ccode\u003ebaseCreateRenderer\u003c/code\u003e 返回 \u003ccode\u003erender\u003c/code\u003e、\u003ccode\u003ehydrate\u003c/code\u003e（SSR 相关）、\u003ccode\u003ecreateApp\u003c/code\u003e。\u003c/p\u003e\n\u003cp\u003e\u003ccode\u003ecreateApp\u003c/code\u003e 中可以看到常用的方法：\u003ccode\u003euse\u003c/code\u003e、\u003ccode\u003emixin\u003c/code\u003e、\u003ccode\u003ecomponent\u003c/code\u003e、\u003ccode\u003edirective\u003c/code\u003e、\u003ccode\u003emount\u003c/code\u003e、\u003ccode\u003eonUnmount\u003c/code\u003e、\u003ccode\u003eunmount\u003c/code\u003e、\u003ccode\u003eprovide\u003c/code\u003e。这些都非常熟悉不再赘述。\u003c/p\u003e\n\u003cp\u003e\u003ccode\u003ebaseCreateRenderer\u003c/code\u003e 中最核心的是 \u003cstrong\u003ePatch\u003c/strong\u003e 方法。我们从这个方法可以了解到整个虚拟DOM挂载和更新的流程；\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e一、Patch 递归\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003ePatch 方法是 Diff 算法入口\u003c/strong\u003e，通过递归对 VNode \"打补丁\" 更新 DOM。\u003ccode\u003epatch\u003c/code\u003e 会接受新旧节点，判断两个 VNode 的关系并执行相应操作：\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e相同节点\u003c/strong\u003e（\u003ccode\u003en1 === n2\u003c/code\u003e）→ 直接返回\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e类型不同\u003c/strong\u003e → 卸载旧树，挂载新树\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e按 \u003ccode\u003etype\u003c/code\u003e 分发处理\u003c/strong\u003e：\u003c/li\u003e\n\u003c/ol\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003etype\u003c/th\u003e\n\u003cth\u003e处理函数\u003c/th\u003e\n\u003cth\u003e说明\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eText\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003eprocessText\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e文本节点\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eComment\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003eprocessCommentNode\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e注释节点\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eStatic\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003emountStaticNode\u003c/code\u003e / \u003ccode\u003epatchStaticNode\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e编译优化后的静态节点\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eFragment\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003eprocessFragment\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e片段\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eElement\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003eprocessElement\u003c/code\u003e → \u003ccode\u003emountElement\u003c/code\u003e / \u003ccode\u003epatchElement\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e普通元素\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eComponent\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003eprocessComponent\u003c/code\u003e → \u003ccode\u003emountComponent\u003c/code\u003e / \u003ccode\u003eupdateComponent\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e组件\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eTeleport\u003c/td\u003e\n\u003ctd\u003e调用 Teleport 自身的 process\u003c/td\u003e\n\u003ctd\u003e传送门\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eSuspense\u003c/td\u003e\n\u003ctd\u003e调用 Suspense 自身的 process\u003c/td\u003e\n\u003ctd\u003e异步组件\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003epatchFlag 优化\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003epatchFlag\u003c/strong\u003e 是在生成 VNode 阶段产生的，它标记了元素哪些部分是动态的，用来在 Diff 中进行性能优化。\u003c/p\u003e\n\u003ch3\u003e流程图\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-mermaid\"\u003egraph TD\n    A[\"patch(n1, n2)\"] --\u003e B{\"n1 === n2?\"}\n    B --\u003e|是| Z[\"节点没变，不需要更新\"]\n    B --\u003e|否| C{\"同类型?\"}\n\n    C --\u003e|否| D[\"unmount旧节点\u0026#x3C;br/\u003en1 = null\"]\n    D --\u003e E\n\n    C --\u003e|是| E{\"根据 n2.type 分支\"}\n\n    E --\u003e|Element| J{\"首次挂载?\"}\n\n    J --\u003e|是| J1[\"挂载新元素\"]\n    J --\u003e|否| J2[\"匹配旧元素\"]\n\n    J2 --\u003e J3{\"有动态子元素?\"}\n    J3 --\u003e|否| J5[\"patchChildren 全量 diff\"]\n    J3 --\u003e|是| J4[\"patchBlockChildren 只遍历动态节点\"]\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e二、Diff 核心\u003c/h2\u003e\n\u003cp\u003eDiff 算法是降低 DOM 渲染频率以提升 Vue 性能的算法。算法的思想是降低真实DOM的增删操作，尽量复用旧的节点。\u003c/p\u003e\n\u003cp\u003e在 Patch 递归过程中只能处理单节点嵌套，而消耗大量性能的多子节点更新最终会在 \u003ccode\u003epatchChildren\u003c/code\u003e 中处理。\u003c/p\u003e\n\u003ch3\u003e两种情形\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e有 key\u003c/strong\u003e：进行头尾匹配，再对中间无序区间进行最长递增子序列进行节点移动性能优化\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e无 key\u003c/strong\u003e：按索引一一对比，多余旧节点卸载，多余新节点挂载\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e其中对于有 key 属性的子节点处理就是整个 Diff 性能优化最核心的地方。\u003c/p\u003e\n\u003ch3\u003e有 key 的 Diff 流程\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e从头同步\u003c/strong\u003e：双指针从开头向中间移动，逐个比对，相同则 patch\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e从尾同步\u003c/strong\u003e：双指针从结尾向中间移动，逐个比对，相同则 patch\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e处理剩余\u003c/strong\u003e：\n\u003cul\u003e\n\u003cli\u003e旧节点先遍历完 → 剩余新节点挂载\u003c/li\u003e\n\u003cli\u003e新节点先匹配完 → 剩余旧节点卸载\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e乱序处理\u003c/strong\u003e：构建新节点 key → index 映射，遍历旧节点匹配更新，通过最长递增子序列计算最少移动\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e\u003cstrong\u003e伪代码\u003c/strong\u003e：\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003efunction patchKeyedChildren(旧列表, 新列表):\n    i = 0                    // 起始指针\n    e1 = 旧列表.length - 1   // 旧列表末尾\n    e2 = 新列表.length - 1   // 新列表末尾\n\n    // 1. 头同步：从头逐个比对，相同则 patch，指针后移\n    while i \u0026#x3C;= e1 \u0026#x26;\u0026#x26; i \u0026#x3C;= e2 \u0026#x26;\u0026#x26; 旧列表[i] 与 新列表[i] 类型相同:\n        patch(旧列表[i], 新列表[i])\n        i++\n\n    // 2. 尾同步：从尾逐个比对，相同则 patch，末尾前移\n    while i \u0026#x3C;= e1 \u0026#x26;\u0026#x26; i \u0026#x3C;= e2 \u0026#x26;\u0026#x26; 旧列表[e1] 与 新列表[e2] 类型相同:\n        patch(旧列表[e1], 新列表[e2])\n        e1--; e2--\n\n    // 3. 剩余处理\n    if i \u003e e1:                // 旧节点遍历完，新节点还有\n        挂载剩余新节点\n    else if i \u003e e2:          // 新节点匹配完，旧节点还有\n        卸载剩余旧节点\n    else:\n        // 4. 乱序部分\n        建立 新列表 key → index 的映射表\n\n        遍历旧列表:\n            根据 key 在映射表中查找对应新节点\n            if 找到:\n                patch 该节点\n                记录\"新节点位置 → 旧节点位置\"的对应关系\n                判断是否需要移动（位置递减 = 需要移动）\n            else:\n                卸载该旧节点\n\n        计算最长递增子序列（基于记录的对应关系）\n\n        从后向前遍历新列表:\n            if 从未匹配过:\n                挂载该新节点\n            else if 需要移动且不在递增序列中:\n                移动该节点到正确位置\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e核心思想\u003c/strong\u003e：通过最长递增子序列找出不需要移动的节点，只移动必须移动的节点，最小化 DOM 操作。\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e三、组件更新\u003c/h2\u003e\n\u003cp\u003e组件更新流程分为两种触发方式：\u003cstrong\u003e内部状态变化\u003c/strong\u003e 和 \u003cstrong\u003e父组件更新\u003c/strong\u003e。\u003c/p\u003e\n\u003ch3\u003e触发方式\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e触发方式\u003c/th\u003e\n\u003cth\u003e说明\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e内部状态变化\u003c/td\u003e\n\u003ctd\u003e组件自己的响应式数据变化，触发 \u003ccode\u003einstance.update()\u003c/code\u003e\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e父组件更新\u003c/td\u003e\n\u003ctd\u003e父组件传入新的 VNode，触发 patch\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e核心流程\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-mermaid\"\u003egraph TD\n    A[\"组件状态变化\"] --\u003e B[\"instance.update()\"]\n    B --\u003e C[\"componentUpdateFn\"]\n    C --\u003e D{\"shouldUpdateComponent?\"}\n\n    D --\u003e|是| E[\"updateComponentPreRender\"]\n    D --\u003e|否| F[\"复用旧 VNode\"]\n\n    E --\u003e G[\"renderComponentRoot 渲染新 VNode\"]\n    G --\u003e H[\"patch prevTree, nextTree\"]\n    H --\u003e I[\"Diff 比对 + DOM 更新\"]\n\n    F --\u003e J[结束]\n    I --\u003e J\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003e1. \u003ccode\u003eupdateComponent\u003c/code\u003e - 判断是否需要更新\u003c/h4\u003e\n\u003cpre\u003e\u003ccode\u003efunction updateComponent(旧VNode, 新VNode):\n    从 新VNode 获取组件实例\n\n    if 应该更新(旧VNode, 新VNode):\n        if 是异步组件且未解析完成:\n            只更新 props 和 slots\n        else:\n            缓存新 VNode\n            触发组件的响应式 effect（执行渲染函数）\n    else:\n        直接复用旧 VNode 的 DOM 元素\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003e2. \u003ccode\u003ecomponentUpdateFn\u003c/code\u003e - 渲染 effect 核心\u003c/h4\u003e\n\u003cpre\u003e\u003ccode\u003efunction componentUpdateFn():\n    if 未挂载:\n        执行挂载流程\n    else:\n        // 更新流程\n        if 有待处理的 VNode:\n            更新组件的 props 和 slots\n\n        执行 beforeUpdate 生命周期钩子\n\n        // 渲染\n        新子树 = 执行组件的 render 函数（生成新 VNode）\n        旧子树 = 当前保存的子树\n\n        // 比对\n        patch(旧子树, 新子树)\n\n        执行 updated 生命周期钩子\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003e3. \u003ccode\u003eupdateComponentPreRender\u003c/code\u003e - 更新组件内部状态\u003c/h4\u003e\n\u003cpre\u003e\u003ccode\u003efunction updateComponentPreRender(组件实例, 新VNode):\n    更新组件实例的 vnode 引用\n    清空待处理的 next\n    更新 props\n    更新 slots\n    刷新前置队列中的回调\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e生命周期顺序\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003ebeforeUpdate → 渲染新 VNode → patch → updated\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e四、Fragment \u0026#x26; Teleport 等特殊 VNode 的处理\u003c/h2\u003e\n\u003ch3\u003eFragment\u003c/h3\u003e\n\u003cp\u003eFragment 用于处理多个根节点的情况，如模板编译产生的 \u003ccode\u003e\u0026#x3C;\u003e\u0026#x3C;/\u003e\u003c/code\u003e 或 \u003ccode\u003ev-for\u003c/code\u003e 生成的片段。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e特点\u003c/strong\u003e：没有单个 DOM 元素作为根，需要用两个锚点（startAnchor/endAnchor）包裹。\u003c/p\u003e\n\u003ch4\u003e语义化描述\u003c/h4\u003e\n\u003cpre\u003e\u003ccode\u003efunction processFragment(旧VNode, 新VNode, 容器, 锚点):\n    // 创建两个锚点标记片段边界\n    创建片段起始锚点\n    创建片段结束锚点\n\n    if 首次挂载:\n        将两个锚点插入容器\n        遍历子节点逐个挂载到两个锚点之间\n    else:\n        if 是稳定片段且有动态子节点:\n            只 patch 动态子节点（快速路径）\n        else:\n            全量比对子节点列表\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003e两种更新路径\u003c/h4\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e路径\u003c/th\u003e\n\u003cth\u003e条件\u003c/th\u003e\n\u003cth\u003e说明\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e快速路径\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003eSTABLE_FRAGMENT\u003c/code\u003e + \u003ccode\u003edynamicChildren\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e子节点顺序不变，只更新动态节点\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e全量路径\u003c/td\u003e\n\u003ctd\u003e其他情况\u003c/td\u003e\n\u003ctd\u003e调用 \u003ccode\u003epatchChildren\u003c/code\u003e 全量比对\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003chr\u003e\n\u003ch3\u003eTeleport\u003c/h3\u003e\n\u003cp\u003eTeleport 用于将子节点渲染到当前组件 DOM 树以外的位置，如 Modal、Toast 等场景。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e核心概念\u003c/strong\u003e：\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003eto\u003c/code\u003e：目标容器，可以是 CSS 选择器或 DOM 元素\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003edisabled\u003c/code\u003e：是否禁用 teleport\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003etargetAnchor\u003c/code\u003e：\u003ccode\u003eto\u003c/code\u003e 容器中的插入锚点\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch4\u003e语义化描述\u003c/h4\u003e\n\u003cpre\u003e\u003ccode\u003efunction processTeleport(旧VNode, 新VNode, 容器, 锚点):\n    if 首次挂载:\n        // 1. 在原始位置插入占位锚点\n        创建 teleport start 锚点\n        创建 teleport end 锚点\n\n        // 2. 挂载到目标容器\n        if 未禁用:\n            解析目标容器\n            将子节点挂载到目标容器中\n\n    else:\n        // 更新流程\n        复用旧 VNode 的锚点引用\n\n        // 1. 处理子节点更新\n        if 有动态子节点:\n            快速路径 patch\n        else:\n            全量比对子节点\n\n        // 2. 处理目标容器变化\n        if 禁用状态变化:\n            移动到对应容器（主容器或目标容器）\n        else if 目标容器变化:\n            移动到新的目标容器\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003e三种移动类型\u003c/h4\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e类型\u003c/th\u003e\n\u003cth\u003e说明\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eTOGGLE\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eenabled ↔ disabled 状态切换\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eTARGET_CHANGE\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e目标容器（\u003ccode\u003eto\u003c/code\u003e prop）变化\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eGLOBAL\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e未知原因需要全局移动\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003chr\u003e\n\u003ch3\u003eSuspense\u003c/h3\u003e\n\u003cp\u003eSuspense 用于处理异步组件加载状态，展示加载中/失败等 fallback UI。\u003c/p\u003e\n\u003cp\u003e（详见 \u003ccode\u003epackages/runtime-core/src/components/Suspense.ts\u003c/code\u003e）\u003c/p\u003e\n"])</script><script>self.__next_f.push([1,"13:[\"$\",\"div\",null,{\"className\":\"prose prose-lg max-w-none\",\"dangerouslySetInnerHTML\":{\"__html\":\"$14\"}}]\n"])</script></body></html>

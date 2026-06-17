@@ -1,0 +1,73 @@
+1:"$Sreact.fragment"
+2:I[9766,[],""]
+3:I[8924,[],""]
+8:I[7150,[],""]
+:HL["/_next/static/css/6d85209af33e5687.css","style"]
+0:{"P":null,"b":"slGIBmhmlh2zcRWfp35sq","p":"","c":["","blog","vue3-vs-vue2",""],"i":false,"f":[[["",{"children":["blog",{"children":[["slug","vue3-vs-vue2","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/6d85209af33e5687.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","children":[["$","head",null,{"children":["$","link",null,{"rel":"icon","type":"image/png","href":"/shenLogo.png"}]}],["$","body",null,{"className":"min-h-screen flex flex-col","children":[["$","header",null,{"className":"sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200","children":["$","div",null,{"className":"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8","children":["$","div",null,{"className":"flex items-center justify-between h-14","children":[["$","a",null,{"href":"/","className":"flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors","children":[["$","img",null,{"src":"/shenLogo.png","alt":"Logo","className":"w-8 h-8 rounded-full"}],["$","span",null,{"children":"shen"}]]}],["$","nav",null,{"className":"flex items-center gap-6","children":[["$","a",null,{"href":"/","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"主页"}],["$","a",null,{"href":"/blog","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"文章"}],["$","a",null,{"href":"/notes","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"笔记"}],["$","a",null,{"href":"/kb","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"知识库"}],["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"GitHub"}]]}]]}]}]}],["$","main",null,{"className":"flex-1","children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-[60vh] flex items-center justify-center px-4","children":["$","div",null,{"className":"text-center","children":[["$","h1",null,{"className":"text-6xl font-bold text-gray-900 mb-4","children":"404"}],["$","p",null,{"className":"text-xl text-gray-600 mb-8","children":"页面找不到了"}],["$","a",null,{"href":"/","className":"inline-flex items-center px-6 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors","children":"返回首页"}]]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","footer",null,{"className":"border-t border-gray-200 bg-white","children":["$","div",null,{"className":"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6","children":["$","div",null,{"className":"flex flex-col sm:flex-row items-center justify-between gap-4","children":[["$","p",null,{"className":"text-sm text-gray-500","children":["© ",2026," shen. 个人博客"]}],["$","div",null,{"className":"flex items-center gap-4","children":["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"text-gray-400 hover:text-gray-600 transition-colors","children":["$","svg",null,{"className":"w-5 h-5","fill":"currentColor","viewBox":"0 0 24 24","aria-hidden":"true","children":["$","path",null,{"fillRule":"evenodd","d":"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z","clipRule":"evenodd"}]}]}]}]]}]}]}]]}]]}]]}],{"children":["blog","$L4",{"children":[["slug","vue3-vs-vue2","d"],"$L5",{"children":["__PAGE__","$L6",{},null,false]},null,false]},null,false]},null,false],"$L7",false]],"m":"$undefined","G":["$8",[]],"s":false,"S":true}
+a:I[4431,[],"OutletBoundary"]
+c:I[5278,[],"AsyncMetadataOutlet"]
+e:I[4431,[],"ViewportBoundary"]
+10:I[4431,[],"MetadataBoundary"]
+11:"$Sreact.suspense"
+4:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+5:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+6:["$","$1","c",{"children":["$L9",null,["$","$La",null,{"children":["$Lb",["$","$Lc",null,{"promise":"$@d"}]]}]]}]
+7:["$","$1","h",{"children":[null,[["$","$Le",null,{"children":"$Lf"}],null],["$","$L10",null,{"children":["$","div",null,{"hidden":true,"children":["$","$11",null,{"fallback":null,"children":"$L12"}]}]}]]}]
+f:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+b:null
+9:["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12","children":[["$","div",null,{"className":"mb-8","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4","children":"Vue"}],["$","h1",null,{"className":"text-3xl sm:text-4xl font-bold text-gray-900 mb-4","children":"vue3和vue2的区别"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-gray-500","children":[["$","time",null,{"dateTime":"2024-03-05T00:00:00.000Z","children":["发布于 ","2024年3月5日"]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-4","children":[["$","a","vue",{"href":"/tags/vue","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","vue"]}],["$","a","vue3",{"href":"/tags/vue3","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","vue3"]}],["$","a","vue2",{"href":"/tags/vue2","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","vue2"]}],["$","a","对比",{"href":"/tags/对比","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","对比"]}]]}]]}],"$L13",["$","div",null,{"className":"mt-12 pt-8 border-t border-gray-200","children":["$","a",null,{"href":"/blog","className":"inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors","children":[["$","svg",null,{"className":"w-4 h-4 mr-2","fill":"none","stroke":"currentColor","viewBox":"0 0 24 24","children":["$","path",null,{"strokeLinecap":"round","strokeLinejoin":"round","strokeWidth":2,"d":"M10 19l-7-7m0 0l7-7m-7 7h18"}]}],"返回文章列表"]}]}]]}]
+d:{"metadata":[["$","title","0",{"children":"vue3和vue2的区别 | shen 的博客"}],["$","meta","1",{"name":"description","content":"全面解析 Vue3 与 Vue2 的差异，包括响应式原理、Composition API、编译优化等"}]],"error":null,"digest":"$undefined"}
+12:"$d:metadata"
+14:T6f1,<h1>vue3和vue2的区别</h1>
+<p>1、vue3使用ts重写。</p>
+<p>2、支持composition Api</p>
+<p>3、响应式原理改用proxy实现，可监听动态新增删除属性，以及数组变化。</p>
+<pre><code class="language-js">// vue2的响应式使用defineProperty实现
+const data = {
+  name: '123',
+  age: 18
+}
+const obj = {}
+function proxyData(){
+  Object.keys(data).forEach(key => {
+    Object.defineProperty(obj, key, {
+      get(){
+        return data[key]
+      },
+      set(value){
+        if(newValue === data[key]) return 
+        data[key] = value
+        // 附加响应式逻辑
+      }
+    })
+  })
+}
+proxyData()
+
+// vue3
+
+const data = {
+  name: '123',
+  age: 18,
+}
+
+const vm = new Proxy(data, {
+  get(target, key){
+    return target[key]
+  },
+  set(target, key, value){
+    if(target[key] === value) return
+    target[key] = value
+    // 响应式逻辑
+  }
+})
+</code></pre>
+<p>4、编译优化，vue2通过编辑静态根节点优化diff，vue3标记和提升所有静态根节点，diff的时候只需要对比动态节点内容</p>
+<p>5、移除了一些不常用的api（inline-template、filter）</p>
+<p>6、生命周期的变化：使用setup代替了之前的beforeCreate和created</p>
+<p>7、vue3的template模板支持多个根标签</p>
+<p>8、Vuex状态管理：创建实例的方式改变，vue2为new Store，vue3为createStore</p>
+<p>9、Route获取页面实例与路由信息：vue2通过<strong>this</strong>获取router实例，vue3通过使用getCurrentInstance/useRoute和useRouter方法获取当前组件实例</p>
+<p>10、Props的使用变化：vue2通过this获取props里面的内容，vue3直接通过defineProps</p>
+<p>11、父子组件传值：vue3向父组件传回数据时，如使用自定义名称需要使用defineEmits</p>
+13:["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$14"}}]

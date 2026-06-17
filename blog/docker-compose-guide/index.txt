@@ -1,0 +1,412 @@
+1:"$Sreact.fragment"
+2:I[9766,[],""]
+3:I[8924,[],""]
+8:I[7150,[],""]
+:HL["/_next/static/css/6d85209af33e5687.css","style"]
+0:{"P":null,"b":"slGIBmhmlh2zcRWfp35sq","p":"","c":["","blog","docker-compose-guide",""],"i":false,"f":[[["",{"children":["blog",{"children":[["slug","docker-compose-guide","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/6d85209af33e5687.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","children":[["$","head",null,{"children":["$","link",null,{"rel":"icon","type":"image/png","href":"/shenLogo.png"}]}],["$","body",null,{"className":"min-h-screen flex flex-col","children":[["$","header",null,{"className":"sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200","children":["$","div",null,{"className":"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8","children":["$","div",null,{"className":"flex items-center justify-between h-14","children":[["$","a",null,{"href":"/","className":"flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors","children":[["$","img",null,{"src":"/shenLogo.png","alt":"Logo","className":"w-8 h-8 rounded-full"}],["$","span",null,{"children":"shen"}]]}],["$","nav",null,{"className":"flex items-center gap-6","children":[["$","a",null,{"href":"/","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"主页"}],["$","a",null,{"href":"/blog","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"文章"}],["$","a",null,{"href":"/notes","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"笔记"}],["$","a",null,{"href":"/kb","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"知识库"}],["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"GitHub"}]]}]]}]}]}],["$","main",null,{"className":"flex-1","children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-[60vh] flex items-center justify-center px-4","children":["$","div",null,{"className":"text-center","children":[["$","h1",null,{"className":"text-6xl font-bold text-gray-900 mb-4","children":"404"}],["$","p",null,{"className":"text-xl text-gray-600 mb-8","children":"页面找不到了"}],["$","a",null,{"href":"/","className":"inline-flex items-center px-6 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors","children":"返回首页"}]]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","footer",null,{"className":"border-t border-gray-200 bg-white","children":["$","div",null,{"className":"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6","children":["$","div",null,{"className":"flex flex-col sm:flex-row items-center justify-between gap-4","children":[["$","p",null,{"className":"text-sm text-gray-500","children":["© ",2026," shen. 个人博客"]}],["$","div",null,{"className":"flex items-center gap-4","children":["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"text-gray-400 hover:text-gray-600 transition-colors","children":["$","svg",null,{"className":"w-5 h-5","fill":"currentColor","viewBox":"0 0 24 24","aria-hidden":"true","children":["$","path",null,{"fillRule":"evenodd","d":"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z","clipRule":"evenodd"}]}]}]}]]}]}]}]]}]]}]]}],{"children":["blog","$L4",{"children":[["slug","docker-compose-guide","d"],"$L5",{"children":["__PAGE__","$L6",{},null,false]},null,false]},null,false]},null,false],"$L7",false]],"m":"$undefined","G":["$8",[]],"s":false,"S":true}
+a:I[4431,[],"OutletBoundary"]
+c:I[5278,[],"AsyncMetadataOutlet"]
+e:I[4431,[],"ViewportBoundary"]
+10:I[4431,[],"MetadataBoundary"]
+11:"$Sreact.suspense"
+4:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+5:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+6:["$","$1","c",{"children":["$L9",null,["$","$La",null,{"children":["$Lb",["$","$Lc",null,{"promise":"$@d"}]]}]]}]
+7:["$","$1","h",{"children":[null,[["$","$Le",null,{"children":"$Lf"}],null],["$","$L10",null,{"children":["$","div",null,{"hidden":true,"children":["$","$11",null,{"fallback":null,"children":"$L12"}]}]}]]}]
+f:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+b:null
+9:["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12","children":[["$","div",null,{"className":"mb-8","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4","children":"工程化"}],["$","h1",null,{"className":"text-3xl sm:text-4xl font-bold text-gray-900 mb-4","children":"Docker 与 Docker Compose 实战指南"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-gray-500","children":[["$","time",null,{"dateTime":"2026-06-17T00:00:00.000Z","children":["发布于 ","2026年6月17日"]}],false]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-4","children":[["$","a","docker",{"href":"/tags/docker","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","docker"]}],["$","a","docker-compose",{"href":"/tags/docker-compose","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","docker-compose"]}],["$","a","容器化",{"href":"/tags/容器化","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","容器化"]}],["$","a","部署",{"href":"/tags/部署","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","部署"]}],["$","a","运维",{"href":"/tags/运维","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","运维"]}],["$","a","工程化",{"href":"/tags/工程化","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","工程化"]}]]}]]}],"$L13",["$","div",null,{"className":"mt-12 pt-8 border-t border-gray-200","children":["$","a",null,{"href":"/blog","className":"inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors","children":[["$","svg",null,{"className":"w-4 h-4 mr-2","fill":"none","stroke":"currentColor","viewBox":"0 0 24 24","children":["$","path",null,{"strokeLinecap":"round","strokeLinejoin":"round","strokeWidth":2,"d":"M10 19l-7-7m0 0l7-7m-7 7h18"}]}],"返回文章列表"]}]}]]}]
+d:{"metadata":[["$","title","0",{"children":"Docker 与 Docker Compose 实战指南 | shen 的博客"}],["$","meta","1",{"name":"description","content":"以 tenant-hub 项目为例，讲解 Docker 容器化与 Docker Compose 多容器编排的实际应用"}]],"error":null,"digest":"$undefined"}
+12:"$d:metadata"
+14:T3994,<blockquote>
+<p>本文以 <a href="https://github.com/nfap9/tenant-hub">tenant-hub</a> 项目（公寓物业管理系统）为例，讲解 Docker 和 Docker Compose 的实际使用。该项目使用 pnpm monorepo 架构，包含后端 API、前端 Web 和小程序三个应用。</p>
+</blockquote>
+<hr>
+<h2>核心概念</h2>
+<p><strong>镜像（Image）</strong></p>
+<p>镜像是一个只读模板，包含运行应用所需的完整文件系统、依赖库和配置。基于 Dockerfile 构建生成。每一层构建指令创建一个新层，Docker 通过层缓存加速重复构建。</p>
+<p><strong>容器（Container）</strong></p>
+<p>容器是镜像的运行实例。拥有独立的进程空间、文件系统和网络，但共享宿主机内核。相比虚拟机，容器启动更快、资源占用更少。</p>
+<p><strong>卷（Volume）</strong></p>
+<p>容器停止后数据会丢失。卷用于将容器内的数据持久化到宿主机，或者在容器之间共享数据。</p>
+<hr>
+<h2>安装配置</h2>
+<h3>Ubuntu / Debian</h3>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release &#x26;&#x26; echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+<h3>macOS</h3>
+<pre><code class="language-bash">brew install --cask docker
+</code></pre>
+<p>安装完启动 Docker Desktop 应用，确保 daemon 在运行。</p>
+<h3>验证</h3>
+<pre><code class="language-bash">docker --version
+docker compose version
+</code></pre>
+<h3>免 sudo 使用</h3>
+<pre><code class="language-bash">sudo usermod -aG docker $USER
+newgrp docker
+</code></pre>
+<p><code>newgrp docker</code> 使当前终端立即生效，其他终端需重新登录。</p>
+<hr>
+<h2>Docker 核心命令</h2>
+<h3>镜像操作</h3>
+<pre><code class="language-bash">docker search nginx          # 搜索镜像
+docker pull nginx:latest     # 拉取镜像
+docker images                # 列出本地镜像
+docker rmi nginx:latest      # 删除镜像
+docker history nginx:latest  # 查看构建层
+</code></pre>
+<h3>容器操作</h3>
+<pre><code class="language-bash"># 前台运行
+docker run -it nginx
+
+# 后台运行，端口映射
+docker run -d -p 8080:80 --name my-nginx nginx
+
+# 参数说明
+# -it      交互式 + 伪终端
+# -d       后台运行
+# -p 8080:80  端口映射（宿主机:容器）
+# -v       卷挂载
+# --name   指定容器名
+# --rm     停止后自动删除
+# -e       环境变量
+
+docker ps                    # 查看运行中容器
+docker ps -a                 # 查看所有容器
+
+docker stop my-nginx         # 停止
+docker start my-nginx        # 启动
+docker restart my-nginx      # 重含
+
+docker logs -f my-nginx      # 查看日志
+docker exec -it my-nginx /bin/bash  # 进入容器
+
+docker rm my-nginx           # 删除
+docker rm -f my-nginx        # 强制删除运行中容器
+</code></pre>
+<h3>卷管理</h3>
+<pre><code class="language-bash">docker volume create my-data          # 创建命名卷
+docker volume ls                      # 列表
+docker run -d -v my-data:/data nginx  # 挂载卷
+docker run -d -v $(pwd)/data:/app/data nginx  # 绑定挂载
+docker volume prune                   # 清理未使用卷
+</code></pre>
+<p>绑定挂载将宿主机目录直接映射到容器，开发时常用。生产环境建议使用 Docker 管理的命名卷，避免宿主机与容器权限不一致的问题。</p>
+<h3>网络管理</h3>
+<pre><code class="language-bash">docker network ls                              # 列表
+docker network create my-network               # 创建
+docker run -d --network my-network --name web nginx  # 指定网络
+docker network inspect my-network              # 详情
+</code></pre>
+<p>自定义网络中，容器通过服务名互访，无需记录 IP。</p>
+<hr>
+<h2>Dockerfile 编写</h2>
+<p>以 tenant-hub 项目的后端 API 为例。该项目使用 pnpm monorepo，需要在工作空间中管理多个子项目的依赖。</p>
+<h3>后端 API Dockerfile</h3>
+<pre><code class="language-dockerfile">FROM node:22-alpine AS base
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories \
+  &#x26;&#x26; corepack enable \
+  &#x26;&#x26; apk add --no-cache openssl wget
+WORKDIR /app
+
+FROM base AS deps
+ENV HUSKY=0
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY apps/api/package.json apps/api/package.json
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS development
+COPY apps/api apps/api
+EXPOSE 4000
+CMD ["sh", "-c", "pnpm --filter @tenant-hub/api prisma generate &#x26;&#x26; pnpm --filter @tenant-hub/api dev"]
+
+FROM deps AS build
+COPY apps/api apps/api
+RUN pnpm --filter @tenant-hub/api prisma generate
+RUN pnpm --filter @tenant-hub/api build
+
+FROM base AS production
+ENV HUSKY=0
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY apps/api/package.json apps/api/package.json
+COPY apps/api/prisma apps/api/prisma
+RUN pnpm install --frozen-lockfile --prod
+RUN pnpm --filter @tenant-hub/api prisma generate
+COPY --from=build /app/apps/api/dist apps/api/dist
+WORKDIR /app/apps/api
+EXPOSE 4000
+CMD ["sh", "-c", "pnpm prisma migrate deploy &#x26;&#x26; node dist/server.js"]
+</code></pre>
+<h3>关键细节</h3>
+<p><strong>多阶段构建</strong></p>
+<p>该 Dockerfile 定义了 5 个阶段：</p>
+<ol>
+<li><strong>base</strong> —— 基础镜像，设置 pnpm 环境和安装系统依赖（openssl、wget）</li>
+<li><strong>deps</strong> —— 安装生产依赖，利用缓存加速</li>
+<li><strong>development</strong> —— 开发环境，包含 Prisma generate 和 dev 命令</li>
+<li><strong>build</strong> —— 构建产物</li>
+<li><strong>production</strong> —— 生产环境，仅包含构建产物和生产依赖，体积最小</li>
+</ol>
+<p><strong>层缓存优化</strong></p>
+<p>先复制依赖文件（<code>package.json</code>、<code>pnpm-lock.yaml</code>），再复制代码。这样代码修改时，依赖层缓存不会失效，构建速度大幅提升。</p>
+<p><strong>生产环境启动</strong></p>
+<pre><code>CMD ["sh", "-c", "pnpm prisma migrate deploy &#x26;&#x26; node dist/server.js"]
+</code></pre>
+<p>生产环境启动时先执行数据库迁移，确保数据库 schema 与代码一致，然后启动应用。</p>
+<h3>前端 Web Dockerfile</h3>
+<pre><code class="language-dockerfile">FROM node:22-alpine AS base
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY apps/tenant-web/package.json apps/tenant-web/package.json
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS development
+COPY apps/tenant-web apps/tenant-web
+EXPOSE 5173
+CMD ["pnpm", "--filter", "@tenant-hub/tenant-web", "dev"]
+
+FROM deps AS build
+ARG VITE_API_BASE_URL=http://localhost:4000/api
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+COPY apps/tenant-web apps/tenant-web
+RUN pnpm --filter @tenant-hub/tenant-web build
+
+FROM nginx:1.27-alpine AS production
+COPY apps/tenant-web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/apps/tenant-web/dist /usr/share/nginx/html
+EXPOSE 80
+</code></pre>
+<p>前端构建产物是静态文件，最终用 Nginx 作为静态服务器。构建时通过 <code>ARG</code> 传入 API 基础地址，生成环境相关的静态资源。</p>
+<hr>
+<h2>Docker Compose 多容器编排</h2>
+<h3>基础结构</h3>
+<p>以下是 tenant-hub 项目的生产环境 Compose 配置：</p>
+<pre><code class="language-yaml">version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tenant-hub-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_DB: tenant_hub
+      POSTGRES_USER: postgres
+    volumes:
+      - /home/ubuntu/tenant-hub-data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: production
+    container_name: tenant-hub-api
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/tenant_hub?schema=public
+    ports:
+      - '4000:4000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:4000/health || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  tenant-web:
+    build:
+      context: .
+      dockerfile: apps/tenant-web/Dockerfile
+      target: production
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    container_name: tenant-hub-tenant-web
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:80/ || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 12
+</code></pre>
+<h3>服务依赖</h3>
+<p>配置中使用了 <code>depends_on</code> 的 <code>condition: service_healthy</code> 语法：</p>
+<ul>
+<li><code>tenant-web</code> 等待 <code>api</code> 健康后才启动</li>
+<li><code>api</code> 等待 <code>postgres</code> 健康后才启动</li>
+</ul>
+<p>这样确保服务启动顺序正确，应用不会在数据库还未就绪时尝试连接。</p>
+<h3>环境变量管理</h3>
+<p>敏感配置放在 <code>.env.production</code> 文件中：</p>
+<pre><code>POSTGRES_PASSWORD=*** =***
+</code></pre>
+<p>通过 <code>env_file</code> 引入到各个服务，配置与代码分离。</p>
+<hr>
+<h2>核心命令</h2>
+<pre><code class="language-bash"># 启动所有服务（前台）
+docker compose up
+
+# 后台启动
+docker compose up -d
+
+# 重新构建镜像并启动（代码变更后）
+docker compose up -d --build
+
+# 查看日志
+docker compose logs -f
+docker compose logs -f api  # 仅查看 api 服务
+
+# 停止并删除容器
+docker compose down
+
+# 停止并删除容器 + 卷（数据丢失）
+docker compose down -v
+
+# 查看状态
+docker compose ps
+
+# 进入容器
+docker compose exec api /bin/sh
+
+# 重启单个服务
+docker compose restart api
+</code></pre>
+<hr>
+<h2>生产环境注意事项</h2>
+<h3>日志限制</h3>
+<p>Docker 默认日志驱动无限增长，必须限制：</p>
+<pre><code class="language-yaml">services:
+  api:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+</code></pre>
+<p>或全局配置 <code>/etc/docker/daemon.json</code>：</p>
+<pre><code class="language-json">{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
+</code></pre>
+<p>修改后 <code>sudo systemctl restart docker</code> 生效。注意此操作会停止所有容器。</p>
+<h3>数据库备份</h3>
+<pre><code class="language-bash"># 备份
+docker compose exec db pg_dump -U postgres tenant_hub > backup.sql
+
+# 恢复
+docker compose exec -T db psql -U postgres tenant_hub &#x3C; backup.sql
+</code></pre>
+<p><code>-T</code> 禁用 TTY 分配，避免 stdin 交互问题。</p>
+<p>定时备份脚本：</p>
+<pre><code class="language-bash">#!/bin/bash
+DATE=$(date +%Y%m%d_%H%M%S)
+docker compose exec -T db pg_dump -U postgres tenant_hub > /backup/tenant_hub_${DATE}.sql
+find /backup -name "tenant_hub_*.sql" -mtime +7 -delete
+</code></pre>
+<h3>时区配置</h3>
+<p>容器默认 UTC 时区。同步宿主机时区：</p>
+<pre><code class="language-yaml">services:
+  api:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+</code></pre>
+<h3>端口冲突</h3>
+<p>如果 80/443 被宿主机进程占用，可修改端口映射：</p>
+<pre><code class="language-yaml">ports:
+  - "8080:80"
+</code></pre>
+<p>或者停止宿主机已有服务：</p>
+<pre><code class="language-bash">sudo lsof -i :80
+sudo ss -tlnp | grep 80
+</code></pre>
+<h3>数据库连接问题</h3>
+<p><code>depends_on</code> 仅保证容器启动顺序，不保证服务 ready。如果应用在数据库初始化期间尝试连接，会报错。</p>
+<p>解决方案：</p>
+<ol>
+<li>在应用层实现重试逻辑</li>
+<li>添加 wait 脚本：</li>
+</ol>
+<pre><code class="language-bash">#!/bin/sh
+until nc -z postgres 5432; do
+  echo "Waiting for PostgreSQL..."
+  sleep 1
+done
+exec "$@"
+</code></pre>
+<p>在 Dockerfile 中 CMD 改为 <code>CMD ["./wait-for-db.sh", "node", "dist/server.js"]</code></p>
+<h3>权限管理</h3>
+<p>生产环境不建议使用绑定挂载。宿主机目录权限与容器内用户可能不一致，导致应用无法读写文件。优先使用 Docker 管理的命名卷。</p>
+<hr>
+<h2>常用维护</h2>
+<h3>清理空间</h3>
+<pre><code class="language-bash">docker container prune     # 删除已停止容器
+docker image prune -a      # 删除未使用镜像
+docker volume prune        # 删除未使用卷
+docker system prune -a --volumes  # 一键清理（慎用）
+</code></pre>
+<p>执行前建议 <code>docker system df</code> 查看磁盘占用。</p>
+<h3>查看资源占用</h3>
+<pre><code class="language-bash">docker stats
+</code></pre>
+<p>实时显示所有容器的 CPU、内存、网络、IO 使用情况。</p>
+<h3>镜像导出导入</h3>
+<pre><code class="language-bash">docker save -o tenant-hub.tar tenant-hub-api:latest
+
+# 在目标机器加载
+docker load -i tenant-hub.tar
+</code></pre>
+<p>适用于内网环境无法直接 <code>docker pull</code> 的场景。</p>
+<hr>
+<h2>总结</h2>
+<p>Docker 的核心价值在于环境一致性和快速部署。以 tenant-hub 项目为例，实际使用流程为：</p>
+<ol>
+<li>编写 Dockerfile 定义构建流程（多阶段构建、层缓存优化）</li>
+<li>编写 docker-compose.yml 定义服务编排（应用、数据库、前端、依赖关系）</li>
+<li>使用 <code>docker compose up -d --build</code> 构建并启动整个技术栈</li>
+<li>生产环境配置日志限制、健康检查、数据备份</li>
+</ol>
+<p>学习路径建议先掌握单容器运行，再引入 Compose 处理多服务协作。具体问题查阅官方文档比通读大全更有效。</p>
+13:["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$14"}}]

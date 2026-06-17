@@ -1,0 +1,708 @@
+<!DOCTYPE html><!--slGIBmhmlh2zcRWfp35sq--><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/shenLogo.png"/><link rel="stylesheet" href="/_next/static/css/6d85209af33e5687.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-4e6bf084ac60582b.js"/><script src="/_next/static/chunks/4bd1b696-c023c6e3521b1417.js" async=""></script><script src="/_next/static/chunks/255-2aa030c9ba2867e3.js" async=""></script><script src="/_next/static/chunks/main-app-19f6093270bc3273.js" async=""></script><link rel="icon" type="image/png" href="/shenLogo.png"/><title>Vue 源码中的工程化设计：五个可复用的团队开发范式 | shen 的博客</title><meta name="description" content="从 Vue 源码中提炼五个可落地的工程化设计范式，覆盖架构分层、条件编译、测试策略、代码规范与发布自动化"/><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script></head><body class="min-h-screen flex flex-col"><div hidden=""><!--$--><!--/$--></div><header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex items-center justify-between h-14"><a href="/" class="flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors"><img src="/shenLogo.png" alt="Logo" class="w-8 h-8 rounded-full"/><span>shen</span></a><nav class="flex items-center gap-6"><a href="/" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">主页</a><a href="/blog" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">文章</a><a href="/notes" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">笔记</a><a href="/kb" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">知识库</a><a href="https://github.com/nfap9" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">GitHub</a></nav></div></div></header><main class="flex-1"><article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12"><div class="mb-8"><span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4">Vue</span><h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Vue 源码中的工程化设计：五个可复用的团队开发范式</h1><div class="flex flex-wrap items-center gap-4 text-sm text-gray-500"><time dateTime="2025-03-28T00:00:00.000Z">发布于 <!-- -->2025年3月28日</time></div><div class="flex flex-wrap gap-2 mt-4"><a href="/tags/vue" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->vue</a><a href="/tags/工程化" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->工程化</a><a href="/tags/源码" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->源码</a><a href="/tags/架构" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->架构</a><a href="/tags/团队开发" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->团队开发</a></div></div><div class="prose prose-lg max-w-none"><blockquote>
+<p>本文从 Vue 源码的工程实践中提炼出五个可落地的设计范式，覆盖架构分层、条件编译、测试策略、代码规范与发布自动化。适合前端团队负责人和架构师参考，将 Vue 验证过的工程化思想迁移到自己的项目中。</p>
+</blockquote>
+<hr>
+<h2>一、分层架构与依赖治理</h2>
+<p><strong>核心思想：用物理边界约束架构，防止代码腐化。</strong></p>
+<p>Vue 源码的包结构是工程化设计的典范。编译器（<code>@vue/compiler-core</code>）和运行时（<code>@vue/runtime-core</code>）是两个独立的包，二者互不直接引用，只通过共享的 <code>@vue/shared</code> 进行通信。这种单向依赖图确保了架构的清晰性。</p>
+<h3>Vue 的依赖治理实践</h3>
+<table>
+<thead>
+<tr>
+<th>实践</th>
+<th>具体做法</th>
+<th>可借鉴点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单向依赖图</td>
+<td>编译器 → 共享包 ← 运行时，二者互不引用</td>
+<td>同层级模块禁止互相依赖</td>
+</tr>
+<tr>
+<td>共享包收敛</td>
+<td>所有跨包工具收敛到 <code>@vue/shared</code></td>
+<td>提取公共依赖，避免重复和循环引用</td>
+</tr>
+<tr>
+<td>私有包隔离</td>
+<td><code>packages-private/</code> 目录物理隔离</td>
+<td>防止内部工具被误发布到 npm</td>
+</tr>
+</tbody>
+</table>
+<h3>前端项目三层划分建议</h3>
+<p>基于 Vue 的设计思想，前端项目可以按以下三层组织：</p>
+<pre><code>┌─────────────────────────────────────┐
+│     视图层 (UI Layer)               │  页面组件、通用组件库
+├─────────────────────────────────────┤
+│     业务层 (Business Layer)          │  状态管理、业务逻辑、hooks
+├─────────────────────────────────────┤
+│     基础层 (Infrastructure Layer)    │  工具函数、API 封装、类型定义、常量
+└─────────────────────────────────────────────────────────────┘
+         依赖方向：上层可引用下层，下层禁止引用上层
+</code></pre>
+<p><strong>依赖规则</strong>：</p>
+<ul>
+<li>✅ 视图层 → 业务层、基础层</li>
+<li>✅ 业务层 → 基础层</li>
+<li>❌ 禁止同层级相互引用（如业务模块 A 引用业务模块 B）</li>
+<li>❌ 禁止反向依赖（如基础层引用业务层）</li>
+</ul>
+<h3>用 ESLint 强制约束依赖方向</h3>
+<p>安装插件：</p>
+<pre><code class="language-bash">pnpm add -D eslint-plugin-import
+</code></pre>
+<p>配置 <code>.eslintrc.cjs</code>：</p>
+<pre><code class="language-js">module.exports = {
+  rules: {
+    'import/no-restricted-paths': ['error', {
+      zones: [
+        // 规则1：基础层（utils）禁止引用业务层
+        {
+          target: 'src/utils',
+          from: 'src/business',
+          message: '基础设施层禁止依赖业务层',
+        },
+        // 规则2：基础层禁止引用视图层
+        {
+          target: 'src/utils',
+          from: 'src/views',
+          message: '基础设施层禁止依赖视图层',
+        },
+        // 规则3：业务层禁止引用视图层
+        {
+          target: 'src/business',
+          from: 'src/views',
+          message: '业务层禁止依赖视图层',
+        },
+        // 规则4：同层级业务模块间禁止互相引用
+        {
+          target: 'src/business/module-a',
+          from: 'src/business/module-b',
+          message: '同层级业务模块禁止互相依赖，公共逻辑应下沉到 utils',
+        },
+      ],
+    }],
+  },
+};
+</code></pre>
+<blockquote>
+<p>💡 <strong>如何落地</strong>：先配置规则为 <code>warn</code> 级别，让团队有时间重构现有代码，清理完毕后再切换为 <code>error</code>。</p>
+</blockquote>
+<h3>Monorepo 依赖治理进阶</h3>
+<p>在 Monorepo 场景下，依赖治理需要额外关注三个问题：</p>
+<p><strong>1. 共享包版本同步</strong></p>
+<pre><code class="language-json">// packages/shared/package.json
+{
+  "name": "@my-org/shared",
+  "version": "1.2.0"
+}
+
+// packages/app/package.json
+{
+  "dependencies": {
+    "@my-org/shared": "workspace:^"
+  }
+}
+</code></pre>
+<p>使用 pnpm workspace 协议（<code>workspace:^</code>），发布时自动替换为实际版本号，避免手动同步。</p>
+<p><strong>2. 循环依赖检测</strong></p>
+<pre><code class="language-bash"># 使用 madge 检测循环依赖
+npx madge --circular src/
+</code></pre>
+<p>发现循环依赖后，将公共部分提取到 <code>shared</code> 包中打破循环。</p>
+<p><strong>3. 共享包内容取舍原则</strong></p>
+<ul>
+<li><strong>应该进 shared</strong>：纯工具函数（<code>isObject</code>、<code>capitalize</code>）、类型定义、通用常量</li>
+<li><strong>不应该进 shared</strong>：业务逻辑、组件实现、框架特定的封装</li>
+<li><strong>判断标准</strong>：如果删除该函数会影响多个包的正常运行，它就应该在 shared 中</li>
+</ul>
+<hr>
+<h2>二、条件编译与环境标志</h2>
+<p><strong>核心思想：在构建时消除不需要的代码，不让调试代码和平台特定逻辑进入生产包。</strong></p>
+<p>Vue 大量使用全局标志（<code>__DEV__</code>、<code>__SSR__</code>、<code>__TEST__</code>）控制代码分支。这些标志不是普通的运行时变量，而是在构建阶段通过 esbuild 的 <code>define</code> 功能直接替换为布尔值。条件分支在打包后会被 Tree Shaking 彻底移除。</p>
+<h3>Vue 的条件编译实现</h3>
+<pre><code class="language-js">// 源码中的写法
+if (__DEV__) {
+  console.warn('Invalid vnode type');
+  checkComponentName(validName);
+}
+
+// 生产环境构建后，整块代码被直接移除
+// （相当于这一段从未存在过）
+</code></pre>
+<p>Vue 的 <code>rollup.config.js</code> 中通过 <code>define</code> 配置实现替换：</p>
+<pre><code class="language-js">// rollup.config.js
+const esbuildPlugin = esbuild({
+  define: {
+    __DEV__: JSON.stringify(!isProduction),
+    __SSR__: JSON.stringify(target === 'node'),
+    __TEST__: 'false',
+  },
+});
+</code></pre>
+<h3>前端项目实践</h3>
+<p><strong>1. Vite 中配置构建时环境变量</strong></p>
+<pre><code class="language-ts">// vite.config.ts
+import { defineConfig } from 'vite';
+
+export default defineConfig(({ mode }) => ({
+  define: {
+    // 构建时直接替换，不是运行时 process.env 读取
+    __DEV__: JSON.stringify(mode === 'development'),
+    __MOCK__: JSON.stringify(mode === 'development' || mode === 'staging'),
+  },
+}));
+</code></pre>
+<p>在代码中使用：</p>
+<pre><code class="language-ts">// types/global.d.ts 中先声明全局变量
+declare const __DEV__: boolean;
+declare const __MOCK__: boolean;
+
+// 业务代码中使用
+if (__DEV__) {
+  console.log('[Debug] Current user:', user);
+  setupDevTools();
+}
+
+if (__MOCK__) {
+  import('./mock').then(({ setupMock }) => setupMock());
+}
+</code></pre>
+<p><strong>2. .env 文件管理环境差异</strong></p>
+<pre><code class="language-bash"># .env.development
+VITE_API_BASE_URL=http://localhost:3000
+VITE_UPLOAD_ENDPOINT=http://localhost:3000/upload
+
+# .env.production
+VITE_API_BASE_URL=https://api.example.com
+VITE_UPLOAD_ENDPOINT=https://cdn.example.com/upload
+</code></pre>
+<blockquote>
+<p>⚠️ <strong>关键区别</strong>：<code>define</code> 中的变量在构建时被替换（代码会直接消失），而 <code>import.meta.env</code> 中的变量是运行时读取的字符串。调试代码和开发期工具应该用 <code>define</code>，API 地址等运行时配置用 <code>.env</code>。</p>
+</blockquote>
+<p><strong>3. 验证产物是否干净</strong></p>
+<pre><code class="language-bash"># 构建后搜索残留的开发代码
+grep -n "console.log\|console.warn" dist/assets/*.js
+
+# 或使用 rollup-plugin-visualizer 分析产物组成
+npx vite-bundle-visualizer
+</code></pre>
+<p>理想的构建产物中，<code>__DEV__</code> 包裹的代码块应该完全消失，不占任何体积。</p>
+<hr>
+<h2>三、平台无关的测试策略</h2>
+<p><strong>核心思想：测试粒度与运行时环境解耦，能用 Node 跑的测试绝不走浏览器。</strong></p>
+<h3>Vue 的三层测试架构</h3>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>运行环境</th>
+<th>测试范围</th>
+<th>执行速度</th>
+<th>占比建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单元测试</td>
+<td>Node (纯 JS)</td>
+<td>逻辑、算法、编译器输出</td>
+<td>⚡ 极快（毫秒级）</td>
+<td>~70%</td>
+</tr>
+<tr>
+<td>组件测试</td>
+<td>jsdom</td>
+<td>DOM 操作、事件处理、组件交互</td>
+<td>🔄 中等（秒级）</td>
+<td>~20%</td>
+</tr>
+<tr>
+<td>E2E 测试</td>
+<td>Puppeteer / Playwright</td>
+<td>真实浏览器行为、跨页面流程</td>
+<td>🐢 较慢（分钟级）</td>
+<td>~10%</td>
+</tr>
+</tbody>
+</table>
+<p>Vue 最巧妙的设计是 <code>runtime-test</code> 包——用纯 JavaScript 对象模拟 DOM，让 VDOM 的 <code>mount</code>、<code>patch</code> 等核心逻辑在 Node 环境中即可完成测试，完全不依赖 jsdom 或浏览器。</p>
+<h3>runtime-test 的核心原理</h3>
+<pre><code class="language-ts">// 用普通 JS 对象模拟 DOM 节点
+interface TestElement {
+  nodeType: number;
+  tagName: string;
+  props: Record&#x3C;string, any>;
+  children: TestNode[];
+  parentNode: TestNode | null;
+  eventListeners: Record&#x3C;string, Function[]>;
+}
+
+function createElement(tag: string): TestElement {
+  return {
+    nodeType: 1,
+    tagName: tag.toUpperCase(),
+    props: {},
+    children: [],
+    parentNode: null,
+    eventListeners: {},
+  };
+}
+
+function patchVNode(oldVNode: TestNode, newVNode: TestNode) {
+  // VDOM diff 逻辑：完全在纯 JS 环境中执行
+  // 不涉及任何浏览器 API
+}
+</code></pre>
+<p>借助这个模拟层，Vue 的 VDOM 测试可以在 <strong>毫秒级</strong> 完成，而不需要启动 jsdom。</p>
+<h3>前端项目实践</h3>
+<p><strong>1. Vitest 统一测试框架配置</strong></p>
+<pre><code class="language-ts">// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    environment: 'jsdom',      // 组件测试默认用 jsdom
+    globals: true,             // 无需手动导入 describe/it
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 70,
+        statements: 80,
+      },
+    },
+  },
+});
+</code></pre>
+<p><strong>2. 分层测试代码示例</strong></p>
+<p>纯逻辑测试（Node 环境，最快）：</p>
+<pre><code class="language-ts">// composables/usePagination.spec.ts
+import { describe, it, expect } from 'vitest';
+import { usePagination } from './usePagination';
+
+describe('usePagination', () => {
+  it('should calculate correct page range', () => {
+    const { pageRange } = usePagination({
+      total: 100,
+      pageSize: 10,
+      currentPage: 5,
+    });
+
+    expect(pageRange.value).toEqual([3, 4, 5, 6, 7]);
+  });
+
+  it('should handle edge case: total is 0', () => {
+    const { totalPages } = usePagination({
+      total: 0,
+      pageSize: 10,
+      currentPage: 1,
+    });
+
+    expect(totalPages.value).toBe(0);
+  });
+});
+</code></pre>
+<p>组件测试（jsdom，测试 DOM 交互）：</p>
+<pre><code class="language-ts">// components/Pagination.spec.ts
+import { describe, it, expect } from 'vitest';
+import { mount } from '@vue/test-utils';
+import Pagination from './Pagination.vue';
+
+describe('Pagination.vue', () => {
+  it('should emit page-change event when clicking page number', async () => {
+    const wrapper = mount(Pagination, {
+      props: { total: 100, pageSize: 10, modelValue: 1 },
+    });
+
+    await wrapper.find('[data-testid="page-3"]').trigger('click');
+
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual([3]);
+  });
+
+  it('should disable prev button on first page', () => {
+    const wrapper = mount(Pagination, {
+      props: { total: 100, pageSize: 10, modelValue: 1 },
+    });
+
+    const prevButton = wrapper.find('[data-testid="prev-btn"]');
+    expect(prevButton.attributes('disabled')).toBeDefined();
+  });
+});
+</code></pre>
+<p><strong>3. CI 中分层执行策略</strong></p>
+<pre><code class="language-yaml"># .github/workflows/ci.yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  # PR 阶段只跑单元测试（最快，2-3 分钟）
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: pnpm install
+      - run: pnpm test:unit        # 只跑 Node 环境的测试
+
+  # 合并到 main 后跑全量测试
+  full-test:
+    if: github.ref == 'refs/heads/main'
+    needs: unit-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: pnpm install
+      - run: pnpm test:unit
+      - run: pnpm test:component   # jsdom 测试
+      - run: pnpm test:e2e         # Playwright 测试
+</code></pre>
+<blockquote>
+<p>💡 <strong>关键原则</strong>：</p>
+<ul>
+<li><strong>测试下沉</strong>：能用 Node 就不走 jsdom，能走 jsdom 就不开浏览器</li>
+<li><strong>80/20 法则</strong>：80% 的测试应该是单元测试，它们运行快、定位准</li>
+<li><strong>给测试加 <code>data-testid</code></strong>：不要用 class 或文本来定位元素，避免样式重构导致测试失败</li>
+</ul>
+</blockquote>
+<hr>
+<h2>四、代码规范的三层防护</h2>
+<p><strong>核心思想：规范不是写在文档里的建议，而是焊死在工具链里的强制约束。</strong></p>
+<p>Vue 的 ESLint 配置是编译时的硬约束，不是可忽略的建议。这套思路推广到前端项目中，可以构建三层防护体系。</p>
+<h3>三层防护链路</h3>
+<pre><code>第一层：编辑器实时提示  →  第二层：提交前自动修复  →  第三层：CI 红线拦截
+    （最快反馈）              （兜底机制）               （最终防线）
+</code></pre>
+<h3>第一层：编辑器实时提示</h3>
+<p>VSCode 配置 <code>.vscode/settings.json</code>：</p>
+<pre><code class="language-json">{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "typescript", "vue"]
+}
+</code></pre>
+<h3>第二层：pre-commit Hook</h3>
+<p>安装依赖：</p>
+<pre><code class="language-bash">pnpm add -D husky lint-staged
+
+# Husky v9 初始化
+npx husky init
+</code></pre>
+<p>配置 <code>package.json</code>：</p>
+<pre><code class="language-json">{
+  "lint-staged": {
+    "*.{ts,vue}": ["eslint --fix"],
+    "*.{css,scss}": ["stylelint --fix"],
+    "*": ["prettier --write --ignore-unknown"]
+  }
+}
+</code></pre>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：lint-staged v10+ 会自动处理 <code>git add</code>，不需要在配置中手动添加。</p>
+</blockquote>
+<p>创建 hook：</p>
+<pre><code class="language-bash"># Husky v9 语法
+echo 'npx lint-staged' > .husky/pre-commit
+</code></pre>
+<h3>第三层：CI 强制检查</h3>
+<pre><code class="language-yaml"># .github/workflows/lint.yml
+name: Code Quality
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm type-check    # 同时跑 TypeScript 类型检查
+</code></pre>
+<h3>构建时强制拦截</h3>
+<pre><code class="language-ts">// vite.config.ts
+import { defineConfig } from 'vite';
+import eslint from 'vite-plugin-eslint2';
+
+export default defineConfig({
+  plugins: [
+    eslint({
+      lintOnStart: true,        // 启动时检查
+      failOnWarning: true,      // ⚠️ Warning 也会中断构建
+    }),
+  ],
+});
+</code></pre>
+<blockquote>
+<p>💡 <strong>建议</strong>：本地开发时 <code>failOnWarning</code> 可以设为 <code>false</code>，但在 CI 构建脚本中通过 <code>ESLINT_FAIL_ON_WARNING=true pnpm build</code> 强制开启。</p>
+</blockquote>
+<hr>
+<h2>五、Commit 规范与发布自动化</h2>
+<p><strong>核心思想：让提交信息成为可解析的数据源，驱动 CHANGELOG 生成和版本管理。</strong></p>
+<h3>Commit 规范格式</h3>
+<p>采用 Angular Commit Convention：</p>
+<pre><code>type(scope): subject
+
+[可选的 body]
+
+[可选的 footer]
+</code></pre>
+<p>示例：</p>
+<pre><code>feat(compiler): add template optimization for v-if
+
+The compiler now generates optimized code for v-if
+blocks with single static children.
+
+Closes #123
+</code></pre>
+<h3>用 Husky 拦截不规范提交</h3>
+<pre><code class="language-js">// scripts/verify-commit.js
+const fs = require('fs');
+const path = require('path');
+
+const msgPath = path.resolve('.git/COMMIT_EDITMSG');
+const msg = fs.readFileSync(msgPath, 'utf-8').trim();
+
+const commitRE = /^(revert: )?(feat|fix|docs|dx|style|refactor|perf|test|workflow|build|ci|chore|types|wip)(\(.+\))?: .{1,50}/;
+
+if (!commitRE.test(msg)) {
+  console.error('\n  ❌ Invalid commit message format.\n');
+  console.error('  Expected format: type(scope): subject\n');
+  console.error('  Valid types:');
+  console.error('    feat     → New feature (triggers minor version)');
+  console.error('    fix      → Bug fix (triggers patch version)');
+  console.error('    refactor → Code change that neither fixes a bug nor adds a feature');
+  console.error('    docs     → Documentation changes');
+  console.error('    test     → Adding or correcting tests');
+  console.error('    chore    → Build tools and dependency changes\n');
+  console.error('  Examples:');
+  console.error('    feat(compiler): add template optimization');
+  console.error('    fix(v-model): handle blur event correctly');
+  console.error('    docs: update installation guide\n');
+  process.exit(1);
+}
+</code></pre>
+<p>配置 hook：</p>
+<pre><code class="language-bash"># Husky v9
+echo 'node scripts/verify-commit.js' > .husky/commit-msg
+</code></pre>
+<h3>语义化版本映射</h3>
+<table>
+<thead>
+<tr>
+<th>提交类型</th>
+<th>版本变化</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feat(xxx):</code></td>
+<td>minor +1</td>
+<td><code>1.2.0</code> → <code>1.3.0</code></td>
+</tr>
+<tr>
+<td><code>fix(xxx):</code></td>
+<td>patch +1</td>
+<td><code>1.2.0</code> → <code>1.2.1</code></td>
+</tr>
+<tr>
+<td><code>BREAKING CHANGE:</code> in footer</td>
+<td>major +1</td>
+<td><code>1.2.0</code> → <code>2.0.0</code></td>
+</tr>
+<tr>
+<td>手动指定</td>
+<td>任意版本</td>
+<td>交互式选择</td>
+</tr>
+</tbody>
+</table>
+<p><strong>声明破坏性变更</strong>：</p>
+<pre><code>fix(api): remove deprecated /old/endpoint
+
+BREAKING CHANGE: The /old/endpoint has been removed.
+Please migrate to /v2/endpoint before upgrading.
+</code></pre>
+<h3>自动化发布流水线</h3>
+<pre><code class="language-js">// scripts/release.js
+const { prompt } = require('enquirer');
+const semver = require('semver');
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+async function main() {
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+  const current = pkg.version;
+  const increments = ['patch', 'minor', 'major'];
+
+  const { release } = await prompt({
+    type: 'select',
+    name: 'release',
+    message: `Current: v${current}. Select release type:`,
+    choices: increments.map(i => ({
+      name: `${i} (${semver.inc(current, i)})`,
+      value: i,
+    })),
+  });
+
+  const type = release.match(/^(\w+)/)[1];
+  const target = semver.inc(current, type);
+
+  const { confirm } = await prompt({
+    type: 'confirm',
+    name: 'confirm',
+    message: `Release v${target}?`,
+    initial: true,
+  });
+
+  if (!confirm) {
+    console.log('Cancelled.');
+    process.exit(0);
+  }
+
+  // 更新版本号
+  pkg.version = target;
+  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+
+  // 生成 CHANGELOG
+  execSync('pnpm changelog', { stdio: 'inherit' });
+
+  // Git 提交、打标签、推送
+  execSync(`git add -A &#x26;&#x26; git commit -m "release: v${target}"`, { stdio: 'inherit' });
+  execSync(`git tag v${target}`);
+  execSync('git push &#x26;&#x26; git push --tags', { stdio: 'inherit' });
+
+  console.log(`\n🎉 v${target} released!`);
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
+</code></pre>
+<p><code>package.json</code> 配置：</p>
+<pre><code class="language-json">{
+  "scripts": {
+    "release": "node scripts/release.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  }
+}
+</code></pre>
+<h3>GitHub Actions 自动发布</h3>
+<pre><code class="language-yaml"># .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm test
+
+  publish:
+    needs: [test]
+    runs-on: ubuntu-latest
+    environment: Release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # CHANGELOG 生成需要完整历史
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          body: |
+            See [CHANGELOG.md](./CHANGELOG.md) for details.
+</code></pre>
+<hr>
+<h2>总结：在自己项目中最值得优先落地的 3 件事</h2>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>事项</th>
+<th>投入</th>
+<th>收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🥇 P0</td>
+<td><strong>依赖方向约束</strong></td>
+<td>低（ESLint 规则）</td>
+<td>极高（防止架构腐化）</td>
+</tr>
+<tr>
+<td>🥈 P1</td>
+<td><strong>测试分层</strong></td>
+<td>中（配置 + 补测试）</td>
+<td>高（缩短反馈循环）</td>
+</tr>
+<tr>
+<td>🥉 P2</td>
+<td><strong>规范自动化</strong></td>
+<td>低（ Husky + CI）</td>
+<td>高（减少人为失误）</td>
+</tr>
+</tbody>
+</table>
+<h3>1. 画好"依赖地图"</h3>
+<p>用 <code>import/no-restricted-paths</code> 明确每个目录的职责和依赖方向。这是防止代码腐化最有效、成本最低的手段。</p>
+<h3>2. 测试分层守护</h3>
+<p>单元测试（Node）→ 组件测试（jsdom）→ E2E（浏览器），按速度由快到慢、覆盖范围由小到大递进。CI 中按分支策略分层执行，PR 阶段只跑单元测试，合并后跑全量。</p>
+<h3>3. 规范焊死在工具链</h3>
+<p>能自动化的不要靠人记，能编译时拦截的不要留到运行时。Commit 规范 + CHANGELOG 自动生成 + 语义化版本，让发布变成一条命令的事。</p>
+<hr>
+<h2>参考与延伸阅读</h2>
+<ul>
+<li><a href="https://github.com/vuejs/core">Vue 源码仓库</a> —— 工程化设计的最佳教材</li>
+<li><a href="https://www.conventionalcommits.org/">Conventional Commits 规范</a></li>
+<li><a href="https://semver.org/">Semantic Versioning</a></li>
+<li><a href="https://vitest.dev/">Vitest 文档</a></li>
+<li><a href="https://pnpm.io/workspaces">pnpm Workspace 协议</a></li>
+</ul>
+</div><div class="mt-12 pt-8 border-t border-gray-200"><a href="/blog" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>返回文章列表</a></div></article><!--$--><!--/$--></main><footer class="border-t border-gray-200 bg-white"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6"><div class="flex flex-col sm:flex-row items-center justify-between gap-4"><p class="text-sm text-gray-500">© <!-- -->2026<!-- --> shen. 个人博客</p><div class="flex items-center gap-4"><a href="https://github.com/nfap9" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg></a></div></div></div></footer><script src="/_next/static/chunks/webpack-4e6bf084ac60582b.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[9766,[],\"\"]\n3:I[8924,[],\"\"]\n8:I[7150,[],\"\"]\n:HL[\"/_next/static/css/6d85209af33e5687.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"slGIBmhmlh2zcRWfp35sq\",\"p\":\"\",\"c\":[\"\",\"blog\",\"vue-engineering-patterns\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"vue-engineering-patterns\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/6d85209af33e5687.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"children\":[[\"$\",\"head\",null,{\"children\":[\"$\",\"link\",null,{\"rel\":\"icon\",\"type\":\"image/png\",\"href\":\"/shenLogo.png\"}]}],[\"$\",\"body\",null,{\"className\":\"min-h-screen flex flex-col\",\"children\":[[\"$\",\"header\",null,{\"className\":\"sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex items-center justify-between h-14\",\"children\":[[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors\",\"children\":[[\"$\",\"img\",null,{\"src\":\"/shenLogo.png\",\"alt\":\"Logo\",\"className\":\"w-8 h-8 rounded-full\"}],[\"$\",\"span\",null,{\"children\":\"shen\"}]]}],[\"$\",\"nav\",null,{\"className\":\"flex items-center gap-6\",\"children\":[[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"主页\"}],[\"$\",\"a\",null,{\"href\":\"/blog\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"文章\"}],[\"$\",\"a\",null,{\"href\":\"/notes\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"笔记\"}],[\"$\",\"a\",null,{\"href\":\"/kb\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"知识库\"}],[\"$\",\"a\",null,{\"href\":\"https://github.com/nfap9\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"GitHub\"}]]}]]}]}]}],[\"$\",\"main\",null,{\"className\":\"flex-1\",\"children\":[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"div\",null,{\"className\":\"min-h-[60vh] flex items-center justify-center px-4\",\"children\":[\"$\",\"div\",null,{\"className\":\"text-center\",\"children\":[[\"$\",\"h1\",null,{\"className\":\"text-6xl font-bold text-gray-900 mb-4\",\"children\":\"404\"}],[\"$\",\"p\",null,{\"className\":\"text-xl text-gray-600 mb-8\",\"children\":\"页面找不到了\"}],[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"inline-flex items-center px-6 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors\",\"children\":\"返回首页\"}]]}]}],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"footer\",null,{\"className\":\"border-t border-gray-200 bg-white\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex flex-col sm:flex-row items-center justify-between gap-4\",\"children\":[[\"$\",\"p\",null,{\"className\":\"text-sm text-gray-500\",\"children\":[\"© \",2026,\" shen. 个人博客\"]}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4\",\"children\":[\"$\",\"a\",null,{\"href\":\"https://github.com/nfap9\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"className\":\"text-gray-400 hover:text-gray-600 transition-colors\",\"children\":[\"$\",\"svg\",null,{\"className\":\"w-5 h-5\",\"fill\":\"currentColor\",\"viewBox\":\"0 0 24 24\",\"aria-hidden\":\"true\",\"children\":[\"$\",\"path\",null,{\"fillRule\":\"evenodd\",\"d\":\"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z\",\"clipRule\":\"evenodd\"}]}]}]}]]}]}]}]]}]]}]]}],{\"children\":[\"blog\",\"$L4\",{\"children\":[[\"slug\",\"vue-engineering-patterns\",\"d\"],\"$L5\",{\"children\":[\"__PAGE__\",\"$L6\",{},null,false]},null,false]},null,false]},null,false],\"$L7\",false]],\"m\":\"$undefined\",\"G\":[\"$8\",[]],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"a:I[4431,[],\"OutletBoundary\"]\nc:I[5278,[],\"AsyncMetadataOutlet\"]\ne:I[4431,[],\"ViewportBoundary\"]\n10:I[4431,[],\"MetadataBoundary\"]\n11:\"$Sreact.suspense\"\n4:[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]\n5:[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]\n6:[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$Lb\",[\"$\",\"$Lc\",null,{\"promise\":\"$@d\"}]]}]]}]\n7:[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$Le\",null,{\"children\":\"$Lf\"}],null],[\"$\",\"$L10\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$11\",null,{\"fallback\":null,\"children\":\"$L12\"}]}]}]]}]\n"])</script><script>self.__next_f.push([1,"f:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\nb:null\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"mb-8\",\"children\":[[\"$\",\"span\",null,{\"className\":\"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4\",\"children\":\"Vue\"}],[\"$\",\"h1\",null,{\"className\":\"text-3xl sm:text-4xl font-bold text-gray-900 mb-4\",\"children\":\"Vue 源码中的工程化设计：五个可复用的团队开发范式\"}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap items-center gap-4 text-sm text-gray-500\",\"children\":[[\"$\",\"time\",null,{\"dateTime\":\"2025-03-28T00:00:00.000Z\",\"children\":[\"发布于 \",\"2025年3月28日\"]}],\"$undefined\"]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"a\",\"vue\",{\"href\":\"/tags/vue\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"vue\"]}],[\"$\",\"a\",\"工程化\",{\"href\":\"/tags/工程化\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"工程化\"]}],[\"$\",\"a\",\"源码\",{\"href\":\"/tags/源码\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"源码\"]}],[\"$\",\"a\",\"架构\",{\"href\":\"/tags/架构\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"架构\"]}],[\"$\",\"a\",\"团队开发\",{\"href\":\"/tags/团队开发\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"团队开发\"]}]]}]]}],\"$L13\",[\"$\",\"div\",null,{\"className\":\"mt-12 pt-8 border-t border-gray-200\",\"children\":[\"$\",\"a\",null,{\"href\":\"/blog\",\"className\":\"inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors\",\"children\":[[\"$\",\"svg\",null,{\"className\":\"w-4 h-4 mr-2\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"viewBox\":\"0 0 24 24\",\"children\":[\"$\",\"path\",null,{\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"strokeWidth\":2,\"d\":\"M10 19l-7-7m0 0l7-7m-7 7h18\"}]}],\"返回文章列表\"]}]}]]}]\n"])</script><script>self.__next_f.push([1,"d:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"Vue 源码中的工程化设计：五个可复用的团队开发范式 | shen 的博客\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"从 Vue 源码中提炼五个可落地的工程化设计范式，覆盖架构分层、条件编译、测试策略、代码规范与发布自动化\"}]],\"error\":null,\"digest\":\"$undefined\"}\n12:\"$d:metadata\"\n"])</script><script>self.__next_f.push([1,"14:T5e47,"])</script><script>self.__next_f.push([1,"\u003cblockquote\u003e\n\u003cp\u003e本文从 Vue 源码的工程实践中提炼出五个可落地的设计范式，覆盖架构分层、条件编译、测试策略、代码规范与发布自动化。适合前端团队负责人和架构师参考，将 Vue 验证过的工程化思想迁移到自己的项目中。\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e一、分层架构与依赖治理\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003e核心思想：用物理边界约束架构，防止代码腐化。\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003eVue 源码的包结构是工程化设计的典范。编译器（\u003ccode\u003e@vue/compiler-core\u003c/code\u003e）和运行时（\u003ccode\u003e@vue/runtime-core\u003c/code\u003e）是两个独立的包，二者互不直接引用，只通过共享的 \u003ccode\u003e@vue/shared\u003c/code\u003e 进行通信。这种单向依赖图确保了架构的清晰性。\u003c/p\u003e\n\u003ch3\u003eVue 的依赖治理实践\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e实践\u003c/th\u003e\n\u003cth\u003e具体做法\u003c/th\u003e\n\u003cth\u003e可借鉴点\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e单向依赖图\u003c/td\u003e\n\u003ctd\u003e编译器 → 共享包 ← 运行时，二者互不引用\u003c/td\u003e\n\u003ctd\u003e同层级模块禁止互相依赖\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e共享包收敛\u003c/td\u003e\n\u003ctd\u003e所有跨包工具收敛到 \u003ccode\u003e@vue/shared\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e提取公共依赖，避免重复和循环引用\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e私有包隔离\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003epackages-private/\u003c/code\u003e 目录物理隔离\u003c/td\u003e\n\u003ctd\u003e防止内部工具被误发布到 npm\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e前端项目三层划分建议\u003c/h3\u003e\n\u003cp\u003e基于 Vue 的设计思想，前端项目可以按以下三层组织：\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌─────────────────────────────────────┐\n│     视图层 (UI Layer)               │  页面组件、通用组件库\n├─────────────────────────────────────┤\n│     业务层 (Business Layer)          │  状态管理、业务逻辑、hooks\n├─────────────────────────────────────┤\n│     基础层 (Infrastructure Layer)    │  工具函数、API 封装、类型定义、常量\n└─────────────────────────────────────────────────────────────┘\n         依赖方向：上层可引用下层，下层禁止引用上层\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e依赖规则\u003c/strong\u003e：\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e✅ 视图层 → 业务层、基础层\u003c/li\u003e\n\u003cli\u003e✅ 业务层 → 基础层\u003c/li\u003e\n\u003cli\u003e❌ 禁止同层级相互引用（如业务模块 A 引用业务模块 B）\u003c/li\u003e\n\u003cli\u003e❌ 禁止反向依赖（如基础层引用业务层）\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e用 ESLint 强制约束依赖方向\u003c/h3\u003e\n\u003cp\u003e安装插件：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003epnpm add -D eslint-plugin-import\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e配置 \u003ccode\u003e.eslintrc.cjs\u003c/code\u003e：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-js\"\u003emodule.exports = {\n  rules: {\n    'import/no-restricted-paths': ['error', {\n      zones: [\n        // 规则1：基础层（utils）禁止引用业务层\n        {\n          target: 'src/utils',\n          from: 'src/business',\n          message: '基础设施层禁止依赖业务层',\n        },\n        // 规则2：基础层禁止引用视图层\n        {\n          target: 'src/utils',\n          from: 'src/views',\n          message: '基础设施层禁止依赖视图层',\n        },\n        // 规则3：业务层禁止引用视图层\n        {\n          target: 'src/business',\n          from: 'src/views',\n          message: '业务层禁止依赖视图层',\n        },\n        // 规则4：同层级业务模块间禁止互相引用\n        {\n          target: 'src/business/module-a',\n          from: 'src/business/module-b',\n          message: '同层级业务模块禁止互相依赖，公共逻辑应下沉到 utils',\n        },\n      ],\n    }],\n  },\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003cblockquote\u003e\n\u003cp\u003e💡 \u003cstrong\u003e如何落地\u003c/strong\u003e：先配置规则为 \u003ccode\u003ewarn\u003c/code\u003e 级别，让团队有时间重构现有代码，清理完毕后再切换为 \u003ccode\u003eerror\u003c/code\u003e。\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003ch3\u003eMonorepo 依赖治理进阶\u003c/h3\u003e\n\u003cp\u003e在 Monorepo 场景下，依赖治理需要额外关注三个问题：\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e1. 共享包版本同步\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e// packages/shared/package.json\n{\n  \"name\": \"@my-org/shared\",\n  \"version\": \"1.2.0\"\n}\n\n// packages/app/package.json\n{\n  \"dependencies\": {\n    \"@my-org/shared\": \"workspace:^\"\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e使用 pnpm workspace 协议（\u003ccode\u003eworkspace:^\u003c/code\u003e），发布时自动替换为实际版本号，避免手动同步。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e2. 循环依赖检测\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003e# 使用 madge 检测循环依赖\nnpx madge --circular src/\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e发现循环依赖后，将公共部分提取到 \u003ccode\u003eshared\u003c/code\u003e 包中打破循环。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e3. 共享包内容取舍原则\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e应该进 shared\u003c/strong\u003e：纯工具函数（\u003ccode\u003eisObject\u003c/code\u003e、\u003ccode\u003ecapitalize\u003c/code\u003e）、类型定义、通用常量\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e不应该进 shared\u003c/strong\u003e：业务逻辑、组件实现、框架特定的封装\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e判断标准\u003c/strong\u003e：如果删除该函数会影响多个包的正常运行，它就应该在 shared 中\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e二、条件编译与环境标志\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003e核心思想：在构建时消除不需要的代码，不让调试代码和平台特定逻辑进入生产包。\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003eVue 大量使用全局标志（\u003ccode\u003e__DEV__\u003c/code\u003e、\u003ccode\u003e__SSR__\u003c/code\u003e、\u003ccode\u003e__TEST__\u003c/code\u003e）控制代码分支。这些标志不是普通的运行时变量，而是在构建阶段通过 esbuild 的 \u003ccode\u003edefine\u003c/code\u003e 功能直接替换为布尔值。条件分支在打包后会被 Tree Shaking 彻底移除。\u003c/p\u003e\n\u003ch3\u003eVue 的条件编译实现\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-js\"\u003e// 源码中的写法\nif (__DEV__) {\n  console.warn('Invalid vnode type');\n  checkComponentName(validName);\n}\n\n// 生产环境构建后，整块代码被直接移除\n// （相当于这一段从未存在过）\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eVue 的 \u003ccode\u003erollup.config.js\u003c/code\u003e 中通过 \u003ccode\u003edefine\u003c/code\u003e 配置实现替换：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-js\"\u003e// rollup.config.js\nconst esbuildPlugin = esbuild({\n  define: {\n    __DEV__: JSON.stringify(!isProduction),\n    __SSR__: JSON.stringify(target === 'node'),\n    __TEST__: 'false',\n  },\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e前端项目实践\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e1. Vite 中配置构建时环境变量\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// vite.config.ts\nimport { defineConfig } from 'vite';\n\nexport default defineConfig(({ mode }) =\u003e ({\n  define: {\n    // 构建时直接替换，不是运行时 process.env 读取\n    __DEV__: JSON.stringify(mode === 'development'),\n    __MOCK__: JSON.stringify(mode === 'development' || mode === 'staging'),\n  },\n}));\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e在代码中使用：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// types/global.d.ts 中先声明全局变量\ndeclare const __DEV__: boolean;\ndeclare const __MOCK__: boolean;\n\n// 业务代码中使用\nif (__DEV__) {\n  console.log('[Debug] Current user:', user);\n  setupDevTools();\n}\n\nif (__MOCK__) {\n  import('./mock').then(({ setupMock }) =\u003e setupMock());\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e2. .env 文件管理环境差异\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003e# .env.development\nVITE_API_BASE_URL=http://localhost:3000\nVITE_UPLOAD_ENDPOINT=http://localhost:3000/upload\n\n# .env.production\nVITE_API_BASE_URL=https://api.example.com\nVITE_UPLOAD_ENDPOINT=https://cdn.example.com/upload\n\u003c/code\u003e\u003c/pre\u003e\n\u003cblockquote\u003e\n\u003cp\u003e⚠️ \u003cstrong\u003e关键区别\u003c/strong\u003e：\u003ccode\u003edefine\u003c/code\u003e 中的变量在构建时被替换（代码会直接消失），而 \u003ccode\u003eimport.meta.env\u003c/code\u003e 中的变量是运行时读取的字符串。调试代码和开发期工具应该用 \u003ccode\u003edefine\u003c/code\u003e，API 地址等运行时配置用 \u003ccode\u003e.env\u003c/code\u003e。\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e\u003cstrong\u003e3. 验证产物是否干净\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003e# 构建后搜索残留的开发代码\ngrep -n \"console.log\\|console.warn\" dist/assets/*.js\n\n# 或使用 rollup-plugin-visualizer 分析产物组成\nnpx vite-bundle-visualizer\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e理想的构建产物中，\u003ccode\u003e__DEV__\u003c/code\u003e 包裹的代码块应该完全消失，不占任何体积。\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e三、平台无关的测试策略\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003e核心思想：测试粒度与运行时环境解耦，能用 Node 跑的测试绝不走浏览器。\u003c/strong\u003e\u003c/p\u003e\n\u003ch3\u003eVue 的三层测试架构\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e层级\u003c/th\u003e\n\u003cth\u003e运行环境\u003c/th\u003e\n\u003cth\u003e测试范围\u003c/th\u003e\n\u003cth\u003e执行速度\u003c/th\u003e\n\u003cth\u003e占比建议\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e单元测试\u003c/td\u003e\n\u003ctd\u003eNode (纯 JS)\u003c/td\u003e\n\u003ctd\u003e逻辑、算法、编译器输出\u003c/td\u003e\n\u003ctd\u003e⚡ 极快（毫秒级）\u003c/td\u003e\n\u003ctd\u003e~70%\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e组件测试\u003c/td\u003e\n\u003ctd\u003ejsdom\u003c/td\u003e\n\u003ctd\u003eDOM 操作、事件处理、组件交互\u003c/td\u003e\n\u003ctd\u003e🔄 中等（秒级）\u003c/td\u003e\n\u003ctd\u003e~20%\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eE2E 测试\u003c/td\u003e\n\u003ctd\u003ePuppeteer / Playwright\u003c/td\u003e\n\u003ctd\u003e真实浏览器行为、跨页面流程\u003c/td\u003e\n\u003ctd\u003e🐢 较慢（分钟级）\u003c/td\u003e\n\u003ctd\u003e~10%\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003eVue 最巧妙的设计是 \u003ccode\u003eruntime-test\u003c/code\u003e 包——用纯 JavaScript 对象模拟 DOM，让 VDOM 的 \u003ccode\u003emount\u003c/code\u003e、\u003ccode\u003epatch\u003c/code\u003e 等核心逻辑在 Node 环境中即可完成测试，完全不依赖 jsdom 或浏览器。\u003c/p\u003e\n\u003ch3\u003eruntime-test 的核心原理\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// 用普通 JS 对象模拟 DOM 节点\ninterface TestElement {\n  nodeType: number;\n  tagName: string;\n  props: Record\u0026#x3C;string, any\u003e;\n  children: TestNode[];\n  parentNode: TestNode | null;\n  eventListeners: Record\u0026#x3C;string, Function[]\u003e;\n}\n\nfunction createElement(tag: string): TestElement {\n  return {\n    nodeType: 1,\n    tagName: tag.toUpperCase(),\n    props: {},\n    children: [],\n    parentNode: null,\n    eventListeners: {},\n  };\n}\n\nfunction patchVNode(oldVNode: TestNode, newVNode: TestNode) {\n  // VDOM diff 逻辑：完全在纯 JS 环境中执行\n  // 不涉及任何浏览器 API\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e借助这个模拟层，Vue 的 VDOM 测试可以在 \u003cstrong\u003e毫秒级\u003c/strong\u003e 完成，而不需要启动 jsdom。\u003c/p\u003e\n\u003ch3\u003e前端项目实践\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e1. Vitest 统一测试框架配置\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// vitest.config.ts\nimport { defineConfig } from 'vitest/config';\n\nexport default defineConfig({\n  test: {\n    environment: 'jsdom',      // 组件测试默认用 jsdom\n    globals: true,             // 无需手动导入 describe/it\n    coverage: {\n      reporter: ['text', 'json', 'html'],\n      thresholds: {\n        lines: 80,\n        functions: 80,\n        branches: 70,\n        statements: 80,\n      },\n    },\n  },\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e2. 分层测试代码示例\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e纯逻辑测试（Node 环境，最快）：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// composables/usePagination.spec.ts\nimport { describe, it, expect } from 'vitest';\nimport { usePagination } from './usePagination';\n\ndescribe('usePagination', () =\u003e {\n  it('should calculate correct page range', () =\u003e {\n    const { pageRange } = usePagination({\n      total: 100,\n      pageSize: 10,\n      currentPage: 5,\n    });\n\n    expect(pageRange.value).toEqual([3, 4, 5, 6, 7]);\n  });\n\n  it('should handle edge case: total is 0', () =\u003e {\n    const { totalPages } = usePagination({\n      total: 0,\n      pageSize: 10,\n      currentPage: 1,\n    });\n\n    expect(totalPages.value).toBe(0);\n  });\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e组件测试（jsdom，测试 DOM 交互）：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// components/Pagination.spec.ts\nimport { describe, it, expect } from 'vitest';\nimport { mount } from '@vue/test-utils';\nimport Pagination from './Pagination.vue';\n\ndescribe('Pagination.vue', () =\u003e {\n  it('should emit page-change event when clicking page number', async () =\u003e {\n    const wrapper = mount(Pagination, {\n      props: { total: 100, pageSize: 10, modelValue: 1 },\n    });\n\n    await wrapper.find('[data-testid=\"page-3\"]').trigger('click');\n\n    expect(wrapper.emitted('update:modelValue')).toBeTruthy();\n    expect(wrapper.emitted('update:modelValue')[0]).toEqual([3]);\n  });\n\n  it('should disable prev button on first page', () =\u003e {\n    const wrapper = mount(Pagination, {\n      props: { total: 100, pageSize: 10, modelValue: 1 },\n    });\n\n    const prevButton = wrapper.find('[data-testid=\"prev-btn\"]');\n    expect(prevButton.attributes('disabled')).toBeDefined();\n  });\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e3. CI 中分层执行策略\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# .github/workflows/ci.yml\nname: CI\n\non: [push, pull_request]\n\njobs:\n  # PR 阶段只跑单元测试（最快，2-3 分钟）\n  unit-test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n      - run: pnpm install\n      - run: pnpm test:unit        # 只跑 Node 环境的测试\n\n  # 合并到 main 后跑全量测试\n  full-test:\n    if: github.ref == 'refs/heads/main'\n    needs: unit-test\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n      - run: pnpm install\n      - run: pnpm test:unit\n      - run: pnpm test:component   # jsdom 测试\n      - run: pnpm test:e2e         # Playwright 测试\n\u003c/code\u003e\u003c/pre\u003e\n\u003cblockquote\u003e\n\u003cp\u003e💡 \u003cstrong\u003e关键原则\u003c/strong\u003e：\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e测试下沉\u003c/strong\u003e：能用 Node 就不走 jsdom，能走 jsdom 就不开浏览器\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e80/20 法则\u003c/strong\u003e：80% 的测试应该是单元测试，它们运行快、定位准\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e给测试加 \u003ccode\u003edata-testid\u003c/code\u003e\u003c/strong\u003e：不要用 class 或文本来定位元素，避免样式重构导致测试失败\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e四、代码规范的三层防护\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003e核心思想：规范不是写在文档里的建议，而是焊死在工具链里的强制约束。\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003eVue 的 ESLint 配置是编译时的硬约束，不是可忽略的建议。这套思路推广到前端项目中，可以构建三层防护体系。\u003c/p\u003e\n\u003ch3\u003e三层防护链路\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e第一层：编辑器实时提示  →  第二层：提交前自动修复  →  第三层：CI 红线拦截\n    （最快反馈）              （兜底机制）               （最终防线）\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e第一层：编辑器实时提示\u003c/h3\u003e\n\u003cp\u003eVSCode 配置 \u003ccode\u003e.vscode/settings.json\u003c/code\u003e：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e{\n  \"editor.formatOnSave\": true,\n  \"editor.defaultFormatter\": \"esbenp.prettier-vscode\",\n  \"editor.codeActionsOnSave\": {\n    \"source.fixAll.eslint\": \"explicit\"\n  },\n  \"eslint.validate\": [\"javascript\", \"typescript\", \"vue\"]\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e第二层：pre-commit Hook\u003c/h3\u003e\n\u003cp\u003e安装依赖：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003epnpm add -D husky lint-staged\n\n# Husky v9 初始化\nnpx husky init\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e配置 \u003ccode\u003epackage.json\u003c/code\u003e：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e{\n  \"lint-staged\": {\n    \"*.{ts,vue}\": [\"eslint --fix\"],\n    \"*.{css,scss}\": [\"stylelint --fix\"],\n    \"*\": [\"prettier --write --ignore-unknown\"]\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cblockquote\u003e\n\u003cp\u003e⚠️ \u003cstrong\u003e注意\u003c/strong\u003e：lint-staged v10+ 会自动处理 \u003ccode\u003egit add\u003c/code\u003e，不需要在配置中手动添加。\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e创建 hook：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003e# Husky v9 语法\necho 'npx lint-staged' \u003e .husky/pre-commit\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e第三层：CI 强制检查\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# .github/workflows/lint.yml\nname: Code Quality\n\non: [push, pull_request]\n\njobs:\n  lint:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: pnpm/action-setup@v2\n      - uses: actions/setup-node@v4\n        with:\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm lint\n      - run: pnpm type-check    # 同时跑 TypeScript 类型检查\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e构建时强制拦截\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// vite.config.ts\nimport { defineConfig } from 'vite';\nimport eslint from 'vite-plugin-eslint2';\n\nexport default defineConfig({\n  plugins: [\n    eslint({\n      lintOnStart: true,        // 启动时检查\n      failOnWarning: true,      // ⚠️ Warning 也会中断构建\n    }),\n  ],\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003cblockquote\u003e\n\u003cp\u003e💡 \u003cstrong\u003e建议\u003c/strong\u003e：本地开发时 \u003ccode\u003efailOnWarning\u003c/code\u003e 可以设为 \u003ccode\u003efalse\u003c/code\u003e，但在 CI 构建脚本中通过 \u003ccode\u003eESLINT_FAIL_ON_WARNING=true pnpm build\u003c/code\u003e 强制开启。\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e五、Commit 规范与发布自动化\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003e核心思想：让提交信息成为可解析的数据源，驱动 CHANGELOG 生成和版本管理。\u003c/strong\u003e\u003c/p\u003e\n\u003ch3\u003eCommit 规范格式\u003c/h3\u003e\n\u003cp\u003e采用 Angular Commit Convention：\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003etype(scope): subject\n\n[可选的 body]\n\n[可选的 footer]\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e示例：\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003efeat(compiler): add template optimization for v-if\n\nThe compiler now generates optimized code for v-if\nblocks with single static children.\n\nCloses #123\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e用 Husky 拦截不规范提交\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-js\"\u003e// scripts/verify-commit.js\nconst fs = require('fs');\nconst path = require('path');\n\nconst msgPath = path.resolve('.git/COMMIT_EDITMSG');\nconst msg = fs.readFileSync(msgPath, 'utf-8').trim();\n\nconst commitRE = /^(revert: )?(feat|fix|docs|dx|style|refactor|perf|test|workflow|build|ci|chore|types|wip)(\\(.+\\))?: .{1,50}/;\n\nif (!commitRE.test(msg)) {\n  console.error('\\n  ❌ Invalid commit message format.\\n');\n  console.error('  Expected format: type(scope): subject\\n');\n  console.error('  Valid types:');\n  console.error('    feat     → New feature (triggers minor version)');\n  console.error('    fix      → Bug fix (triggers patch version)');\n  console.error('    refactor → Code change that neither fixes a bug nor adds a feature');\n  console.error('    docs     → Documentation changes');\n  console.error('    test     → Adding or correcting tests');\n  console.error('    chore    → Build tools and dependency changes\\n');\n  console.error('  Examples:');\n  console.error('    feat(compiler): add template optimization');\n  console.error('    fix(v-model): handle blur event correctly');\n  console.error('    docs: update installation guide\\n');\n  process.exit(1);\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e配置 hook：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-bash\"\u003e# Husky v9\necho 'node scripts/verify-commit.js' \u003e .husky/commit-msg\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e语义化版本映射\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e提交类型\u003c/th\u003e\n\u003cth\u003e版本变化\u003c/th\u003e\n\u003cth\u003e示例\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003efeat(xxx):\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eminor +1\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003e1.2.0\u003c/code\u003e → \u003ccode\u003e1.3.0\u003c/code\u003e\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003efix(xxx):\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003epatch +1\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003e1.2.0\u003c/code\u003e → \u003ccode\u003e1.2.1\u003c/code\u003e\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eBREAKING CHANGE:\u003c/code\u003e in footer\u003c/td\u003e\n\u003ctd\u003emajor +1\u003c/td\u003e\n\u003ctd\u003e\u003ccode\u003e1.2.0\u003c/code\u003e → \u003ccode\u003e2.0.0\u003c/code\u003e\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e手动指定\u003c/td\u003e\n\u003ctd\u003e任意版本\u003c/td\u003e\n\u003ctd\u003e交互式选择\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e\u003cstrong\u003e声明破坏性变更\u003c/strong\u003e：\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003efix(api): remove deprecated /old/endpoint\n\nBREAKING CHANGE: The /old/endpoint has been removed.\nPlease migrate to /v2/endpoint before upgrading.\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e自动化发布流水线\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-js\"\u003e// scripts/release.js\nconst { prompt } = require('enquirer');\nconst semver = require('semver');\nconst { execSync } = require('child_process');\nconst fs = require('fs');\nconst path = require('path');\n\nasync function main() {\n  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));\n  const current = pkg.version;\n  const increments = ['patch', 'minor', 'major'];\n\n  const { release } = await prompt({\n    type: 'select',\n    name: 'release',\n    message: `Current: v${current}. Select release type:`,\n    choices: increments.map(i =\u003e ({\n      name: `${i} (${semver.inc(current, i)})`,\n      value: i,\n    })),\n  });\n\n  const type = release.match(/^(\\w+)/)[1];\n  const target = semver.inc(current, type);\n\n  const { confirm } = await prompt({\n    type: 'confirm',\n    name: 'confirm',\n    message: `Release v${target}?`,\n    initial: true,\n  });\n\n  if (!confirm) {\n    console.log('Cancelled.');\n    process.exit(0);\n  }\n\n  // 更新版本号\n  pkg.version = target;\n  fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\\n');\n\n  // 生成 CHANGELOG\n  execSync('pnpm changelog', { stdio: 'inherit' });\n\n  // Git 提交、打标签、推送\n  execSync(`git add -A \u0026#x26;\u0026#x26; git commit -m \"release: v${target}\"`, { stdio: 'inherit' });\n  execSync(`git tag v${target}`);\n  execSync('git push \u0026#x26;\u0026#x26; git push --tags', { stdio: 'inherit' });\n\n  console.log(`\\n🎉 v${target} released!`);\n}\n\nmain().catch(err =\u003e {\n  console.error(err);\n  process.exit(1);\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003ccode\u003epackage.json\u003c/code\u003e 配置：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e{\n  \"scripts\": {\n    \"release\": \"node scripts/release.js\",\n    \"changelog\": \"conventional-changelog -p angular -i CHANGELOG.md -s\"\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003eGitHub Actions 自动发布\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# .github/workflows/release.yml\nname: Release\n\non:\n  push:\n    tags:\n      - 'v*'\n\npermissions:\n  contents: write\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: pnpm/action-setup@v2\n      - uses: actions/setup-node@v4\n        with:\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm lint\n      - run: pnpm build\n      - run: pnpm test\n\n  publish:\n    needs: [test]\n    runs-on: ubuntu-latest\n    environment: Release\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          fetch-depth: 0    # CHANGELOG 生成需要完整历史\n      - uses: pnpm/action-setup@v2\n      - uses: actions/setup-node@v4\n        with:\n          registry-url: 'https://registry.npmjs.org'\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm build\n      - run: pnpm publish --no-git-checks\n        env:\n          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}\n      - name: Create GitHub Release\n        uses: actions/create-release@v1\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n        with:\n          tag_name: ${{ github.ref_name }}\n          release_name: ${{ github.ref_name }}\n          body: |\n            See [CHANGELOG.md](./CHANGELOG.md) for details.\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e总结：在自己项目中最值得优先落地的 3 件事\u003c/h2\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e优先级\u003c/th\u003e\n\u003cth\u003e事项\u003c/th\u003e\n\u003cth\u003e投入\u003c/th\u003e\n\u003cth\u003e收益\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e🥇 P0\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003e依赖方向约束\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e低（ESLint 规则）\u003c/td\u003e\n\u003ctd\u003e极高（防止架构腐化）\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e🥈 P1\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003e测试分层\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e中（配置 + 补测试）\u003c/td\u003e\n\u003ctd\u003e高（缩短反馈循环）\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e🥉 P2\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003e规范自动化\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e低（ Husky + CI）\u003c/td\u003e\n\u003ctd\u003e高（减少人为失误）\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e1. 画好\"依赖地图\"\u003c/h3\u003e\n\u003cp\u003e用 \u003ccode\u003eimport/no-restricted-paths\u003c/code\u003e 明确每个目录的职责和依赖方向。这是防止代码腐化最有效、成本最低的手段。\u003c/p\u003e\n\u003ch3\u003e2. 测试分层守护\u003c/h3\u003e\n\u003cp\u003e单元测试（Node）→ 组件测试（jsdom）→ E2E（浏览器），按速度由快到慢、覆盖范围由小到大递进。CI 中按分支策略分层执行，PR 阶段只跑单元测试，合并后跑全量。\u003c/p\u003e\n\u003ch3\u003e3. 规范焊死在工具链\u003c/h3\u003e\n\u003cp\u003e能自动化的不要靠人记，能编译时拦截的不要留到运行时。Commit 规范 + CHANGELOG 自动生成 + 语义化版本，让发布变成一条命令的事。\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e参考与延伸阅读\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\"https://github.com/vuejs/core\"\u003eVue 源码仓库\u003c/a\u003e —— 工程化设计的最佳教材\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://www.conventionalcommits.org/\"\u003eConventional Commits 规范\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://semver.org/\"\u003eSemantic Versioning\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://vitest.dev/\"\u003eVitest 文档\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://pnpm.io/workspaces\"\u003epnpm Workspace 协议\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e\n"])</script><script>self.__next_f.push([1,"13:[\"$\",\"div\",null,{\"className\":\"prose prose-lg max-w-none\",\"dangerouslySetInnerHTML\":{\"__html\":\"$14\"}}]\n"])</script></body></html>

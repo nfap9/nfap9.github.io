@@ -1,0 +1,338 @@
+1:"$Sreact.fragment"
+2:I[9766,[],""]
+3:I[8924,[],""]
+8:I[7150,[],""]
+:HL["/_next/static/css/6d85209af33e5687.css","style"]
+0:{"P":null,"b":"slGIBmhmlh2zcRWfp35sq","p":"","c":["","blog","genetator-iterator",""],"i":false,"f":[[["",{"children":["blog",{"children":[["slug","genetator-iterator","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/6d85209af33e5687.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","children":[["$","head",null,{"children":["$","link",null,{"rel":"icon","type":"image/png","href":"/shenLogo.png"}]}],["$","body",null,{"className":"min-h-screen flex flex-col","children":[["$","header",null,{"className":"sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200","children":["$","div",null,{"className":"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8","children":["$","div",null,{"className":"flex items-center justify-between h-14","children":[["$","a",null,{"href":"/","className":"flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors","children":[["$","img",null,{"src":"/shenLogo.png","alt":"Logo","className":"w-8 h-8 rounded-full"}],["$","span",null,{"children":"shen"}]]}],["$","nav",null,{"className":"flex items-center gap-6","children":[["$","a",null,{"href":"/","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"主页"}],["$","a",null,{"href":"/blog","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"文章"}],["$","a",null,{"href":"/notes","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"笔记"}],["$","a",null,{"href":"/kb","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"知识库"}],["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors","children":"GitHub"}]]}]]}]}]}],["$","main",null,{"className":"flex-1","children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-[60vh] flex items-center justify-center px-4","children":["$","div",null,{"className":"text-center","children":[["$","h1",null,{"className":"text-6xl font-bold text-gray-900 mb-4","children":"404"}],["$","p",null,{"className":"text-xl text-gray-600 mb-8","children":"页面找不到了"}],["$","a",null,{"href":"/","className":"inline-flex items-center px-6 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors","children":"返回首页"}]]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","footer",null,{"className":"border-t border-gray-200 bg-white","children":["$","div",null,{"className":"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6","children":["$","div",null,{"className":"flex flex-col sm:flex-row items-center justify-between gap-4","children":[["$","p",null,{"className":"text-sm text-gray-500","children":["© ",2026," shen. 个人博客"]}],["$","div",null,{"className":"flex items-center gap-4","children":["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"text-gray-400 hover:text-gray-600 transition-colors","children":["$","svg",null,{"className":"w-5 h-5","fill":"currentColor","viewBox":"0 0 24 24","aria-hidden":"true","children":["$","path",null,{"fillRule":"evenodd","d":"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z","clipRule":"evenodd"}]}]}]}]]}]}]}]]}]]}]]}],{"children":["blog","$L4",{"children":[["slug","genetator-iterator","d"],"$L5",{"children":["__PAGE__","$L6",{},null,false]},null,false]},null,false]},null,false],"$L7",false]],"m":"$undefined","G":["$8",[]],"s":false,"S":true}
+a:I[4431,[],"OutletBoundary"]
+c:I[5278,[],"AsyncMetadataOutlet"]
+e:I[4431,[],"ViewportBoundary"]
+10:I[4431,[],"MetadataBoundary"]
+11:"$Sreact.suspense"
+4:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+5:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+6:["$","$1","c",{"children":["$L9",null,["$","$La",null,{"children":["$Lb",["$","$Lc",null,{"promise":"$@d"}]]}]]}]
+7:["$","$1","h",{"children":[null,[["$","$Le",null,{"children":"$Lf"}],null],["$","$L10",null,{"children":["$","div",null,{"hidden":true,"children":["$","$11",null,{"fallback":null,"children":"$L12"}]}]}]]}]
+f:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+b:null
+9:["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12","children":[["$","div",null,{"className":"mb-8","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4","children":"JavaScript"}],["$","h1",null,{"className":"text-3xl sm:text-4xl font-bold text-gray-900 mb-4","children":"生成器和可迭代对象"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-gray-500","children":[["$","time",null,{"dateTime":"2025-03-27T00:00:00.000Z","children":["发布于 ","2025年3月27日"]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-4","children":[["$","a","Javascript",{"href":"/tags/Javascript","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors","children":["#","Javascript"]}]]}]]}],"$L13",["$","div",null,{"className":"mt-12 pt-8 border-t border-gray-200","children":["$","a",null,{"href":"/blog","className":"inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors","children":[["$","svg",null,{"className":"w-4 h-4 mr-2","fill":"none","stroke":"currentColor","viewBox":"0 0 24 24","children":["$","path",null,{"strokeLinecap":"round","strokeLinejoin":"round","strokeWidth":2,"d":"M10 19l-7-7m0 0l7-7m-7 7h18"}]}],"返回文章列表"]}]}]]}]
+d:{"metadata":[["$","title","0",{"children":"生成器和可迭代对象 | shen 的博客"}],["$","meta","1",{"name":"description","content":"学习js中的生成器和可迭代对象"}]],"error":null,"digest":"$undefined"}
+12:"$d:metadata"
+14:T2c22,<blockquote>
+<p>JavaScript 中的**可迭代对象（Iterables）<strong>和</strong>生成器（Generators）**是处理序列数据的核心机制，它们让异步操作、惰性计算和数据流处理变得优雅。</p>
+</blockquote>
+<h2>一、可迭代对象</h2>
+<p>如果一个对象实现了 <strong><code>[Symbol.iterator]</code></strong> 方法，并且该方法返回一个遵循<strong>迭代器协议</strong>的对象（即具有 <code>next()</code> 方法，返回 <code>{ value, done }</code>），那么它就是可迭代的。</p>
+<h3>内置的可迭代对象</h3>
+<p>JavaScript 内置了多种可迭代对象，可以直接使用 <code>for...of</code> 遍历：</p>
+<pre><code class="language-js">// 字符串 —— 按 Unicode 字符遍历
+for (const char of "hello") {
+  console.log(char); // h, e, l, l, o
+}
+
+// 数组
+for (const item of [10, 20, 30]) {
+  console.log(item);
+}
+
+// Map（保留插入顺序）和 Set（去重）
+const map = new Map([['a', 1], ['b', 2]]);
+for (const [key, value] of map) {
+  console.log(key, value);
+}
+</code></pre>
+<h3><code>for...of</code> 的底层原理</h3>
+<p><code>for...of</code> 本质上是这样工作的：</p>
+<pre><code class="language-js">const iterable = [10, 20, 30];
+
+// 1. 获取迭代器
+const iterator = iterable[Symbol.iterator]();
+
+// 2. 反复调用 next()，直到 done 为 true
+let result = iterator.next();
+while (!result.done) {
+  console.log(result.value); // 10, 20, 30
+  result = iterator.next();
+}
+</code></pre>
+<p>理解这个机制，有助于你更好地自定义可迭代行为。</p>
+<h3>自定义可迭代对象</h3>
+<p>手动实现 <code>[Symbol.iterator]</code> 方法：</p>
+<pre><code class="language-js">const range = {
+  from: 1,
+  to: 5,
+  [Symbol.iterator]() {
+    return {
+      current: this.from,
+      last: this.to,
+      next() {
+        return this.current &#x3C;= this.last
+          ? { done: false, value: this.current++ }
+          : { done: true, value: undefined };  // done: true 时 value 可省略，但建议显式写出
+      }
+    };
+  }
+};
+
+console.log([...range]); // [1, 2, 3, 4, 5]
+</code></pre>
+<hr>
+<h2>二、生成器</h2>
+<p>生成器是 ES6 引入的特殊函数，用 <code>function*</code> 声明。它最大的特点是<strong>可以在执行过程中暂停和恢复</strong>，通过 <code>yield</code> 关键字交出控制权。</p>
+<h3>基本语法</h3>
+<pre><code class="language-js">function* idGenerator() {
+  let id = 1;
+  while (true) {
+    yield id++; // 每次在这里暂停，返回当前 id
+  }
+}
+
+const gen = idGenerator();
+console.log(gen.next().value); // 1
+console.log(gen.next().value); // 2
+console.log(gen.next().value); // 3
+// 不会无限循环，每次 yield 都会把控制权交还调用方
+</code></pre>
+<h3>生成器与可迭代的关系</h3>
+<p><strong>生成器对象同时满足迭代器协议和可迭代协议</strong>——它既是迭代器（有 <code>next()</code> 方法），也是可迭代对象（<code>[Symbol.iterator]</code> 返回自身）。这意味着生成器可以无缝接入任何需要可迭代对象的场景。</p>
+<pre><code class="language-js">function* countdown(n) {
+  while (n >= 0) {
+    yield n;
+    n--;
+  }
+}
+
+// 生成器可以直接用于 for...of
+for (const num of countdown(5)) {
+  console.log(num); // 5, 4, 3, 2, 1, 0
+}
+
+// 也可以展开
+console.log([...countdown(3)]); // [3, 2, 1, 0]
+
+// 还能解构
+const [first, second] = countdown(10);
+console.log(first, second); // 10, 9
+</code></pre>
+<h3><code>return</code> 在生成器中的特殊行为</h3>
+<p>生成器内的 <code>return</code> 会结束迭代，将 <code>done</code> 设为 <code>true</code>：</p>
+<pre><code class="language-js">function* withReturn() {
+  yield 1;
+  yield 2;
+  return 3;  // 结束生成器，value 3 通常被忽略
+  yield 4;   // 不会执行
+}
+
+const g = withReturn();
+console.log(g.next()); // { value: 1, done: false }
+console.log(g.next()); // { value: 2, done: false }
+console.log(g.next()); // { value: 3, done: true } ← return 的值
+console.log(g.next()); // { value: undefined, done: true }
+</code></pre>
+<blockquote>
+<p>注意：<code>return</code> 的值虽然会出现在最后一个 <code>next()</code> 的结果中，但 <code>for...of</code> 和展开运算符会忽略它。</p>
+</blockquote>
+<h3>生成器的 <code>return()</code> 和 <code>throw()</code></h3>
+<p>作为调用方，你可以主动控制生成器的生命周期：</p>
+<pre><code class="language-js">function* gen() {
+  try {
+    yield 1;
+    yield 2;
+    yield 3;
+  } finally {
+    console.log('清理资源');  // finally 会在生成器被终止时执行
+  }
+}
+
+const g = gen();
+console.log(g.next());        // { value: 1, done: false }
+console.log(g.return(100));   // { value: 100, done: true } —— 提前终止
+// 输出："清理资源"
+
+const g2 = gen();
+g2.next();                    // 先启动到第一个 yield
+g2.throw(new Error('出错了')); // 向生成器内部注入异常
+// Error: 出错了
+</code></pre>
+<p>这两个方法在需要<strong>提前终止生成器</strong>或<strong>处理生成器内部异常</strong>时非常有用。</p>
+<h3><code>yield*</code> —— 委托迭代</h3>
+<p><code>yield*</code> 可以将迭代工作委托给另一个可迭代对象，避免手动逐个 <code>yield</code>：</p>
+<pre><code class="language-js">function* combined() {
+  yield* [1, 2, 3];
+  yield 'end';
+}
+
+// 上面的代码等效于：
+function* combinedManual() {
+  yield 1;
+  yield 2;
+  yield 3;
+  yield 'end';
+}
+
+console.log([...combined()]); // [1, 2, 3, 'end']
+</code></pre>
+<p><code>yield*</code> 还可以递归委托给另一个生成器，常用于遍历树形结构。</p>
+<h3>双向通信</h3>
+<p>生成器不仅可以向外产出值，还可以通过 <code>next(value)</code> 向内部传入数据：</p>
+<pre><code class="language-js">function* chat() {
+  const name = yield "你叫什么名字？";
+  yield `你好，${name}！`;
+}
+
+const g = chat();
+console.log(g.next().value);         // "你叫什么名字？"
+console.log(g.next("Alice").value);  // "你好，Alice！"
+</code></pre>
+<p>第一次调用 <code>g.next()</code> 启动生成器，之后每次传入的参数会成为上一个 <code>yield</code> 表达式的返回值。这种双向通信让生成器可以实现<strong>协程</strong>模式。</p>
+<hr>
+<h2>三、异步生成器</h2>
+<p>ES2018 引入了异步生成器（<code>async function*</code>）和 <code>for await...of</code> 语法，用于处理异步数据流。它的核心是：</p>
+<ul>
+<li>用 <code>async function*</code> 定义异步生成器</li>
+<li>内部可以 <code>await</code> 异步操作，也可以 <code>yield</code> 值</li>
+<li>外部用 <code>for await...of</code> 消费</li>
+</ul>
+<pre><code class="language-js">// 异步生成器：每 500ms 产出一个值
+async function* asyncCounter() {
+  let i = 0;
+  while (i &#x3C; 3) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    yield i++;
+  }
+}
+
+// 消费异步生成器
+(async () => {
+  for await (const num of asyncCounter()) {
+    console.log(num); // 0, 1, 2（每 500ms 输出一个）
+  }
+})();
+</code></pre>
+<p>异步生成器是连接"异步操作"与"迭代器模式"的桥梁，也是接下来两个实战场景的基础。</p>
+<hr>
+<h2>四、实际应用场景</h2>
+<p>掌握基础概念后，我们来看看生成器在真实项目中如何解决实际问题。</p>
+<h3>1. 无限滚动</h3>
+<p>将分页 API 封装成异步生成器后，调用方完全不需要关心分页逻辑：</p>
+<pre><code class="language-js">// 封装层：自动翻页，对调用方来说就像个无限数组
+async function* fetchAllUsers(pageSize = 20) {
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const response = await fetch(`/api/users?page=${page}&#x26;size=${pageSize}`);
+    const { data, total } = await response.json();
+
+    for (const user of data) {
+      yield user; // 每次产出一个用户，而不是一整页
+    }
+
+    hasMore = page * pageSize &#x3C; total;
+    page++;
+  }
+}
+
+// 消费层：完全不需要关心分页逻辑
+async function renderUserList() {
+  const container = document.getElementById('users');
+
+  // 甚至可以配合 Intersection Observer，每次滚动到底部只取 10 条
+  for await (const user of fetchAllUsers()) {
+    const div = document.createElement('div');
+    div.textContent = `${user.name} - ${user.email}`;
+    container.appendChild(div);
+
+    // 控制节奏：每渲染 50 条暂停，等用户继续滚动
+    if (container.children.length % 50 === 0) {
+      await waitForScroll(); // 伪代码：等待用户滚动到底部再继续
+    }
+  }
+}
+</code></pre>
+<h3>2. 流式传输（SSE）</h3>
+<p>处理 ChatGPT 这类流式接口时，异步生成器可以将底层的 SSE（Server-Sent Events）格式封装成干净的数据流：</p>
+<pre><code class="language-js">// 封装层：把 fetch SSE 流转成异步生成器
+async function* streamChatGPT(messages) {
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, stream: true })
+  });
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      // SSE 格式：每行以 "data: " 开头
+      for (const line of chunk.split('\n')) {
+        if (line.startsWith('data: ')) {
+          const json = line.slice(6);
+          if (json === '[DONE]') return;
+
+          const parsed = JSON.parse(json);
+          const content = parsed.choices?.[0]?.delta?.content;
+          if (content) yield content;  // 逐字/逐句产出
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock(); // 确保资源释放
+  }
+}
+
+// 消费层：业务代码完全感知不到流的复杂性
+async function chat() {
+  const messages = [{ role: 'user', content: '讲个故事' }];
+
+  // 就像在处理一个普通数组，但是是异步、流式的
+  for await (const token of streamChatGPT(messages)) {
+    process.stdout.write(token);  // 逐字打印，无需等待全部响应
+  }
+}
+</code></pre>
+<hr>
+<h2>总结</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>可迭代对象</th>
+<th>生成器</th>
+<th>异步生成器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定义方式</td>
+<td>实现 <code>[Symbol.iterator]</code></td>
+<td><code>function*</code></td>
+<td><code>async function*</code></td>
+</tr>
+<tr>
+<td>协议</td>
+<td>迭代器协议</td>
+<td>迭代器 + 可迭代协议</td>
+<td>异步迭代器 + 异步可迭代协议</td>
+</tr>
+<tr>
+<td>消费方式</td>
+<td><code>for...of</code> / <code>...</code></td>
+<td><code>for...of</code> / <code>...</code></td>
+<td><code>for await...of</code></td>
+</tr>
+<tr>
+<td>核心能力</td>
+<td>遍历序列</td>
+<td><strong>暂停/恢复</strong>、双向通信</td>
+<td>暂停/恢复 + <strong>异步操作</strong></td>
+</tr>
+</tbody>
+</table>
+<p>理解生成器的关键在于：<strong>它把"遍历数据"变成了"控制流程"</strong>。<code>yield</code> 不只是返回值，更是一种流程控制的工具——这让无限数据流、延迟计算、资源清理等场景变得异常优雅。</p>
+13:["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$14"}}]

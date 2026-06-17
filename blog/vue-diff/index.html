@@ -1,0 +1,339 @@
+<!DOCTYPE html><!--slGIBmhmlh2zcRWfp35sq--><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/shenLogo.png"/><link rel="stylesheet" href="/_next/static/css/6d85209af33e5687.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-4e6bf084ac60582b.js"/><script src="/_next/static/chunks/4bd1b696-c023c6e3521b1417.js" async=""></script><script src="/_next/static/chunks/255-2aa030c9ba2867e3.js" async=""></script><script src="/_next/static/chunks/main-app-19f6093270bc3273.js" async=""></script><link rel="icon" type="image/png" href="/shenLogo.png"/><title>Vue2和Vue3中diff算法对比 | shen 的博客</title><meta name="description" content="详细对比 Vue2 和 Vue3 的 diff 算法实现原理"/><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script></head><body class="min-h-screen flex flex-col"><div hidden=""><!--$--><!--/$--></div><header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex items-center justify-between h-14"><a href="/" class="flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors"><img src="/shenLogo.png" alt="Logo" class="w-8 h-8 rounded-full"/><span>shen</span></a><nav class="flex items-center gap-6"><a href="/" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">主页</a><a href="/blog" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">文章</a><a href="/notes" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">笔记</a><a href="/kb" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">知识库</a><a href="https://github.com/nfap9" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">GitHub</a></nav></div></div></header><main class="flex-1"><article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12"><div class="mb-8"><span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4">Vue</span><h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Vue2和Vue3中diff算法对比</h1><div class="flex flex-wrap items-center gap-4 text-sm text-gray-500"><time dateTime="2024-03-01T00:00:00.000Z">发布于 <!-- -->2024年3月1日</time></div><div class="flex flex-wrap gap-2 mt-4"><a href="/tags/vue" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->vue</a><a href="/tags/diff" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->diff</a><a href="/tags/算法" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->算法</a><a href="/tags/虚拟DOM" class="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors">#<!-- -->虚拟DOM</a></div></div><div class="prose prose-lg max-w-none"><h1>diff算法</h1>
+<p>Diff 算法是 Vue 虚拟 DOM（Virtual DOM）渲染器的核心机制，其目标是用<strong>最小的性能代价</strong>找出新旧虚拟节点（VNode）之间的差异，并高效地更新真实 DOM。完整对比两棵 DOM 树的差异时间复杂度为 O(n³)，这在实际应用中是性能灾难。Vue 通过一系列优化策略将复杂度降至 O(n)，而 Vue 3 在此基础上进一步优化了算法实现。</p>
+<hr>
+<h2>vue2 diff算法</h2>
+<h3>核心思想：双端比较（Double-Ended Diff）</h3>
+<p>Vue 2 的 diff 算法基于 snabbdom 修改而来，核心策略是<strong>同层比较</strong>和<strong>双端比较</strong>。算法通过四个指针分别指向新旧列表的头尾，进行四种假设性匹配，尽可能复用已有的 DOM 节点。</p>
+<h4>四个核心指针</h4>
+<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>oldStartIdx</code></td>
+<td>指向旧子节点列表头部</td>
+</tr>
+<tr>
+<td><code>oldEndIdx</code></td>
+<td>指向旧子节点列表尾部</td>
+</tr>
+<tr>
+<td><code>newStartIdx</code></td>
+<td>指向新子节点列表头部</td>
+</tr>
+<tr>
+<td><code>newEndIdx</code></td>
+<td>指向新子节点列表尾部</td>
+</tr>
+</tbody>
+</table>
+<h4>五步匹配策略</h4>
+<p>算法在 <code>while</code> 循环中运行，终止条件是任一方的头指针越过尾指针。每一轮循环按<strong>固定顺序</strong>进行以下匹配：</p>
+<p><strong>① 头-头匹配（oldStart vs newStart）</strong></p>
+<p>检查两个列表的第一个节点是否相同（key 和 tag 均相同）。若匹配，调用 <code>patchVnode</code> 更新节点，两个 <code>Start</code> 指针同时后移（+1）。</p>
+<p><strong>② 尾-尾匹配（oldEnd vs newEnd）</strong></p>
+<p>检查两个列表的最后一个节点是否相同。若匹配，调用 <code>patchVnode</code> 更新节点，两个 <code>End</code> 指针同时前移（-1）。</p>
+<p><strong>③ 旧头-新尾匹配（oldStart vs newEnd）</strong></p>
+<p>适用于"首节点移到了尾部"的场景。若匹配，更新节点后将 <code>oldStart</code> 指向的 DOM 移动到 <code>oldEnd</code> 对应 DOM 的后面。<code>oldStartIdx++</code>，<code>newEndIdx--</code>。</p>
+<p><strong>④ 旧尾-新头匹配（oldEnd vs newStart）</strong></p>
+<p>适用于"尾节点移到了头部"的场景。若匹配，更新节点后将 <code>oldEnd</code> 指向的 DOM 移动到 <code>oldStart</code> 对应 DOM 的前面。<code>oldEndIdx--</code>，<code>newStartIdx++</code>。</p>
+<p><strong>⑤ 乱序匹配</strong></p>
+<p>若以上四种匹配全部失败，则以旧列表剩余节点的 <code>key</code> 建立哈希映射表，用新头节点的 <code>key</code> 去查找：</p>
+<ul>
+<li><strong>找到了</strong>：复用该节点，将其 DOM 移动到 <code>oldStart</code> 前面</li>
+<li><strong>没找到</strong>：创建新 DOM 节点插入到 <code>newStartIdx</code> 位置</li>
+</ul>
+<h4>循环结束后的收尾</h4>
+<ul>
+<li><strong>旧列表先遍历完</strong>（<code>oldStartIdx > oldEndIdx</code>）：新列表剩余节点为新增，批量挂载</li>
+<li><strong>新列表先遍历完</strong>（<code>newStartIdx > newEndIdx</code>）：旧列表剩余节点为多余，批量卸载</li>
+</ul>
+<h4>代码流程示意</h4>
+<pre><code class="language-javascript">function updateChildren(oldCh, newCh) {
+  let oldStartIdx = 0, newStartIdx = 0;
+  let oldEndIdx = oldCh.length - 1, newEndIdx = newCh.length - 1;
+  let oldStartVnode = oldCh[0], newStartVnode = newCh[0];
+  let oldEndVnode = oldCh[oldEndIdx], newEndVnode = newCh[newEndIdx];
+
+  while (oldStartIdx &#x3C;= oldEndIdx &#x26;&#x26; newStartIdx &#x3C;= newEndIdx) {
+    if (sameVnode(oldStartVnode, newStartVnode)) {
+      // 头-头匹配
+      patchVnode(oldStartVnode, newStartVnode);
+      oldStartVnode = oldCh[++oldStartIdx];
+      newStartVnode = newCh[++newStartIdx];
+    } else if (sameVnode(oldEndVnode, newEndVnode)) {
+      // 尾-尾匹配
+      patchVnode(oldEndVnode, newEndVnode);
+      oldEndVnode = oldCh[--oldEndIdx];
+      newEndVnode = newCh[--newEndIdx];
+    } else if (sameVnode(oldStartVnode, newEndVnode)) {
+      // 旧头-新尾匹配（需要移动DOM）
+      patchVnode(oldStartVnode, newEndVnode);
+      parentElm.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSibling);
+      oldStartVnode = oldCh[++oldStartIdx];
+      newEndVnode = newCh[--newEndIdx];
+    } else if (sameVnode(oldEndVnode, newStartVnode)) {
+      // 旧尾-新头匹配（需要移动DOM）
+      patchVnode(oldEndVnode, newStartVnode);
+      parentElm.insertBefore(oldEndVnode.el, oldStartVnode.el);
+      oldEndVnode = oldCh[--oldEndIdx];
+      newStartVnode = newCh[++newStartIdx];
+    } else {
+      // 乱序匹配：建立key映射表查找
+      // ...
+    }
+  }
+
+  // 处理新增或删除的节点
+  if (oldStartIdx > oldEndIdx) {
+    // 挂载新节点
+  } else if (newStartIdx > newEndIdx) {
+    // 卸载旧节点
+  }
+}
+</code></pre>
+<h4>Vue 2 diff 算法的特点与局限</h4>
+<p><strong>优势：</strong></p>
+<ul>
+<li>对于列表在两端增删的场景（最常见），双端对比能迅速收窄范围</li>
+<li>通过头尾交叉检测，能有效优化"倒序"或"首尾互换"场景</li>
+<li>时间复杂度为 O(n)，相比简单 diff 的 O(n²) 大幅优化</li>
+</ul>
+<p><strong>局限：</strong></p>
+<ul>
+<li>处理长列表的复杂乱序时，频繁创建 key 映射表存在额外性能开销</li>
+<li>无法保证 DOM 移动次数是最少的，偶尔会产生多余的移动操作</li>
+<li>全量对比属性，无法精准只对比变化的部分</li>
+</ul>
+<hr>
+<h2>vue3 diff算法</h2>
+<h3>核心思想：快速 Diff + 最长递增子序列（Quick Diff + LIS）</h3>
+<p>Vue 3 借鉴了 inferno 框架的算法思路，引入了<strong>预处理</strong>和**最长递增子序列（LIS）**算法。其核心思想是：先通过预处理缩小需要处理的乱序区间，再对剩余节点使用 LIS 算法找出相对顺序不需要改变的最大集合，只移动不在序列中的节点，从而将 DOM 移动次数降至理论上的最低值。</p>
+<h4>五步优化策略</h4>
+<p><strong>① 预处理前置节点（从前往后比较）</strong></p>
+<p>新旧列表从头部开始逐个比较，直到遇到不同类型的节点。所有匹配的前置节点直接 <code>patch</code> 复用。</p>
+<pre><code>旧列表：[A, B, C, D, E]
+新列表：[A, B, D, C, E]
+         ↑↑ 匹配，i = 2
+</code></pre>
+<p><strong>② 预处理后置节点（从后往前比较）</strong></p>
+<p>跳过前置匹配后，从尾部继续向前比较，直到遇到不同类型节点。</p>
+<pre><code>旧列表：[A, B, C, D, E]
+新列表：[A, B, D, C, E]
+                     ↑ 匹配，E 相同，e1--, e2--
+</code></pre>
+<p><strong>③ 处理仅有新增节点的情况</strong></p>
+<p>若旧节点已遍历完（<code>i > e1</code>），但新节点还有剩余，说明剩余部分为新增节点，批量挂载。</p>
+<p><strong>④ 处理仅有卸载节点的情况</strong></p>
+<p>若新节点已遍历完（<code>i > e2</code>），但旧节点还有剩余，说明剩余部分为多余节点，批量卸载。</p>
+<p><strong>⑤ 处理混合复杂情况（核心 diff）</strong></p>
+<p>当前后预处理后仍有未处理的节点，说明存在乱序、新增、删除、移动的混合场景。此时进入核心 diff 流程：</p>
+<ul>
+<li><strong>建立新节点索引表</strong>（<code>keyToNewIndexMap</code>）：以 key 为键，新列表中的索引为值</li>
+<li><strong>构建新旧位置映射</strong>（<code>newIndexToOldIndexMap</code>）：遍历旧节点，在映射表中查找可复用的节点，记录其在新列表中的位置</li>
+<li><strong>获取最长递增子序列</strong>：对 <code>newIndexToOldIndexMap</code> 求 LIS，得到不需要移动的节点集合</li>
+<li><strong>逆向遍历移动节点</strong>：从后向前遍历新节点列表，不在 LIS 中的节点执行移动操作</li>
+</ul>
+<h4>最长递增子序列（LIS）的作用</h4>
+<p>最长递增子序列是 Vue 3 diff 算法最核心的优化点。其作用是：在乱序节点中，找出一个<strong>相对顺序已经正确</strong>的最大节点集合，这些节点不需要移动，只需要移动不在序列中的节点。</p>
+<p><strong>示例：</strong></p>
+<pre><code>旧列表：[A, B, C, D, E]
+新列表：[A, C, E, B, D]
+
+// 预处理后（A 已匹配）
+剩余旧：[B, C, D, E]
+剩余新：[C, E, B, D]
+
+// 新节点在旧列表中的位置映射
+newIndexToOldIndexMap = [2, 4, 1, 3]  // C(2), E(4), B(1), D(3)
+
+// 最长递增子序列
+LIS = [1, 3]  // 对应 B(1), D(3) 或 C(2), E(4)
+
+// 结果：不在 LIS 中的节点需要移动
+</code></pre>
+<p>LIS 使用<strong>贪心 + 二分查找</strong>算法实现，时间复杂度为 O(n log n)。</p>
+<h4>完整代码流程</h4>
+<pre><code class="language-typescript">function patchKeyedChildren(c1, c2, container, parentAnchor) {
+  let i = 0;
+  const e1 = c1.length - 1;
+  const e2 = c2.length - 1;
+  let e1p = e1, e2p = e2;
+
+  // 1. 同步头部
+  while (i &#x3C;= e1p &#x26;&#x26; i &#x3C;= e2p) {
+    if (isSameVNodeType(c1[i], c2[i])) {
+      patch(c1[i], c2[i], container);
+      i++;
+    } else {
+      break;
+    }
+  }
+
+  // 2. 同步尾部
+  while (i &#x3C;= e1p &#x26;&#x26; i &#x3C;= e2p) {
+    if (isSameVNodeType(c1[e1p], c2[e2p])) {
+      patch(c1[e1p], c2[e2p], container);
+      e1p--;
+      e2p--;
+    } else {
+      break;
+    }
+  }
+
+  // 3. 处理仅有新增
+  if (i > e1p) {
+    for (let j = i; j &#x3C;= e2p; j++) {
+      patch(null, c2[j], container, anchor);
+    }
+    return;
+  }
+
+  // 4. 处理仅有卸载
+  if (i > e2p) {
+    for (let j = i; j &#x3C;= e1p; j++) {
+      unmount(c1[j]);
+    }
+    return;
+  }
+
+  // 5. 处理未知序列（核心diff）
+  const s1 = i, s2 = i;
+  const keyToNewIndexMap = new Map();
+  for (i = s2; i &#x3C;= e2p; i++) {
+    keyToNewIndexMap.set(c2[i].key, i);
+  }
+
+  const toBePatched = e2p - s2 + 1;
+  const newIndexToOldIndexMap = new Array(toBePatched).fill(0);
+
+  // 遍历旧节点，寻找可复用节点
+  for (i = s1; i &#x3C;= e1p; i++) {
+    const oldVNode = c1[i];
+    const newIndex = keyToNewIndexMap.get(oldVNode.key);
+    if (newIndex === undefined) {
+      unmount(oldVNode); // 旧节点不存在于新列表中
+    } else {
+      newIndexToOldIndexMap[newIndex - s2] = i + 1; // +1 区分0（新增）
+      patch(oldVNode, c2[newIndex], container);
+    }
+  }
+
+  // 获取最长递增子序列
+  const increasingNewIndexSequence = getSequence(newIndexToOldIndexMap);
+  let j = increasingNewIndexSequence.length - 1;
+
+  // 逆向遍历移动节点
+  for (i = toBePatched - 1; i >= 0; i--) {
+    const nextIndex = s2 + i;
+    const nextChild = c2[nextIndex];
+    const anchor = nextIndex + 1 &#x3C; c2.length ? c2[nextIndex + 1].el : parentAnchor;
+
+    if (newIndexToOldIndexMap[i] === 0) {
+      patch(null, nextChild, container, anchor); // 新增节点
+    } else {
+      if (j &#x3C; 0 || i !== increasingNewIndexSequence[j]) {
+        container.insertBefore(nextChild.el, anchor); // 移动节点
+      } else {
+        j--; // 在LIS中，不需要移动
+      }
+    }
+  }
+}
+</code></pre>
+<hr>
+<h2>Vue 2 与 Vue 3 diff 算法对比</h2>
+<h3>核心差异</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Vue 2</th>
+<th>Vue 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>算法核心</strong></td>
+<td>双端比较（Double-Ended Diff）</td>
+<td>快速 Diff + 最长递增子序列</td>
+</tr>
+<tr>
+<td><strong>对比方式</strong></td>
+<td>四个指针从两端向中间靠拢</td>
+<td>先预处理前缀后缀，再处理中间乱序</td>
+</tr>
+<tr>
+<td><strong>节点移动策略</strong></td>
+<td>头尾交叉检测 + 乱序哈希查找</td>
+<td>LIS 算法找出最小移动集合</td>
+</tr>
+<tr>
+<td><strong>乱序处理</strong></td>
+<td>建立 key→index 映射表逐个查找</td>
+<td>建立映射 + LIS 批量优化</td>
+</tr>
+<tr>
+<td><strong>DOM 移动次数</strong></td>
+<td>非最优，可能有多余移动</td>
+<td>理论最少</td>
+</tr>
+<tr>
+<td><strong>属性对比</strong></td>
+<td>全量对比所有属性</td>
+<td>Patch Flags 精准对比动态属性</td>
+</tr>
+<tr>
+<td><strong>静态节点</strong></td>
+<td>每次渲染都重新生成 VNode</td>
+<td>静态提升，仅生成一次</td>
+</tr>
+<tr>
+<td><strong>时间复杂度</strong></td>
+<td>O(n)</td>
+<td>O(n) ~ O(n log n)</td>
+</tr>
+</tbody>
+</table>
+<h3>为什么 Vue 3 更快？</h3>
+<ol>
+<li>
+<p><strong>更少的 DOM 移动操作</strong>：通过 LIS 算法，Vue 3 能计算出最少的节点移动次数，而 Vue 2 的双端比较在某些复杂乱序场景下会产生多余的移动</p>
+</li>
+<li>
+<p><strong>预处理缩小范围</strong>：Vue 3 的前后置预处理能快速排除不需要处理的节点，而 Vue 2 需要逐一轮询</p>
+</li>
+<li>
+<p><strong>静态节点提升</strong>：Vue 3 在编译阶段将静态节点提升，渲染时直接复用，不参与 diff 比较</p>
+</li>
+<li>
+<p><strong>Patch Flags 靶向更新</strong>：Vue 3 通过编译时标记动态节点，diff 时只对比变化的属性，而非全量对比</p>
+</li>
+</ol>
+<h3>关键概念总结</h3>
+<p><strong>为什么 key 很重要？</strong></p>
+<ul>
+<li><code>key</code> 是节点的唯一标识，帮助算法精准匹配新旧节点</li>
+<li>有 <code>key</code> 时，算法将"销毁-再创建"变为"低开销的移动"</li>
+<li>避免使用 <code>index</code> 作为 <code>key</code>，当列表排序、插入、删除时会导致误判</li>
+</ul>
+<p><strong>Vue 2 的适用场景：</strong></p>
+<ul>
+<li>列表变更主要在两端增删（性能已足够好）</li>
+<li>简单倒序或首尾互换</li>
+</ul>
+<p><strong>Vue 3 的优势场景：</strong></p>
+<ul>
+<li>复杂乱序排列的长列表</li>
+<li>包含大量静态内容的页面（静态提升收益大）</li>
+<li>需要最少 DOM 操作的高频更新场景</li>
+</ul>
+<hr>
+<h2>总结</h2>
+<p>Vue 2 的双端 diff 算法是一种成熟且高效的实现，通过四个指针的巧妙配合，将时间复杂度从 O(n²) 优化到 O(n)，能很好地处理大多数列表更新场景。而 Vue 3 的快速 diff 算法在此基础上引入了最长递增子序列算法，进一步优化了乱序场景下的 DOM 移动次数，配合静态提升和 Patch Flags 等编译期优化，使得 Vue 3 在大型应用中的渲染性能有了显著提升。</p>
+<p>从本质上讲，Vue 2 是在"勤奋"地对比每一处差异，而 Vue 3 是通过"聪明"的编译分析和数学优化，让自己<strong>尽量少干活、只干精准的活</strong>。</p>
+</div><div class="mt-12 pt-8 border-t border-gray-200"><a href="/blog" class="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>返回文章列表</a></div></article><!--$--><!--/$--></main><footer class="border-t border-gray-200 bg-white"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6"><div class="flex flex-col sm:flex-row items-center justify-between gap-4"><p class="text-sm text-gray-500">© <!-- -->2026<!-- --> shen. 个人博客</p><div class="flex items-center gap-4"><a href="https://github.com/nfap9" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg></a></div></div></div></footer><script src="/_next/static/chunks/webpack-4e6bf084ac60582b.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[9766,[],\"\"]\n3:I[8924,[],\"\"]\n8:I[7150,[],\"\"]\n:HL[\"/_next/static/css/6d85209af33e5687.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"slGIBmhmlh2zcRWfp35sq\",\"p\":\"\",\"c\":[\"\",\"blog\",\"vue-diff\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"blog\",{\"children\":[[\"slug\",\"vue-diff\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/6d85209af33e5687.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"children\":[[\"$\",\"head\",null,{\"children\":[\"$\",\"link\",null,{\"rel\":\"icon\",\"type\":\"image/png\",\"href\":\"/shenLogo.png\"}]}],[\"$\",\"body\",null,{\"className\":\"min-h-screen flex flex-col\",\"children\":[[\"$\",\"header\",null,{\"className\":\"sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex items-center justify-between h-14\",\"children\":[[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"flex items-center gap-2 text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors\",\"children\":[[\"$\",\"img\",null,{\"src\":\"/shenLogo.png\",\"alt\":\"Logo\",\"className\":\"w-8 h-8 rounded-full\"}],[\"$\",\"span\",null,{\"children\":\"shen\"}]]}],[\"$\",\"nav\",null,{\"className\":\"flex items-center gap-6\",\"children\":[[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"主页\"}],[\"$\",\"a\",null,{\"href\":\"/blog\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"文章\"}],[\"$\",\"a\",null,{\"href\":\"/notes\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"笔记\"}],[\"$\",\"a\",null,{\"href\":\"/kb\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"知识库\"}],[\"$\",\"a\",null,{\"href\":\"https://github.com/nfap9\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"className\":\"text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors\",\"children\":\"GitHub\"}]]}]]}]}]}],[\"$\",\"main\",null,{\"className\":\"flex-1\",\"children\":[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"div\",null,{\"className\":\"min-h-[60vh] flex items-center justify-center px-4\",\"children\":[\"$\",\"div\",null,{\"className\":\"text-center\",\"children\":[[\"$\",\"h1\",null,{\"className\":\"text-6xl font-bold text-gray-900 mb-4\",\"children\":\"404\"}],[\"$\",\"p\",null,{\"className\":\"text-xl text-gray-600 mb-8\",\"children\":\"页面找不到了\"}],[\"$\",\"a\",null,{\"href\":\"/\",\"className\":\"inline-flex items-center px-6 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 transition-colors\",\"children\":\"返回首页\"}]]}]}],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"footer\",null,{\"className\":\"border-t border-gray-200 bg-white\",\"children\":[\"$\",\"div\",null,{\"className\":\"max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6\",\"children\":[\"$\",\"div\",null,{\"className\":\"flex flex-col sm:flex-row items-center justify-between gap-4\",\"children\":[[\"$\",\"p\",null,{\"className\":\"text-sm text-gray-500\",\"children\":[\"© \",2026,\" shen. 个人博客\"]}],[\"$\",\"div\",null,{\"className\":\"flex items-center gap-4\",\"children\":[\"$\",\"a\",null,{\"href\":\"https://github.com/nfap9\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"className\":\"text-gray-400 hover:text-gray-600 transition-colors\",\"children\":[\"$\",\"svg\",null,{\"className\":\"w-5 h-5\",\"fill\":\"currentColor\",\"viewBox\":\"0 0 24 24\",\"aria-hidden\":\"true\",\"children\":[\"$\",\"path\",null,{\"fillRule\":\"evenodd\",\"d\":\"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z\",\"clipRule\":\"evenodd\"}]}]}]}]]}]}]}]]}]]}]]}],{\"children\":[\"blog\",\"$L4\",{\"children\":[[\"slug\",\"vue-diff\",\"d\"],\"$L5\",{\"children\":[\"__PAGE__\",\"$L6\",{},null,false]},null,false]},null,false]},null,false],\"$L7\",false]],\"m\":\"$undefined\",\"G\":[\"$8\",[]],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"a:I[4431,[],\"OutletBoundary\"]\nc:I[5278,[],\"AsyncMetadataOutlet\"]\ne:I[4431,[],\"ViewportBoundary\"]\n10:I[4431,[],\"MetadataBoundary\"]\n11:\"$Sreact.suspense\"\n4:[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]\n5:[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]\n6:[\"$\",\"$1\",\"c\",{\"children\":[\"$L9\",null,[\"$\",\"$La\",null,{\"children\":[\"$Lb\",[\"$\",\"$Lc\",null,{\"promise\":\"$@d\"}]]}]]}]\n7:[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$Le\",null,{\"children\":\"$Lf\"}],null],[\"$\",\"$L10\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$11\",null,{\"fallback\":null,\"children\":\"$L12\"}]}]}]]}]\n"])</script><script>self.__next_f.push([1,"f:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\nb:null\n"])</script><script>self.__next_f.push([1,"9:[\"$\",\"article\",null,{\"className\":\"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12\",\"children\":[[\"$\",\"div\",null,{\"className\":\"mb-8\",\"children\":[[\"$\",\"span\",null,{\"className\":\"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-50 text-primary-700 mb-4\",\"children\":\"Vue\"}],[\"$\",\"h1\",null,{\"className\":\"text-3xl sm:text-4xl font-bold text-gray-900 mb-4\",\"children\":\"Vue2和Vue3中diff算法对比\"}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap items-center gap-4 text-sm text-gray-500\",\"children\":[[\"$\",\"time\",null,{\"dateTime\":\"2024-03-01T00:00:00.000Z\",\"children\":[\"发布于 \",\"2024年3月1日\"]}],\"$undefined\"]}],[\"$\",\"div\",null,{\"className\":\"flex flex-wrap gap-2 mt-4\",\"children\":[[\"$\",\"a\",\"vue\",{\"href\":\"/tags/vue\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"vue\"]}],[\"$\",\"a\",\"diff\",{\"href\":\"/tags/diff\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"diff\"]}],[\"$\",\"a\",\"算法\",{\"href\":\"/tags/算法\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"算法\"]}],[\"$\",\"a\",\"虚拟DOM\",{\"href\":\"/tags/虚拟DOM\",\"className\":\"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors\",\"children\":[\"#\",\"虚拟DOM\"]}]]}]]}],\"$L13\",[\"$\",\"div\",null,{\"className\":\"mt-12 pt-8 border-t border-gray-200\",\"children\":[\"$\",\"a\",null,{\"href\":\"/blog\",\"className\":\"inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors\",\"children\":[[\"$\",\"svg\",null,{\"className\":\"w-4 h-4 mr-2\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"viewBox\":\"0 0 24 24\",\"children\":[\"$\",\"path\",null,{\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"strokeWidth\":2,\"d\":\"M10 19l-7-7m0 0l7-7m-7 7h18\"}]}],\"返回文章列表\"]}]}]]}]\n"])</script><script>self.__next_f.push([1,"d:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"Vue2和Vue3中diff算法对比 | shen 的博客\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"详细对比 Vue2 和 Vue3 的 diff 算法实现原理\"}]],\"error\":null,\"digest\":\"$undefined\"}\n12:\"$d:metadata\"\n"])</script><script>self.__next_f.push([1,"14:T3976,"])</script><script>self.__next_f.push([1,"\u003ch1\u003ediff算法\u003c/h1\u003e\n\u003cp\u003eDiff 算法是 Vue 虚拟 DOM（Virtual DOM）渲染器的核心机制，其目标是用\u003cstrong\u003e最小的性能代价\u003c/strong\u003e找出新旧虚拟节点（VNode）之间的差异，并高效地更新真实 DOM。完整对比两棵 DOM 树的差异时间复杂度为 O(n³)，这在实际应用中是性能灾难。Vue 通过一系列优化策略将复杂度降至 O(n)，而 Vue 3 在此基础上进一步优化了算法实现。\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003evue2 diff算法\u003c/h2\u003e\n\u003ch3\u003e核心思想：双端比较（Double-Ended Diff）\u003c/h3\u003e\n\u003cp\u003eVue 2 的 diff 算法基于 snabbdom 修改而来，核心策略是\u003cstrong\u003e同层比较\u003c/strong\u003e和\u003cstrong\u003e双端比较\u003c/strong\u003e。算法通过四个指针分别指向新旧列表的头尾，进行四种假设性匹配，尽可能复用已有的 DOM 节点。\u003c/p\u003e\n\u003ch4\u003e四个核心指针\u003c/h4\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e指针\u003c/th\u003e\n\u003cth\u003e含义\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eoldStartIdx\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e指向旧子节点列表头部\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eoldEndIdx\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e指向旧子节点列表尾部\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003enewStartIdx\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e指向新子节点列表头部\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003enewEndIdx\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e指向新子节点列表尾部\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch4\u003e五步匹配策略\u003c/h4\u003e\n\u003cp\u003e算法在 \u003ccode\u003ewhile\u003c/code\u003e 循环中运行，终止条件是任一方的头指针越过尾指针。每一轮循环按\u003cstrong\u003e固定顺序\u003c/strong\u003e进行以下匹配：\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e① 头-头匹配（oldStart vs newStart）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e检查两个列表的第一个节点是否相同（key 和 tag 均相同）。若匹配，调用 \u003ccode\u003epatchVnode\u003c/code\u003e 更新节点，两个 \u003ccode\u003eStart\u003c/code\u003e 指针同时后移（+1）。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e② 尾-尾匹配（oldEnd vs newEnd）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e检查两个列表的最后一个节点是否相同。若匹配，调用 \u003ccode\u003epatchVnode\u003c/code\u003e 更新节点，两个 \u003ccode\u003eEnd\u003c/code\u003e 指针同时前移（-1）。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e③ 旧头-新尾匹配（oldStart vs newEnd）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e适用于\"首节点移到了尾部\"的场景。若匹配，更新节点后将 \u003ccode\u003eoldStart\u003c/code\u003e 指向的 DOM 移动到 \u003ccode\u003eoldEnd\u003c/code\u003e 对应 DOM 的后面。\u003ccode\u003eoldStartIdx++\u003c/code\u003e，\u003ccode\u003enewEndIdx--\u003c/code\u003e。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e④ 旧尾-新头匹配（oldEnd vs newStart）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e适用于\"尾节点移到了头部\"的场景。若匹配，更新节点后将 \u003ccode\u003eoldEnd\u003c/code\u003e 指向的 DOM 移动到 \u003ccode\u003eoldStart\u003c/code\u003e 对应 DOM 的前面。\u003ccode\u003eoldEndIdx--\u003c/code\u003e，\u003ccode\u003enewStartIdx++\u003c/code\u003e。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e⑤ 乱序匹配\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e若以上四种匹配全部失败，则以旧列表剩余节点的 \u003ccode\u003ekey\u003c/code\u003e 建立哈希映射表，用新头节点的 \u003ccode\u003ekey\u003c/code\u003e 去查找：\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e找到了\u003c/strong\u003e：复用该节点，将其 DOM 移动到 \u003ccode\u003eoldStart\u003c/code\u003e 前面\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e没找到\u003c/strong\u003e：创建新 DOM 节点插入到 \u003ccode\u003enewStartIdx\u003c/code\u003e 位置\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch4\u003e循环结束后的收尾\u003c/h4\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e旧列表先遍历完\u003c/strong\u003e（\u003ccode\u003eoldStartIdx \u003e oldEndIdx\u003c/code\u003e）：新列表剩余节点为新增，批量挂载\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e新列表先遍历完\u003c/strong\u003e（\u003ccode\u003enewStartIdx \u003e newEndIdx\u003c/code\u003e）：旧列表剩余节点为多余，批量卸载\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch4\u003e代码流程示意\u003c/h4\u003e\n\u003cpre\u003e\u003ccode class=\"language-javascript\"\u003efunction updateChildren(oldCh, newCh) {\n  let oldStartIdx = 0, newStartIdx = 0;\n  let oldEndIdx = oldCh.length - 1, newEndIdx = newCh.length - 1;\n  let oldStartVnode = oldCh[0], newStartVnode = newCh[0];\n  let oldEndVnode = oldCh[oldEndIdx], newEndVnode = newCh[newEndIdx];\n\n  while (oldStartIdx \u0026#x3C;= oldEndIdx \u0026#x26;\u0026#x26; newStartIdx \u0026#x3C;= newEndIdx) {\n    if (sameVnode(oldStartVnode, newStartVnode)) {\n      // 头-头匹配\n      patchVnode(oldStartVnode, newStartVnode);\n      oldStartVnode = oldCh[++oldStartIdx];\n      newStartVnode = newCh[++newStartIdx];\n    } else if (sameVnode(oldEndVnode, newEndVnode)) {\n      // 尾-尾匹配\n      patchVnode(oldEndVnode, newEndVnode);\n      oldEndVnode = oldCh[--oldEndIdx];\n      newEndVnode = newCh[--newEndIdx];\n    } else if (sameVnode(oldStartVnode, newEndVnode)) {\n      // 旧头-新尾匹配（需要移动DOM）\n      patchVnode(oldStartVnode, newEndVnode);\n      parentElm.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSibling);\n      oldStartVnode = oldCh[++oldStartIdx];\n      newEndVnode = newCh[--newEndIdx];\n    } else if (sameVnode(oldEndVnode, newStartVnode)) {\n      // 旧尾-新头匹配（需要移动DOM）\n      patchVnode(oldEndVnode, newStartVnode);\n      parentElm.insertBefore(oldEndVnode.el, oldStartVnode.el);\n      oldEndVnode = oldCh[--oldEndIdx];\n      newStartVnode = newCh[++newStartIdx];\n    } else {\n      // 乱序匹配：建立key映射表查找\n      // ...\n    }\n  }\n\n  // 处理新增或删除的节点\n  if (oldStartIdx \u003e oldEndIdx) {\n    // 挂载新节点\n  } else if (newStartIdx \u003e newEndIdx) {\n    // 卸载旧节点\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eVue 2 diff 算法的特点与局限\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e优势：\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e对于列表在两端增删的场景（最常见），双端对比能迅速收窄范围\u003c/li\u003e\n\u003cli\u003e通过头尾交叉检测，能有效优化\"倒序\"或\"首尾互换\"场景\u003c/li\u003e\n\u003cli\u003e时间复杂度为 O(n)，相比简单 diff 的 O(n²) 大幅优化\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e局限：\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e处理长列表的复杂乱序时，频繁创建 key 映射表存在额外性能开销\u003c/li\u003e\n\u003cli\u003e无法保证 DOM 移动次数是最少的，偶尔会产生多余的移动操作\u003c/li\u003e\n\u003cli\u003e全量对比属性，无法精准只对比变化的部分\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003evue3 diff算法\u003c/h2\u003e\n\u003ch3\u003e核心思想：快速 Diff + 最长递增子序列（Quick Diff + LIS）\u003c/h3\u003e\n\u003cp\u003eVue 3 借鉴了 inferno 框架的算法思路，引入了\u003cstrong\u003e预处理\u003c/strong\u003e和**最长递增子序列（LIS）**算法。其核心思想是：先通过预处理缩小需要处理的乱序区间，再对剩余节点使用 LIS 算法找出相对顺序不需要改变的最大集合，只移动不在序列中的节点，从而将 DOM 移动次数降至理论上的最低值。\u003c/p\u003e\n\u003ch4\u003e五步优化策略\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e① 预处理前置节点（从前往后比较）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e新旧列表从头部开始逐个比较，直到遇到不同类型的节点。所有匹配的前置节点直接 \u003ccode\u003epatch\u003c/code\u003e 复用。\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e旧列表：[A, B, C, D, E]\n新列表：[A, B, D, C, E]\n         ↑↑ 匹配，i = 2\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e② 预处理后置节点（从后往前比较）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e跳过前置匹配后，从尾部继续向前比较，直到遇到不同类型节点。\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e旧列表：[A, B, C, D, E]\n新列表：[A, B, D, C, E]\n                     ↑ 匹配，E 相同，e1--, e2--\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e③ 处理仅有新增节点的情况\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e若旧节点已遍历完（\u003ccode\u003ei \u003e e1\u003c/code\u003e），但新节点还有剩余，说明剩余部分为新增节点，批量挂载。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e④ 处理仅有卸载节点的情况\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e若新节点已遍历完（\u003ccode\u003ei \u003e e2\u003c/code\u003e），但旧节点还有剩余，说明剩余部分为多余节点，批量卸载。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e⑤ 处理混合复杂情况（核心 diff）\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e当前后预处理后仍有未处理的节点，说明存在乱序、新增、删除、移动的混合场景。此时进入核心 diff 流程：\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e建立新节点索引表\u003c/strong\u003e（\u003ccode\u003ekeyToNewIndexMap\u003c/code\u003e）：以 key 为键，新列表中的索引为值\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e构建新旧位置映射\u003c/strong\u003e（\u003ccode\u003enewIndexToOldIndexMap\u003c/code\u003e）：遍历旧节点，在映射表中查找可复用的节点，记录其在新列表中的位置\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e获取最长递增子序列\u003c/strong\u003e：对 \u003ccode\u003enewIndexToOldIndexMap\u003c/code\u003e 求 LIS，得到不需要移动的节点集合\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e逆向遍历移动节点\u003c/strong\u003e：从后向前遍历新节点列表，不在 LIS 中的节点执行移动操作\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch4\u003e最长递增子序列（LIS）的作用\u003c/h4\u003e\n\u003cp\u003e最长递增子序列是 Vue 3 diff 算法最核心的优化点。其作用是：在乱序节点中，找出一个\u003cstrong\u003e相对顺序已经正确\u003c/strong\u003e的最大节点集合，这些节点不需要移动，只需要移动不在序列中的节点。\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e示例：\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e旧列表：[A, B, C, D, E]\n新列表：[A, C, E, B, D]\n\n// 预处理后（A 已匹配）\n剩余旧：[B, C, D, E]\n剩余新：[C, E, B, D]\n\n// 新节点在旧列表中的位置映射\nnewIndexToOldIndexMap = [2, 4, 1, 3]  // C(2), E(4), B(1), D(3)\n\n// 最长递增子序列\nLIS = [1, 3]  // 对应 B(1), D(3) 或 C(2), E(4)\n\n// 结果：不在 LIS 中的节点需要移动\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eLIS 使用\u003cstrong\u003e贪心 + 二分查找\u003c/strong\u003e算法实现，时间复杂度为 O(n log n)。\u003c/p\u003e\n\u003ch4\u003e完整代码流程\u003c/h4\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003efunction patchKeyedChildren(c1, c2, container, parentAnchor) {\n  let i = 0;\n  const e1 = c1.length - 1;\n  const e2 = c2.length - 1;\n  let e1p = e1, e2p = e2;\n\n  // 1. 同步头部\n  while (i \u0026#x3C;= e1p \u0026#x26;\u0026#x26; i \u0026#x3C;= e2p) {\n    if (isSameVNodeType(c1[i], c2[i])) {\n      patch(c1[i], c2[i], container);\n      i++;\n    } else {\n      break;\n    }\n  }\n\n  // 2. 同步尾部\n  while (i \u0026#x3C;= e1p \u0026#x26;\u0026#x26; i \u0026#x3C;= e2p) {\n    if (isSameVNodeType(c1[e1p], c2[e2p])) {\n      patch(c1[e1p], c2[e2p], container);\n      e1p--;\n      e2p--;\n    } else {\n      break;\n    }\n  }\n\n  // 3. 处理仅有新增\n  if (i \u003e e1p) {\n    for (let j = i; j \u0026#x3C;= e2p; j++) {\n      patch(null, c2[j], container, anchor);\n    }\n    return;\n  }\n\n  // 4. 处理仅有卸载\n  if (i \u003e e2p) {\n    for (let j = i; j \u0026#x3C;= e1p; j++) {\n      unmount(c1[j]);\n    }\n    return;\n  }\n\n  // 5. 处理未知序列（核心diff）\n  const s1 = i, s2 = i;\n  const keyToNewIndexMap = new Map();\n  for (i = s2; i \u0026#x3C;= e2p; i++) {\n    keyToNewIndexMap.set(c2[i].key, i);\n  }\n\n  const toBePatched = e2p - s2 + 1;\n  const newIndexToOldIndexMap = new Array(toBePatched).fill(0);\n\n  // 遍历旧节点，寻找可复用节点\n  for (i = s1; i \u0026#x3C;= e1p; i++) {\n    const oldVNode = c1[i];\n    const newIndex = keyToNewIndexMap.get(oldVNode.key);\n    if (newIndex === undefined) {\n      unmount(oldVNode); // 旧节点不存在于新列表中\n    } else {\n      newIndexToOldIndexMap[newIndex - s2] = i + 1; // +1 区分0（新增）\n      patch(oldVNode, c2[newIndex], container);\n    }\n  }\n\n  // 获取最长递增子序列\n  const increasingNewIndexSequence = getSequence(newIndexToOldIndexMap);\n  let j = increasingNewIndexSequence.length - 1;\n\n  // 逆向遍历移动节点\n  for (i = toBePatched - 1; i \u003e= 0; i--) {\n    const nextIndex = s2 + i;\n    const nextChild = c2[nextIndex];\n    const anchor = nextIndex + 1 \u0026#x3C; c2.length ? c2[nextIndex + 1].el : parentAnchor;\n\n    if (newIndexToOldIndexMap[i] === 0) {\n      patch(null, nextChild, container, anchor); // 新增节点\n    } else {\n      if (j \u0026#x3C; 0 || i !== increasingNewIndexSequence[j]) {\n        container.insertBefore(nextChild.el, anchor); // 移动节点\n      } else {\n        j--; // 在LIS中，不需要移动\n      }\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003eVue 2 与 Vue 3 diff 算法对比\u003c/h2\u003e\n\u003ch3\u003e核心差异\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e特性\u003c/th\u003e\n\u003cth\u003eVue 2\u003c/th\u003e\n\u003cth\u003eVue 3\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e算法核心\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e双端比较（Double-Ended Diff）\u003c/td\u003e\n\u003ctd\u003e快速 Diff + 最长递增子序列\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e对比方式\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e四个指针从两端向中间靠拢\u003c/td\u003e\n\u003ctd\u003e先预处理前缀后缀，再处理中间乱序\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e节点移动策略\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e头尾交叉检测 + 乱序哈希查找\u003c/td\u003e\n\u003ctd\u003eLIS 算法找出最小移动集合\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e乱序处理\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e建立 key→index 映射表逐个查找\u003c/td\u003e\n\u003ctd\u003e建立映射 + LIS 批量优化\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003eDOM 移动次数\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e非最优，可能有多余移动\u003c/td\u003e\n\u003ctd\u003e理论最少\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e属性对比\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e全量对比所有属性\u003c/td\u003e\n\u003ctd\u003ePatch Flags 精准对比动态属性\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e静态节点\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e每次渲染都重新生成 VNode\u003c/td\u003e\n\u003ctd\u003e静态提升，仅生成一次\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e时间复杂度\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eO(n)\u003c/td\u003e\n\u003ctd\u003eO(n) ~ O(n log n)\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e为什么 Vue 3 更快？\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e更少的 DOM 移动操作\u003c/strong\u003e：通过 LIS 算法，Vue 3 能计算出最少的节点移动次数，而 Vue 2 的双端比较在某些复杂乱序场景下会产生多余的移动\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e预处理缩小范围\u003c/strong\u003e：Vue 3 的前后置预处理能快速排除不需要处理的节点，而 Vue 2 需要逐一轮询\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e静态节点提升\u003c/strong\u003e：Vue 3 在编译阶段将静态节点提升，渲染时直接复用，不参与 diff 比较\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003ePatch Flags 靶向更新\u003c/strong\u003e：Vue 3 通过编译时标记动态节点，diff 时只对比变化的属性，而非全量对比\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e关键概念总结\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e为什么 key 很重要？\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003ekey\u003c/code\u003e 是节点的唯一标识，帮助算法精准匹配新旧节点\u003c/li\u003e\n\u003cli\u003e有 \u003ccode\u003ekey\u003c/code\u003e 时，算法将\"销毁-再创建\"变为\"低开销的移动\"\u003c/li\u003e\n\u003cli\u003e避免使用 \u003ccode\u003eindex\u003c/code\u003e 作为 \u003ccode\u003ekey\u003c/code\u003e，当列表排序、插入、删除时会导致误判\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003eVue 2 的适用场景：\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e列表变更主要在两端增删（性能已足够好）\u003c/li\u003e\n\u003cli\u003e简单倒序或首尾互换\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003eVue 3 的优势场景：\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e复杂乱序排列的长列表\u003c/li\u003e\n\u003cli\u003e包含大量静态内容的页面（静态提升收益大）\u003c/li\u003e\n\u003cli\u003e需要最少 DOM 操作的高频更新场景\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e总结\u003c/h2\u003e\n\u003cp\u003eVue 2 的双端 diff 算法是一种成熟且高效的实现，通过四个指针的巧妙配合，将时间复杂度从 O(n²) 优化到 O(n)，能很好地处理大多数列表更新场景。而 Vue 3 的快速 diff 算法在此基础上引入了最长递增子序列算法，进一步优化了乱序场景下的 DOM 移动次数，配合静态提升和 Patch Flags 等编译期优化，使得 Vue 3 在大型应用中的渲染性能有了显著提升。\u003c/p\u003e\n\u003cp\u003e从本质上讲，Vue 2 是在\"勤奋\"地对比每一处差异，而 Vue 3 是通过\"聪明\"的编译分析和数学优化，让自己\u003cstrong\u003e尽量少干活、只干精准的活\u003c/strong\u003e。\u003c/p\u003e\n"])</script><script>self.__next_f.push([1,"13:[\"$\",\"div\",null,{\"className\":\"prose prose-lg max-w-none\",\"dangerouslySetInnerHTML\":{\"__html\":\"$14\"}}]\n"])</script></body></html>
