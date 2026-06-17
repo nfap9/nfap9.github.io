@@ -4,7 +4,6 @@
 
 这是一个**个人博客兼知识库**，使用 Next.js 构建，部署在服务器。
 
-- **站点地址**：https://nfap9.github.io
 - **技术栈**：Next.js 15 + React 19 + Tailwind CSS + MDX
 - **内容格式**：Markdown（博客长文）+ 碎片化笔记
 
