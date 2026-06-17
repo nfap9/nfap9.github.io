@@ -6,8 +6,8 @@
 
 - [Next.js](https://nextjs.org/) - React 全栈框架，静态导出
 - [React](https://react.dev/) - UI 组件库
+- [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架（v4）
 - [MDX](https://mdxjs.com/) - 支持 JSX 的 Markdown
-- [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
 - [gray-matter](https://github.com/jonschlinkert/gray-matter) - Markdown frontmatter 解析
 - [remark](https://remark.js.org/) - Markdown 处理器
 
@@ -21,30 +21,29 @@
 │   │   ├── blog/         # 博客文章
 │   │   └── notes/        # 碎片化笔记
 │   ├── lib/              # 工具库（内容读取等）
-│   ├── styles/           # 全局样式
 │   └── utils/            # 工具函数
 ├── public/               # 静态资源
 ├── next.config.ts        # Next.js 配置
-├── tailwind.config.ts    # Tailwind CSS 配置
-└── postcss.config.mjs    # PostCSS 配置
+├── postcss.config.mjs    # PostCSS 配置
+└── src/app/globals.css   # 全局样式 + Tailwind 主题
 ```
 
 ## 开发
 
 ```bash
 # 安装依赖
-npm install
+pnpm install
 
 # 启动开发服务器
-npm run dev
+pnpm dev
 
 # 构建生产版本
-npm run build
+pnpm build
 
-# 启动生产服务器
-npm run start
+# 启动生产服务器（预览构建产物）
+pnpm start
 ```
 
 ## 部署
 
-通过 GitHub Actions 自动部署到服务器。构建产物输出到 `dist/` 目录。
+通过 GitHub Actions 自动部署到 GitHub Pages。构建产物输出到 `dist/` 目录。

@@ -1,19 +1,26 @@
+<!-- From: /AGENTS.md -->
 # AGENTS.md — 个人知识库使用指南
 
 ## 项目概述
 
-这是一个**个人博客兼知识库**，使用 Next.js 构建，部署在服务器。
+这是一个**个人博客兼知识库**，使用 Next.js 构建，部署在 GitHub Pages。
 
-- **技术栈**：Next.js 15 + React 19 + Tailwind CSS + MDX
+- **技术栈**：Next.js 16 + React 19 + Tailwind CSS v4 + MDX
+- **包管理器**：pnpm
+- **构建方式**：静态导出（`output: 'export'`，产物在 `dist/`）
 - **内容格式**：Markdown（博客长文）+ 碎片化笔记
 
 ## 知识库结构
 
 ```
-src/content/
-├── blog/          # 技术博客文章（长文、教程、原理分析）
-│   └── 主题：Vue、JavaScript、前端工程化、网络协议、CI/CD 等
-└── notes/         # 碎片化知识笔记（短笔记、代码片段、快速参考）
+src/
+├── app/              # Next.js App Router 页面与路由
+├── components/       # React 组件
+├── content/
+│   ├── blog/         # 技术博客文章（长文、教程、原理分析）
+│   └── notes/        # 碎片化知识笔记（短笔记、代码片段、快速参考）
+├── lib/              # 内容读取、工具封装
+└── utils/            # 通用工具函数
 ```
 
 ### Frontmatter 字段说明
@@ -56,4 +63,9 @@ src/content/
 - 路由使用 Next.js App Router，页面位于 `src/app/`
 - 内容读取逻辑封装在 `src/lib/content.ts`
 - Markdown 渲染使用 `remark` + `remark-html` + `remark-gfm`
-- 静态导出产物在 `dist/` 目录
+- 样式使用 Tailwind CSS v4，主题配置在 `src/app/globals.css`
+- 常用命令：
+  - `pnpm install` — 安装依赖
+  - `pnpm dev` — 启动开发服务器
+  - `pnpm build` — 构建静态站点
+  - `pnpm lint` — 运行 ESLint

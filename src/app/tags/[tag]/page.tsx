@@ -1,5 +1,6 @@
-import PostCard from '@/components/PostCard';
-import { getAllItems, getAllTags } from '@/lib/content';
+import Link from "next/link";
+import PostCard from "@/components/PostCard";
+import { getAllItems, getAllTags } from "@/lib/content";
 
 export async function generateStaticParams() {
   const tags = await getAllTags();
@@ -37,13 +38,13 @@ export default async function TagPage({ params }: TagPageProps) {
           <PostCard
             key={item.slug}
             post={item}
-            basePath={item.type === 'blog' ? 'blog' : 'notes'}
+            basePath={item.type === "blog" ? "blog" : "notes"}
           />
         ))}
       </div>
 
       <div className="mt-10">
-        <a
+        <Link
           href="/kb"
           className="inline-flex items-center text-primary-600 font-medium hover:text-primary-700 transition-colors"
         >
@@ -61,7 +62,7 @@ export default async function TagPage({ params }: TagPageProps) {
             />
           </svg>
           返回知识库
-        </a>
+        </Link>
       </div>
     </div>
   );

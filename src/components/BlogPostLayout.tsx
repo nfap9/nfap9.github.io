@@ -1,6 +1,7 @@
-import { formatDate } from '@/utils/date';
-import MdxContent from './MdxContent';
-import type { ContentItem } from '@/lib/content';
+import Link from "next/link";
+import { formatDate } from "@/utils/date";
+import MdxContent from "./MdxContent";
+import type { ContentItem } from "@/lib/content";
 
 interface BlogPostLayoutProps {
   item: ContentItem;
@@ -10,10 +11,10 @@ interface BlogPostLayoutProps {
 
 export default function BlogPostLayout({
   item,
-  backLink = '/blog',
-  backText = '返回文章列表',
+  backLink = "/blog",
+  backText = "返回文章列表",
 }: BlogPostLayoutProps) {
-  const { title, description, pubDate, updatedDate, category, tags } = item.meta;
+  const { title, pubDate, updatedDate, category, tags } = item.meta;
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -35,20 +36,20 @@ export default function BlogPostLayout({
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
             {tags.map((tag) => (
-              <a
+              <Link
                 key={tag}
                 href={`/tags/${tag}`}
                 className="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors"
               >
                 #{tag}
-              </a>
+              </Link>
             ))}
           </div>
         )}
       </div>
       <MdxContent source={item.body} />
       <div className="mt-12 pt-8 border-t border-gray-200">
-        <a
+        <Link
           href={backLink}
           className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
         >
@@ -66,7 +67,7 @@ export default function BlogPostLayout({
             />
           </svg>
           {backText}
-        </a>
+        </Link>
       </div>
     </article>
   );

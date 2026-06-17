@@ -1,4 +1,4 @@
-import { getAllItems, getBlogPosts, getNotes } from '@/lib/content';
+import { getBlogPosts, getNotes } from '@/lib/content';
 
 export const dynamic = 'force-static';
 

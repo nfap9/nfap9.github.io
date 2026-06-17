@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
-import PostCard from './PostCard';
-import type { ContentItem } from '@/lib/content';
+import { useEffect } from "react";
+import Link from "next/link";
+import PostCard from "./PostCard";
+import type { ContentItem } from "@/lib/content";
 
 interface KnowledgeBaseClientProps {
   items: ContentItem[];
@@ -15,37 +16,37 @@ export default function KnowledgeBaseClient({
   categories,
   tags,
 }: KnowledgeBaseClientProps) {
-  const blogCount = items.filter((item) => item.type === 'blog').length;
-  const notesCount = items.filter((item) => item.type === 'notes').length;
+  const blogCount = items.filter((item) => item.type === "blog").length;
+  const notesCount = items.filter((item) => item.type === "notes").length;
 
   useEffect(() => {
-    const buttons = document.querySelectorAll<HTMLButtonElement>('.category-btn');
-    const itemEntries = document.querySelectorAll<HTMLDivElement>('.item-entry');
-    const itemCount = document.getElementById('item-count');
-    const noItems = document.getElementById('no-items');
-    const resetBtn = document.getElementById('reset-filter');
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".category-btn");
+    const itemEntries = document.querySelectorAll<HTMLDivElement>(".item-entry");
+    const itemCount = document.getElementById("item-count");
+    const noItems = document.getElementById("no-items");
+    const resetBtn = document.getElementById("reset-filter");
 
     function filterItems(category: string) {
       let visibleCount = 0;
 
       itemEntries.forEach((item) => {
-        const itemCategory = item.dataset.categories || '';
+        const itemCategory = item.dataset.categories || "";
         if (!category || itemCategory === category) {
-          item.classList.remove('hidden');
+          item.classList.remove("hidden");
           visibleCount++;
         } else {
-          item.classList.add('hidden');
+          item.classList.add("hidden");
         }
       });
 
       buttons.forEach((btn) => {
-        const btnCategory = btn.dataset.category || '';
+        const btnCategory = btn.dataset.category || "";
         if (btnCategory === category) {
-          btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
-          btn.classList.add('bg-primary-600', 'text-white');
+          btn.classList.remove("bg-gray-100", "text-gray-700", "hover:bg-gray-200");
+          btn.classList.add("bg-primary-600", "text-white");
         } else {
-          btn.classList.remove('bg-primary-600', 'text-white');
-          btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+          btn.classList.remove("bg-primary-600", "text-white");
+          btn.classList.add("bg-gray-100", "text-gray-700", "hover:bg-gray-200");
         }
       });
 
@@ -54,25 +55,25 @@ export default function KnowledgeBaseClient({
       }
 
       if (visibleCount === 0) {
-        noItems?.classList.remove('hidden');
+        noItems?.classList.remove("hidden");
       } else {
-        noItems?.classList.add('hidden');
+        noItems?.classList.add("hidden");
       }
     }
 
     buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const category = btn.dataset.category || '';
+      btn.addEventListener("click", () => {
+        const category = btn.dataset.category || "";
         filterItems(category);
       });
     });
 
-    resetBtn?.addEventListener('click', () => {
-      filterItems('');
+    resetBtn?.addEventListener("click", () => {
+      filterItems("");
     });
 
     const url = new URL(window.location.href);
-    const initialCategory = url.searchParams.get('category') || '';
+    const initialCategory = url.searchParams.get("category") || "";
     if (initialCategory) {
       filterItems(initialCategory);
     }
@@ -131,18 +132,18 @@ export default function KnowledgeBaseClient({
               如果你是 AI Agent 或需要使用 LLM 检索本站知识，建议优先访问以下入口：
             </p>
             <div className="flex flex-wrap gap-2">
-              <a
+              <Link
                 href="/llms.txt"
                 className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-white text-primary-700 border border-primary-200 hover:bg-primary-50 transition-colors"
               >
                 /llms.txt — 站点概述
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/llms-full.txt"
                 className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-white text-primary-700 border border-primary-200 hover:bg-primary-50 transition-colors"
               >
                 /llms-full.txt — 全文聚合
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -180,10 +181,10 @@ export default function KnowledgeBaseClient({
         {items.map((item) => (
           <div
             key={`${item.type}-${item.slug}`}
-            data-categories={item.meta.category || ''}
+            data-categories={item.meta.category || ""}
             className="item-entry"
           >
-            <PostCard post={item} basePath={item.type === 'blog' ? 'blog' : 'notes'} />
+            <PostCard post={item} basePath={item.type === "blog" ? "blog" : "notes"} />
           </div>
         ))}
       </div>
@@ -205,14 +206,14 @@ export default function KnowledgeBaseClient({
             {tags.map((tag) => {
               const count = items.filter((item) => item.meta.tags?.includes(tag)).length;
               return (
-                <a
+                <Link
                   key={tag}
                   href={`/tags/${tag}`}
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
                 >
                   <span>#{tag}</span>
                   <span className="text-xs text-gray-400">{count}</span>
-                </a>
+                </Link>
               );
             })}
           </div>
