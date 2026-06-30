@@ -1,0 +1,690 @@
+1:"$Sreact.fragment"
+2:I[23880,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],"default"]
+3:I[26747,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],""]
+8:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"OutletBoundary"]
+9:"$Sreact.suspense"
+4:T144a6,<blockquote>
+<p>本文从 Vue 源码的工程实践中提炼出五个可落地的设计范式，覆盖架构分层、条件编译、测试策略、代码规范与发布自动化。适合前端团队负责人和架构师参考，将 Vue 验证过的工程化思想迁移到自己的项目中。</p>
+</blockquote>
+<hr>
+<h2>一、分层架构与依赖治理</h2>
+<p><strong>核心思想：用物理边界约束架构，防止代码腐化。</strong></p>
+<p>Vue 源码的包结构是工程化设计的典范。编译器（<code>@vue/compiler-core</code>）和运行时（<code>@vue/runtime-core</code>）是两个独立的包，二者互不直接引用，只通过共享的 <code>@vue/shared</code> 进行通信。这种单向依赖图确保了架构的清晰性。</p>
+<h3>Vue 的依赖治理实践</h3>
+<table>
+<thead>
+<tr>
+<th>实践</th>
+<th>具体做法</th>
+<th>可借鉴点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单向依赖图</td>
+<td>编译器 → 共享包 ← 运行时，二者互不引用</td>
+<td>同层级模块禁止互相依赖</td>
+</tr>
+<tr>
+<td>共享包收敛</td>
+<td>所有跨包工具收敛到 <code>@vue/shared</code></td>
+<td>提取公共依赖，避免重复和循环引用</td>
+</tr>
+<tr>
+<td>私有包隔离</td>
+<td><code>packages-private/</code> 目录物理隔离</td>
+<td>防止内部工具被误发布到 npm</td>
+</tr>
+</tbody>
+</table>
+<h3>前端项目三层划分建议</h3>
+<p>基于 Vue 的设计思想，前端项目可以按以下三层组织：</p>
+<pre><code>┌─────────────────────────────────────┐
+│     视图层 (UI Layer)               │  页面组件、通用组件库
+├─────────────────────────────────────┤
+│     业务层 (Business Layer)          │  状态管理、业务逻辑、hooks
+├─────────────────────────────────────┤
+│     基础层 (Infrastructure Layer)    │  工具函数、API 封装、类型定义、常量
+└─────────────────────────────────────────────────────────────┘
+         依赖方向：上层可引用下层，下层禁止引用上层
+</code></pre>
+<p><strong>依赖规则</strong>：</p>
+<ul>
+<li>✅ 视图层 → 业务层、基础层</li>
+<li>✅ 业务层 → 基础层</li>
+<li>❌ 禁止同层级相互引用（如业务模块 A 引用业务模块 B）</li>
+<li>❌ 禁止反向依赖（如基础层引用业务层）</li>
+</ul>
+<h3>用 ESLint 强制约束依赖方向</h3>
+<p>安装插件：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> eslint-plugin-import</span></span></code></pre>
+<p>配置 <code>.eslintrc.cjs</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  rules: {</span></span>
+<span class="line"><span style="color:#9ECBFF">    'import/no-restricted-paths'</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">'error'</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      zones: [</span></span>
+<span class="line"><span style="color:#6A737D">        // 规则1：基础层（utils）禁止引用业务层</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          target: </span><span style="color:#9ECBFF">'src/utils'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          from: </span><span style="color:#9ECBFF">'src/business'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          message: </span><span style="color:#9ECBFF">'基础设施层禁止依赖业务层'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#6A737D">        // 规则2：基础层禁止引用视图层</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          target: </span><span style="color:#9ECBFF">'src/utils'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          from: </span><span style="color:#9ECBFF">'src/views'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          message: </span><span style="color:#9ECBFF">'基础设施层禁止依赖视图层'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#6A737D">        // 规则3：业务层禁止引用视图层</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          target: </span><span style="color:#9ECBFF">'src/business'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          from: </span><span style="color:#9ECBFF">'src/views'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          message: </span><span style="color:#9ECBFF">'业务层禁止依赖视图层'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#6A737D">        // 规则4：同层级业务模块间禁止互相引用</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#E1E4E8">          target: </span><span style="color:#9ECBFF">'src/business/module-a'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          from: </span><span style="color:#9ECBFF">'src/business/module-b'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          message: </span><span style="color:#9ECBFF">'同层级业务模块禁止互相依赖，公共逻辑应下沉到 utils'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    }],</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<blockquote>
+<p>💡 <strong>如何落地</strong>：先配置规则为 <code>warn</code> 级别，让团队有时间重构现有代码，清理完毕后再切换为 <code>error</code>。</p>
+</blockquote>
+<h3>Monorepo 依赖治理进阶</h3>
+<p>在 Monorepo 场景下，依赖治理需要额外关注三个问题：</p>
+<p><strong>1. 共享包版本同步</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/shared/package.json</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"@my-org/shared"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.2.0"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// packages/app/package.json</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "dependencies"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "@my-org/shared"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"workspace:^"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>使用 pnpm workspace 协议（<code>workspace:^</code>），发布时自动替换为实际版本号，避免手动同步。</p>
+<p><strong>2. 循环依赖检测</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># 使用 madge 检测循环依赖</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> madge</span><span style="color:#79B8FF"> --circular</span><span style="color:#9ECBFF"> src/</span></span></code></pre>
+<p>发现循环依赖后，将公共部分提取到 <code>shared</code> 包中打破循环。</p>
+<p><strong>3. 共享包内容取舍原则</strong></p>
+<ul>
+<li><strong>应该进 shared</strong>：纯工具函数（<code>isObject</code>、<code>capitalize</code>）、类型定义、通用常量</li>
+<li><strong>不应该进 shared</strong>：业务逻辑、组件实现、框架特定的封装</li>
+<li><strong>判断标准</strong>：如果删除该函数会影响多个包的正常运行，它就应该在 shared 中</li>
+</ul>
+<hr>
+<h2>二、条件编译与环境标志</h2>
+<p><strong>核心思想：在构建时消除不需要的代码，不让调试代码和平台特定逻辑进入生产包。</strong></p>
+<p>Vue 大量使用全局标志（<code>__DEV__</code>、<code>__SSR__</code>、<code>__TEST__</code>）控制代码分支。这些标志不是普通的运行时变量，而是在构建阶段通过 esbuild 的 <code>define</code> 功能直接替换为布尔值。条件分支在打包后会被 Tree Shaking 彻底移除。</p>
+<h3>Vue 的条件编译实现</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// 源码中的写法</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (__DEV__) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">warn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Invalid vnode type'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">  checkComponentName</span><span style="color:#E1E4E8">(validName);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 生产环境构建后，整块代码被直接移除</span></span>
+<span class="line"><span style="color:#6A737D">// （相当于这一段从未存在过）</span></span></code></pre>
+<p>Vue 的 <code>rollup.config.js</code> 中通过 <code>define</code> 配置实现替换：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// rollup.config.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> esbuildPlugin</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> esbuild</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  define: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    __DEV__: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isProduction),</span></span>
+<span class="line"><span style="color:#E1E4E8">    __SSR__: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(target </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'node'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    __TEST__: </span><span style="color:#9ECBFF">'false'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3>前端项目实践</h3>
+<p><strong>1. Vite 中配置构建时环境变量</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// vite.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { defineConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> defineConfig</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">mode</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">  define: {</span></span>
+<span class="line"><span style="color:#6A737D">    // 构建时直接替换，不是运行时 process.env 读取</span></span>
+<span class="line"><span style="color:#E1E4E8">    __DEV__: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(mode </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'development'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    __MOCK__: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(mode </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'development'</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> mode </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'staging'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}));</span></span></code></pre>
+<p>在代码中使用：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// types/global.d.ts 中先声明全局变量</span></span>
+<span class="line"><span style="color:#F97583">declare</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> __DEV__</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">declare</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> __MOCK__</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> boolean</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 业务代码中使用</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (__DEV__) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[Debug] Current user:'</span><span style="color:#E1E4E8">, user);</span></span>
+<span class="line"><span style="color:#B392F0">  setupDevTools</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (__MOCK__) {</span></span>
+<span class="line"><span style="color:#F97583">  import</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'./mock'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">then</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">setupMock</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> setupMock</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><strong>2. .env 文件管理环境差异</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># .env.development</span></span>
+<span class="line"><span style="color:#E1E4E8">VITE_API_BASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">http://localhost:3000</span></span>
+<span class="line"><span style="color:#E1E4E8">VITE_UPLOAD_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">http://localhost:3000/upload</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># .env.production</span></span>
+<span class="line"><span style="color:#E1E4E8">VITE_API_BASE_URL</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">https://api.example.com</span></span>
+<span class="line"><span style="color:#E1E4E8">VITE_UPLOAD_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">https://cdn.example.com/upload</span></span></code></pre>
+<blockquote>
+<p>⚠️ <strong>关键区别</strong>：<code>define</code> 中的变量在构建时被替换（代码会直接消失），而 <code>import.meta.env</code> 中的变量是运行时读取的字符串。调试代码和开发期工具应该用 <code>define</code>，API 地址等运行时配置用 <code>.env</code>。</p>
+</blockquote>
+<p><strong>3. 验证产物是否干净</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># 构建后搜索残留的开发代码</span></span>
+<span class="line"><span style="color:#B392F0">grep</span><span style="color:#79B8FF"> -n</span><span style="color:#9ECBFF"> "console.log\|console.warn"</span><span style="color:#9ECBFF"> dist/assets/</span><span style="color:#79B8FF">*</span><span style="color:#9ECBFF">.js</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 或使用 rollup-plugin-visualizer 分析产物组成</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> vite-bundle-visualizer</span></span></code></pre>
+<p>理想的构建产物中，<code>__DEV__</code> 包裹的代码块应该完全消失，不占任何体积。</p>
+<hr>
+<h2>三、平台无关的测试策略</h2>
+<p><strong>核心思想：测试粒度与运行时环境解耦，能用 Node 跑的测试绝不走浏览器。</strong></p>
+<h3>Vue 的三层测试架构</h3>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>运行环境</th>
+<th>测试范围</th>
+<th>执行速度</th>
+<th>占比建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单元测试</td>
+<td>Node (纯 JS)</td>
+<td>逻辑、算法、编译器输出</td>
+<td>⚡ 极快（毫秒级）</td>
+<td>~70%</td>
+</tr>
+<tr>
+<td>组件测试</td>
+<td>jsdom</td>
+<td>DOM 操作、事件处理、组件交互</td>
+<td>🔄 中等（秒级）</td>
+<td>~20%</td>
+</tr>
+<tr>
+<td>E2E 测试</td>
+<td>Puppeteer / Playwright</td>
+<td>真实浏览器行为、跨页面流程</td>
+<td>🐢 较慢（分钟级）</td>
+<td>~10%</td>
+</tr>
+</tbody>
+</table>
+<p>Vue 最巧妙的设计是 <code>runtime-test</code> 包——用纯 JavaScript 对象模拟 DOM，让 VDOM 的 <code>mount</code>、<code>patch</code> 等核心逻辑在 Node 环境中即可完成测试，完全不依赖 jsdom 或浏览器。</p>
+<h3>runtime-test 的核心原理</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// 用普通 JS 对象模拟 DOM 节点</span></span>
+<span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> TestElement</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  nodeType</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  tagName</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  props</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#FFAB70">  children</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TestNode</span><span style="color:#E1E4E8">[];</span></span>
+<span class="line"><span style="color:#FFAB70">  parentNode</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TestNode</span><span style="color:#F97583"> |</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  eventListeners</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Function</span><span style="color:#E1E4E8">[]>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> createElement</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">tag</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TestElement</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    nodeType: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tagName: tag.</span><span style="color:#B392F0">toUpperCase</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    props: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">    children: [],</span></span>
+<span class="line"><span style="color:#E1E4E8">    parentNode: </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    eventListeners: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> patchVNode</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">oldVNode</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TestNode</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">newVNode</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TestNode</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">  // VDOM diff 逻辑：完全在纯 JS 环境中执行</span></span>
+<span class="line"><span style="color:#6A737D">  // 不涉及任何浏览器 API</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>借助这个模拟层，Vue 的 VDOM 测试可以在 <strong>毫秒级</strong> 完成，而不需要启动 jsdom。</p>
+<h3>前端项目实践</h3>
+<p><strong>1. Vitest 统一测试框架配置</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// vitest.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { defineConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vitest/config'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> defineConfig</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  test: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    environment: </span><span style="color:#9ECBFF">'jsdom'</span><span style="color:#E1E4E8">,      </span><span style="color:#6A737D">// 组件测试默认用 jsdom</span></span>
+<span class="line"><span style="color:#E1E4E8">    globals: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,             </span><span style="color:#6A737D">// 无需手动导入 describe/it</span></span>
+<span class="line"><span style="color:#E1E4E8">    coverage: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      reporter: [</span><span style="color:#9ECBFF">'text'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'json'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'html'</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">      thresholds: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        lines: </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        functions: </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        branches: </span><span style="color:#79B8FF">70</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        statements: </span><span style="color:#79B8FF">80</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p><strong>2. 分层测试代码示例</strong></p>
+<p>纯逻辑测试（Node 环境，最快）：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// composables/usePagination.spec.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { describe, it, expect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vitest'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { usePagination } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './usePagination'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">describe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'usePagination'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should calculate correct page range'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">pageRange</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> usePagination</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      total: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      pageSize: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      currentPage: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(pageRange.value).</span><span style="color:#B392F0">toEqual</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">7</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should handle edge case: total is 0'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">totalPages</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> usePagination</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      total: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      pageSize: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      currentPage: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(totalPages.value).</span><span style="color:#B392F0">toBe</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>组件测试（jsdom，测试 DOM 交互）：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// components/Pagination.spec.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { describe, it, expect } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vitest'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { mount } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@vue/test-utils'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Pagination </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> './Pagination.vue'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">describe</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Pagination.vue'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should emit page-change event when clicking page number'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> wrapper</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> mount</span><span style="color:#E1E4E8">(Pagination, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      props: { total: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, pageSize: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, modelValue: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> wrapper.</span><span style="color:#B392F0">find</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[data-testid="page-3"]'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">trigger</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'click'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(wrapper.</span><span style="color:#B392F0">emitted</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'update:modelValue'</span><span style="color:#E1E4E8">)).</span><span style="color:#B392F0">toBeTruthy</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(wrapper.</span><span style="color:#B392F0">emitted</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'update:modelValue'</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]).</span><span style="color:#B392F0">toEqual</span><span style="color:#E1E4E8">([</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  it</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'should disable prev button on first page'</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> wrapper</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> mount</span><span style="color:#E1E4E8">(Pagination, {</span></span>
+<span class="line"><span style="color:#E1E4E8">      props: { total: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">, pageSize: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">, modelValue: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> prevButton</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> wrapper.</span><span style="color:#B392F0">find</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'[data-testid="prev-btn"]'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">    expect</span><span style="color:#E1E4E8">(prevButton.</span><span style="color:#B392F0">attributes</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'disabled'</span><span style="color:#E1E4E8">)).</span><span style="color:#B392F0">toBeDefined</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p><strong>3. CI 中分层执行策略</strong></p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># .github/workflows/ci.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">CI</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">pull_request</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">  # PR 阶段只跑单元测试（最快，2-3 分钟）</span></span>
+<span class="line"><span style="color:#85E89D">  unit-test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test:unit</span><span style="color:#6A737D">        # 只跑 Node 环境的测试</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  # 合并到 main 后跑全量测试</span></span>
+<span class="line"><span style="color:#85E89D">  full-test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    if</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">github.ref == 'refs/heads/main'</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">unit-test</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test:unit</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test:component</span><span style="color:#6A737D">   # jsdom 测试</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test:e2e</span><span style="color:#6A737D">         # Playwright 测试</span></span></code></pre>
+<blockquote>
+<p>💡 <strong>关键原则</strong>：</p>
+<ul>
+<li><strong>测试下沉</strong>：能用 Node 就不走 jsdom，能走 jsdom 就不开浏览器</li>
+<li><strong>80/20 法则</strong>：80% 的测试应该是单元测试，它们运行快、定位准</li>
+<li><strong>给测试加 <code>data-testid</code></strong>：不要用 class 或文本来定位元素，避免样式重构导致测试失败</li>
+</ul>
+</blockquote>
+<hr>
+<h2>四、代码规范的三层防护</h2>
+<p><strong>核心思想：规范不是写在文档里的建议，而是焊死在工具链里的强制约束。</strong></p>
+<p>Vue 的 ESLint 配置是编译时的硬约束，不是可忽略的建议。这套思路推广到前端项目中，可以构建三层防护体系。</p>
+<h3>三层防护链路</h3>
+<pre><code>第一层：编辑器实时提示  →  第二层：提交前自动修复  →  第三层：CI 红线拦截
+    （最快反馈）              （兜底机制）               （最终防线）
+</code></pre>
+<h3>第一层：编辑器实时提示</h3>
+<p>VSCode 配置 <code>.vscode/settings.json</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "editor.formatOnSave"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "editor.defaultFormatter"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"esbenp.prettier-vscode"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "editor.codeActionsOnSave"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "source.fixAll.eslint"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"explicit"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "eslint.validate"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"javascript"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"typescript"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"vue"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>第二层：pre-commit Hook</h3>
+<p>安装依赖：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> husky</span><span style="color:#9ECBFF"> lint-staged</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Husky v9 初始化</span></span>
+<span class="line"><span style="color:#B392F0">npx</span><span style="color:#9ECBFF"> husky</span><span style="color:#9ECBFF"> init</span></span></code></pre>
+<p>配置 <code>package.json</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "lint-staged"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "*.{ts,vue}"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"eslint --fix"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">    "*.{css,scss}"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"stylelint --fix"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">    "*"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"prettier --write --ignore-unknown"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：lint-staged v10+ 会自动处理 <code>git add</code>，不需要在配置中手动添加。</p>
+</blockquote>
+<p>创建 hook：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># Husky v9 语法</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> 'npx lint-staged'</span><span style="color:#F97583"> ></span><span style="color:#9ECBFF"> .husky/pre-commit</span></span></code></pre>
+<h3>第三层：CI 强制检查</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># .github/workflows/lint.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Code Quality</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">push</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">pull_request</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  lint</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v2</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install --frozen-lockfile</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm lint</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm type-check</span><span style="color:#6A737D">    # 同时跑 TypeScript 类型检查</span></span></code></pre>
+<h3>构建时强制拦截</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// vite.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { defineConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> eslint </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite-plugin-eslint2'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> defineConfig</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  plugins: [</span></span>
+<span class="line"><span style="color:#B392F0">    eslint</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      lintOnStart: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,        </span><span style="color:#6A737D">// 启动时检查</span></span>
+<span class="line"><span style="color:#E1E4E8">      failOnWarning: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,      </span><span style="color:#6A737D">// ⚠️ Warning 也会中断构建</span></span>
+<span class="line"><span style="color:#E1E4E8">    }),</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<blockquote>
+<p>💡 <strong>建议</strong>：本地开发时 <code>failOnWarning</code> 可以设为 <code>false</code>，但在 CI 构建脚本中通过 <code>ESLINT_FAIL_ON_WARNING=true pnpm build</code> 强制开启。</p>
+</blockquote>
+<hr>
+<h2>五、Commit 规范与发布自动化</h2>
+<p><strong>核心思想：让提交信息成为可解析的数据源，驱动 CHANGELOG 生成和版本管理。</strong></p>
+<h3>Commit 规范格式</h3>
+<p>采用 Angular Commit Convention：</p>
+<pre><code>type(scope): subject
+
+[可选的 body]
+
+[可选的 footer]
+</code></pre>
+<p>示例：</p>
+<pre><code>feat(compiler): add template optimization for v-if
+
+The compiler now generates optimized code for v-if
+blocks with single static children.
+
+Closes #123
+</code></pre>
+<h3>用 Husky 拦截不规范提交</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// scripts/verify-commit.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fs</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'fs'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> path</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'path'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> msgPath</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> path.</span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'.git/COMMIT_EDITMSG'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> fs.</span><span style="color:#B392F0">readFileSync</span><span style="color:#E1E4E8">(msgPath, </span><span style="color:#9ECBFF">'utf-8'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> commitRE</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> /</span><span style="color:#F97583">^</span><span style="color:#DBEDFF">(revert: )</span><span style="color:#F97583">?</span><span style="color:#DBEDFF">(feat</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">fix</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">docs</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">dx</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">style</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">refactor</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">perf</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">test</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">workflow</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">build</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">ci</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">chore</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">types</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">wip)(</span><span style="color:#85E89D;font-weight:bold">\(</span><span style="color:#79B8FF">.</span><span style="color:#F97583">+</span><span style="color:#85E89D;font-weight:bold">\)</span><span style="color:#DBEDFF">)</span><span style="color:#F97583">?</span><span style="color:#DBEDFF">: </span><span style="color:#79B8FF">.</span><span style="color:#F97583">{1,50}</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">commitRE.</span><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(msg)) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">  ❌ Invalid commit message format.</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'  Expected format: type(scope): subject</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'  Valid types:'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    feat     → New feature (triggers minor version)'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    fix      → Bug fix (triggers patch version)'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    refactor → Code change that neither fixes a bug nor adds a feature'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    docs     → Documentation changes'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    test     → Adding or correcting tests'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    chore    → Build tools and dependency changes</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'  Examples:'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    feat(compiler): add template optimization'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    fix(v-model): handle blur event correctly'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'    docs: update installation guide</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>配置 hook：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># Husky v9</span></span>
+<span class="line"><span style="color:#79B8FF">echo</span><span style="color:#9ECBFF"> 'node scripts/verify-commit.js'</span><span style="color:#F97583"> ></span><span style="color:#9ECBFF"> .husky/commit-msg</span></span></code></pre>
+<h3>语义化版本映射</h3>
+<table>
+<thead>
+<tr>
+<th>提交类型</th>
+<th>版本变化</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feat(xxx):</code></td>
+<td>minor +1</td>
+<td><code>1.2.0</code> → <code>1.3.0</code></td>
+</tr>
+<tr>
+<td><code>fix(xxx):</code></td>
+<td>patch +1</td>
+<td><code>1.2.0</code> → <code>1.2.1</code></td>
+</tr>
+<tr>
+<td><code>BREAKING CHANGE:</code> in footer</td>
+<td>major +1</td>
+<td><code>1.2.0</code> → <code>2.0.0</code></td>
+</tr>
+<tr>
+<td>手动指定</td>
+<td>任意版本</td>
+<td>交互式选择</td>
+</tr>
+</tbody>
+</table>
+<p><strong>声明破坏性变更</strong>：</p>
+<pre><code>fix(api): remove deprecated /old/endpoint
+
+BREAKING CHANGE: The /old/endpoint has been removed.
+Please migrate to /v2/endpoint before upgrading.
+</code></pre>
+<h3>自动化发布流水线</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// scripts/release.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">prompt</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'enquirer'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> semver</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'semver'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">execSync</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'child_process'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fs</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'fs'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> path</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'path'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pkg</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(fs.</span><span style="color:#B392F0">readFileSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'package.json'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'utf-8'</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> current</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> pkg.version;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> increments</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">'patch'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'minor'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'major'</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">release</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> prompt</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">'select'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#9ECBFF">'release'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    message: </span><span style="color:#9ECBFF">`Current: v${</span><span style="color:#E1E4E8">current</span><span style="color:#9ECBFF">}. Select release type:`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    choices: increments.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">i</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: </span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">i</span><span style="color:#9ECBFF">} (${</span><span style="color:#E1E4E8">semver</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">inc</span><span style="color:#9ECBFF">(</span><span style="color:#E1E4E8">current</span><span style="color:#9ECBFF">, </span><span style="color:#E1E4E8">i</span><span style="color:#9ECBFF">)</span><span style="color:#9ECBFF">})`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      value: i,</span></span>
+<span class="line"><span style="color:#E1E4E8">    })),</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> type</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> release.</span><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">^</span><span style="color:#DBEDFF">(</span><span style="color:#79B8FF">\w</span><span style="color:#F97583">+</span><span style="color:#DBEDFF">)</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> target</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> semver.</span><span style="color:#B392F0">inc</span><span style="color:#E1E4E8">(current, type);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">confirm</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> prompt</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">'confirm'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#9ECBFF">'confirm'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    message: </span><span style="color:#9ECBFF">`Release v${</span><span style="color:#E1E4E8">target</span><span style="color:#9ECBFF">}?`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    initial: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">confirm) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'Cancelled.'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 更新版本号</span></span>
+<span class="line"><span style="color:#E1E4E8">  pkg.version </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> target;</span></span>
+<span class="line"><span style="color:#E1E4E8">  fs.</span><span style="color:#B392F0">writeFileSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'package.json'</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(pkg, </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#9ECBFF"> '</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 生成 CHANGELOG</span></span>
+<span class="line"><span style="color:#B392F0">  execSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'pnpm changelog'</span><span style="color:#E1E4E8">, { stdio: </span><span style="color:#9ECBFF">'inherit'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // Git 提交、打标签、推送</span></span>
+<span class="line"><span style="color:#B392F0">  execSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`git add -A &#x26;&#x26; git commit -m "release: v${</span><span style="color:#E1E4E8">target</span><span style="color:#9ECBFF">}"`</span><span style="color:#E1E4E8">, { stdio: </span><span style="color:#9ECBFF">'inherit'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#B392F0">  execSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`git tag v${</span><span style="color:#E1E4E8">target</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">  execSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'git push &#x26;&#x26; git push --tags'</span><span style="color:#E1E4E8">, { stdio: </span><span style="color:#9ECBFF">'inherit'</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">🎉 v${</span><span style="color:#E1E4E8">target</span><span style="color:#9ECBFF">} released!`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">main</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">err</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(err);</span></span>
+<span class="line"><span style="color:#E1E4E8">  process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p><code>package.json</code> 配置：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "scripts"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "release"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"node scripts/release.js"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "changelog"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"conventional-changelog -p angular -i CHANGELOG.md -s"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>GitHub Actions 自动发布</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D"># .github/workflows/release.yml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Release</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    tags</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">'v*'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">permissions</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  contents</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">write</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  test</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v2</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install --frozen-lockfile</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm lint</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm build</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm test</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  publish</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    needs</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">test</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    environment</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Release</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          fetch-depth</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#6A737D">    # CHANGELOG 生成需要完整历史</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm/action-setup@v2</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-node@v4</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          registry-url</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'https://registry.npmjs.org'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pnpm'</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm install --frozen-lockfile</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm build</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">run</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">pnpm publish --no-git-checks</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          NODE_AUTH_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.NPM_TOKEN }}</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Create GitHub Release</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/create-release@v1</span></span>
+<span class="line"><span style="color:#85E89D">        env</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          GITHUB_TOKEN</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ secrets.GITHUB_TOKEN }}</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          tag_name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ github.ref_name }}</span></span>
+<span class="line"><span style="color:#85E89D">          release_name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">${{ github.ref_name }}</span></span>
+<span class="line"><span style="color:#85E89D">          body</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            See [CHANGELOG.md](./CHANGELOG.md) for details.</span></span></code></pre>
+<hr>
+<h2>总结：在自己项目中最值得优先落地的 3 件事</h2>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>事项</th>
+<th>投入</th>
+<th>收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🥇 P0</td>
+<td><strong>依赖方向约束</strong></td>
+<td>低（ESLint 规则）</td>
+<td>极高（防止架构腐化）</td>
+</tr>
+<tr>
+<td>🥈 P1</td>
+<td><strong>测试分层</strong></td>
+<td>中（配置 + 补测试）</td>
+<td>高（缩短反馈循环）</td>
+</tr>
+<tr>
+<td>🥉 P2</td>
+<td><strong>规范自动化</strong></td>
+<td>低（ Husky + CI）</td>
+<td>高（减少人为失误）</td>
+</tr>
+</tbody>
+</table>
+<h3>1. 画好"依赖地图"</h3>
+<p>用 <code>import/no-restricted-paths</code> 明确每个目录的职责和依赖方向。这是防止代码腐化最有效、成本最低的手段。</p>
+<h3>2. 测试分层守护</h3>
+<p>单元测试（Node）→ 组件测试（jsdom）→ E2E（浏览器），按速度由快到慢、覆盖范围由小到大递进。CI 中按分支策略分层执行，PR 阶段只跑单元测试，合并后跑全量。</p>
+<h3>3. 规范焊死在工具链</h3>
+<p>能自动化的不要靠人记，能编译时拦截的不要留到运行时。Commit 规范 + CHANGELOG 自动生成 + 语义化版本，让发布变成一条命令的事。</p>
+<hr>
+<h2>参考与延伸阅读</h2>
+<ul>
+<li><a href="https://github.com/vuejs/core">Vue 源码仓库</a> —— 工程化设计的最佳教材</li>
+<li><a href="https://www.conventionalcommits.org/">Conventional Commits 规范</a></li>
+<li><a href="https://semver.org/">Semantic Versioning</a></li>
+<li><a href="https://vitest.dev/">Vitest 文档</a></li>
+<li><a href="https://pnpm.io/workspaces">pnpm Workspace 协议</a></li>
+</ul>0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{}],["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16","children":[["$","header",null,{"className":"glass gradient-border rounded-2xl p-6 sm:p-10 mb-10","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-subtle text-primary-hover mb-5","children":"Vue"}],["$","h1",null,{"className":"text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6","children":"Vue 源码中的工程化设计：五个可复用的团队开发范式"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-text-secondary","children":[["$","span",null,{"className":"inline-flex items-center gap-1.5","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-calendar w-4 h-4 text-text-muted","children":[["$","path","1cmpym",{"d":"M8 2v4"}],["$","path","4m81vk",{"d":"M16 2v4"}],["$","rect","1hopcy",{"width":"18","height":"18","x":"3","y":"4","rx":"2"}],["$","path","8toen8",{"d":"M3 10h18"}],"$undefined"]}],["$","time",null,{"dateTime":"2025-03-28T00:00:00.000Z","children":["发布于 ","2025年3月28日"]}]]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-6 pt-6 border-t border-border-default","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-tag w-4 h-4 text-text-muted mt-1","children":[["$","path","vktsd0",{"d":"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"}],["$","circle","kqv944",{"cx":"7.5","cy":"7.5","r":".5","fill":"currentColor"}],"$undefined"]}],[["$","$L3","vue",{"href":"/tags/vue","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","vue"]}],["$","$L3","工程化",{"href":"/tags/%E5%B7%A5%E7%A8%8B%E5%8C%96","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","工程化"]}],["$","$L3","源码",{"href":"/tags/%E6%BA%90%E7%A0%81","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","源码"]}],["$","$L3","架构",{"href":"/tags/%E6%9E%B6%E6%9E%84","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","架构"]}],["$","$L3","团队开发",{"href":"/tags/%E5%9B%A2%E9%98%9F%E5%BC%80%E5%8F%91","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","团队开发"]}]]]}]]}],["$","div",null,{"className":"prose prose-lg max-w-none","children":["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$4"}}]}],"$L5"]}]],["$L6"],"$L7"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"K-oelemjRgBvjIUoHKFxR"}
+5:["$","div",null,{"className":"mt-12 pt-8 border-t border-border-default","children":["$","$L3",null,{"href":"/blog","className":"group inline-flex items-center text-sm font-medium text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-left w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform","children":[["$","path","1l729n",{"d":"m12 19-7-7 7-7"}],["$","path","x3x0zl",{"d":"M19 12H5"}],"$undefined"]}],"返回文章列表"]}]}]
+6:["$","script","script-0",{"src":"/_next/static/chunks/0pcf14d5923zl.js","async":true}]
+7:["$","$L8",null,{"children":["$","$9",null,{"name":"Next.MetadataOutlet","children":"$@a"}]}]
+a:null

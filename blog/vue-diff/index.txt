@@ -1,0 +1,371 @@
+1:"$Sreact.fragment"
+2:I[59919,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+3:I[2971,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+4:I[76073,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+5:I[60135,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+6:I[26747,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],""]
+13:I[56881,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default",1]
+:HL["/_next/static/chunks/2bqyy2s-o99vn.css","style"]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap","style"]
+0:{"P":null,"c":["","blog","vue-diff",""],"q":"","i":false,"f":[[["",{"children":["blog",{"children":[["slug","vue-diff","d",null],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2bqyy2s-o99vn.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/0551z_430tgpd.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/3n3yvff_6qsfw.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","suppressHydrationWarning":true,"children":[["$","head",null,{"children":[["$","link",null,{"rel":"icon","type":"image/svg+xml","href":"/favicon.svg"}],["$","link",null,{"rel":"preconnect","href":"https://fonts.googleapis.com"}],["$","link",null,{"rel":"preconnect","href":"https://fonts.gstatic.com","crossOrigin":"anonymous"}],["$","link",null,{"href":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap","rel":"stylesheet"}]]}],["$","body",null,{"className":"geist_d214ea34-module__gpj08a__variable min-h-screen flex flex-col","children":["$","$L2",null,{"children":[["$","$L3",null,{}],["$","main",null,{"className":"flex-1","children":["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-[60vh] flex items-center justify-center px-4","children":["$","div",null,{"className":"text-center glass gradient-border rounded-3xl p-10 sm:p-16 max-w-md","children":[["$","h1",null,{"className":"text-7xl sm:text-8xl font-bold text-text-primary mb-4 font-display","children":"404"}],["$","p",null,{"className":"text-xl text-text-secondary mb-8","children":"页面找不到了"}],["$","$L6",null,{"href":"/","className":"inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-medium shadow-lg shadow-primary-glow hover:bg-primary-hover hover:-translate-y-0.5 transition-all duration-200","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-house w-4 h-4","children":[["$","path","5wwlr5",{"d":"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"}],["$","path","1d0kgt",{"d":"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"}],"$undefined"]}],"返回首页"]}]]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","footer",null,{"className":"relative mt-auto","children":[["$","div",null,{"className":"absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border-strong to-transparent"}],["$","div",null,{"className":"glass border-t-0","children":["$","div",null,{"className":"max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8","children":["$","div",null,{"className":"flex flex-col sm:flex-row items-center justify-between gap-6","children":[["$","div",null,{"className":"flex flex-col sm:flex-row items-center gap-4 sm:gap-6","children":[["$","p",null,{"className":"text-sm text-text-muted","children":["© ",2026," shen. 个人博客"]}],["$","div",null,{"className":"flex items-center gap-3","children":[["$","$L6","/llms.txt",{"href":"/llms.txt","className":"inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-file-text w-3.5 h-3.5","children":[["$","path","1rqfz7",{"d":"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"}],["$","path","tnqrlb",{"d":"M14 2v4a2 2 0 0 0 2 2h4"}],["$","path","b1mrlr",{"d":"M10 9H8"}],["$","path","t4e002",{"d":"M16 13H8"}],["$","path","z1uh3a",{"d":"M16 17H8"}],"$undefined"]}],"/llms.txt"]}],["$","$L6","/llms-full.txt",{"href":"/llms-full.txt","className":"inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-bot w-3.5 h-3.5","children":["$L7","$L8","$L9","$La","$Lb","$Lc","$undefined"]}],"/llms-full.txt"]}]]}]]}],"$Ld"]}]}]}]]}]]}]}]]}]]}],{"children":["$Le",{"children":["$Lf",{"children":["$L10",{},null,false,null]},null,false,"$@11"]},null,false,"$@11"]},null,false,null],"$L12",false]],"m":"$undefined","G":["$13",["$L14"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"K-oelemjRgBvjIUoHKFxR"}
+16:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"OutletBoundary"]
+17:"$Sreact.suspense"
+1a:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"ViewportBoundary"]
+1c:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"MetadataBoundary"]
+7:["$","path","hb8ula",{"d":"M12 8V4H8"}]
+8:["$","rect","enze0r",{"width":"16","height":"12","x":"4","y":"8","rx":"2"}]
+9:["$","path","vft8re",{"d":"M2 14h2"}]
+a:["$","path","4cs60a",{"d":"M20 14h2"}]
+b:["$","path","1xurst",{"d":"M15 13v2"}]
+c:["$","path","rq6x2g",{"d":"M9 13v2"}]
+d:["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-github w-4 h-4","children":[["$","path","tonef",{"d":"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}],["$","path","9comsn",{"d":"M9 18c-4.51 2-5-2-7-2"}],"$undefined"]}],["$","span",null,{"children":"GitHub"}]]}]
+e:["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+f:["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+10:["$","$1","c",{"children":["$L15",[["$","script","script-0",{"src":"/_next/static/chunks/0pcf14d5923zl.js","async":true,"nonce":"$undefined"}]],["$","$L16",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]]}]
+19:[]
+11:"$W19"
+12:["$","$1","h",{"children":[null,["$","$L1a",null,{"children":"$L1b"}],["$","div",null,{"hidden":true,"children":["$","$L1c",null,{"children":["$","$17",null,{"name":"Next.Metadata","children":"$L1d"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+14:["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2bqyy2s-o99vn.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+1b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+1e:I[23880,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],"default"]
+20:I[39780,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"IconMark"]
+15:[["$","$L1e",null,{}],["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16","children":[["$","header",null,{"className":"glass gradient-border rounded-2xl p-6 sm:p-10 mb-10","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-subtle text-primary-hover mb-5","children":"Vue"}],["$","h1",null,{"className":"text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6","children":"Vue2和Vue3中diff算法对比"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-text-secondary","children":[["$","span",null,{"className":"inline-flex items-center gap-1.5","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-calendar w-4 h-4 text-text-muted","children":[["$","path","1cmpym",{"d":"M8 2v4"}],["$","path","4m81vk",{"d":"M16 2v4"}],["$","rect","1hopcy",{"width":"18","height":"18","x":"3","y":"4","rx":"2"}],["$","path","8toen8",{"d":"M3 10h18"}],"$undefined"]}],["$","time",null,{"dateTime":"2024-03-01T00:00:00.000Z","children":["发布于 ","2024年3月1日"]}]]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-6 pt-6 border-t border-border-default","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-tag w-4 h-4 text-text-muted mt-1","children":[["$","path","vktsd0",{"d":"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"}],["$","circle","kqv944",{"cx":"7.5","cy":"7.5","r":".5","fill":"currentColor"}],"$undefined"]}],[["$","$L6","vue",{"href":"/tags/vue","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","vue"]}],["$","$L6","diff",{"href":"/tags/diff","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","diff"]}],["$","$L6","算法",{"href":"/tags/%E7%AE%97%E6%B3%95","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","算法"]}],["$","$L6","虚拟DOM",{"href":"/tags/%E8%99%9A%E6%8B%9FDOM","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","虚拟DOM"]}]]]}]]}],["$","div",null,{"className":"prose prose-lg max-w-none","children":"$L1f"}],["$","div",null,{"className":"mt-12 pt-8 border-t border-border-default","children":["$","$L6",null,{"href":"/blog","className":"group inline-flex items-center text-sm font-medium text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-left w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform","children":[["$","path","1l729n",{"d":"m12 19-7-7 7-7"}],["$","path","x3x0zl",{"d":"M19 12H5"}],"$undefined"]}],"返回文章列表"]}]}]]}]]
+18:null
+1d:[["$","title","0",{"children":"Vue2和Vue3中diff算法对比 | shen 的博客"}],["$","meta","1",{"name":"description","content":"详细对比 Vue2 和 Vue3 的 diff 算法实现原理"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L20","3",{}]]
+21:T86c0,<h1>diff算法</h1>
+<p>Diff 算法是 Vue 虚拟 DOM（Virtual DOM）渲染器的核心机制，其目标是用<strong>最小的性能代价</strong>找出新旧虚拟节点（VNode）之间的差异，并高效地更新真实 DOM。完整对比两棵 DOM 树的差异时间复杂度为 O(n³)，这在实际应用中是性能灾难。Vue 通过一系列优化策略将复杂度降至 O(n)，而 Vue 3 在此基础上进一步优化了算法实现。</p>
+<hr>
+<h2>vue2 diff算法</h2>
+<h3>核心思想：双端比较（Double-Ended Diff）</h3>
+<p>Vue 2 的 diff 算法基于 snabbdom 修改而来，核心策略是<strong>同层比较</strong>和<strong>双端比较</strong>。算法通过四个指针分别指向新旧列表的头尾，进行四种假设性匹配，尽可能复用已有的 DOM 节点。</p>
+<h4>四个核心指针</h4>
+<table>
+<thead>
+<tr>
+<th>指针</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>oldStartIdx</code></td>
+<td>指向旧子节点列表头部</td>
+</tr>
+<tr>
+<td><code>oldEndIdx</code></td>
+<td>指向旧子节点列表尾部</td>
+</tr>
+<tr>
+<td><code>newStartIdx</code></td>
+<td>指向新子节点列表头部</td>
+</tr>
+<tr>
+<td><code>newEndIdx</code></td>
+<td>指向新子节点列表尾部</td>
+</tr>
+</tbody>
+</table>
+<h4>五步匹配策略</h4>
+<p>算法在 <code>while</code> 循环中运行，终止条件是任一方的头指针越过尾指针。每一轮循环按<strong>固定顺序</strong>进行以下匹配：</p>
+<p><strong>① 头-头匹配（oldStart vs newStart）</strong></p>
+<p>检查两个列表的第一个节点是否相同（key 和 tag 均相同）。若匹配，调用 <code>patchVnode</code> 更新节点，两个 <code>Start</code> 指针同时后移（+1）。</p>
+<p><strong>② 尾-尾匹配（oldEnd vs newEnd）</strong></p>
+<p>检查两个列表的最后一个节点是否相同。若匹配，调用 <code>patchVnode</code> 更新节点，两个 <code>End</code> 指针同时前移（-1）。</p>
+<p><strong>③ 旧头-新尾匹配（oldStart vs newEnd）</strong></p>
+<p>适用于"首节点移到了尾部"的场景。若匹配，更新节点后将 <code>oldStart</code> 指向的 DOM 移动到 <code>oldEnd</code> 对应 DOM 的后面。<code>oldStartIdx++</code>，<code>newEndIdx--</code>。</p>
+<p><strong>④ 旧尾-新头匹配（oldEnd vs newStart）</strong></p>
+<p>适用于"尾节点移到了头部"的场景。若匹配，更新节点后将 <code>oldEnd</code> 指向的 DOM 移动到 <code>oldStart</code> 对应 DOM 的前面。<code>oldEndIdx--</code>，<code>newStartIdx++</code>。</p>
+<p><strong>⑤ 乱序匹配</strong></p>
+<p>若以上四种匹配全部失败，则以旧列表剩余节点的 <code>key</code> 建立哈希映射表，用新头节点的 <code>key</code> 去查找：</p>
+<ul>
+<li><strong>找到了</strong>：复用该节点，将其 DOM 移动到 <code>oldStart</code> 前面</li>
+<li><strong>没找到</strong>：创建新 DOM 节点插入到 <code>newStartIdx</code> 位置</li>
+</ul>
+<h4>循环结束后的收尾</h4>
+<ul>
+<li><strong>旧列表先遍历完</strong>（<code>oldStartIdx > oldEndIdx</code>）：新列表剩余节点为新增，批量挂载</li>
+<li><strong>新列表先遍历完</strong>（<code>newStartIdx > newEndIdx</code>）：旧列表剩余节点为多余，批量卸载</li>
+</ul>
+<h4>代码流程示意</h4>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> updateChildren</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">oldCh</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">newCh</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> oldStartIdx </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">, newStartIdx </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> oldEndIdx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">, newEndIdx </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> oldStartVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">], newStartVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">];</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> oldEndVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh[oldEndIdx], newEndVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh[newEndIdx];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  while</span><span style="color:#E1E4E8"> (oldStartIdx </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> oldEndIdx </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> newStartIdx </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> newEndIdx) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sameVnode</span><span style="color:#E1E4E8">(oldStartVnode, newStartVnode)) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 头-头匹配</span></span>
+<span class="line"><span style="color:#B392F0">      patchVnode</span><span style="color:#E1E4E8">(oldStartVnode, newStartVnode);</span></span>
+<span class="line"><span style="color:#E1E4E8">      oldStartVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh[</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">oldStartIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">      newStartVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh[</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">newStartIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sameVnode</span><span style="color:#E1E4E8">(oldEndVnode, newEndVnode)) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 尾-尾匹配</span></span>
+<span class="line"><span style="color:#B392F0">      patchVnode</span><span style="color:#E1E4E8">(oldEndVnode, newEndVnode);</span></span>
+<span class="line"><span style="color:#E1E4E8">      oldEndVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh[</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">oldEndIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">      newEndVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh[</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">newEndIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sameVnode</span><span style="color:#E1E4E8">(oldStartVnode, newEndVnode)) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 旧头-新尾匹配（需要移动DOM）</span></span>
+<span class="line"><span style="color:#B392F0">      patchVnode</span><span style="color:#E1E4E8">(oldStartVnode, newEndVnode);</span></span>
+<span class="line"><span style="color:#E1E4E8">      parentElm.</span><span style="color:#B392F0">insertBefore</span><span style="color:#E1E4E8">(oldStartVnode.el, oldEndVnode.el.nextSibling);</span></span>
+<span class="line"><span style="color:#E1E4E8">      oldStartVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh[</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">oldStartIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">      newEndVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh[</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">newEndIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">sameVnode</span><span style="color:#E1E4E8">(oldEndVnode, newStartVnode)) {</span></span>
+<span class="line"><span style="color:#6A737D">      // 旧尾-新头匹配（需要移动DOM）</span></span>
+<span class="line"><span style="color:#B392F0">      patchVnode</span><span style="color:#E1E4E8">(oldEndVnode, newStartVnode);</span></span>
+<span class="line"><span style="color:#E1E4E8">      parentElm.</span><span style="color:#B392F0">insertBefore</span><span style="color:#E1E4E8">(oldEndVnode.el, oldStartVnode.el);</span></span>
+<span class="line"><span style="color:#E1E4E8">      oldEndVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> oldCh[</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">oldEndIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">      newStartVnode </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newCh[</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">newStartIdx];</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 乱序匹配：建立key映射表查找</span></span>
+<span class="line"><span style="color:#6A737D">      // ...</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 处理新增或删除的节点</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (oldStartIdx </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> oldEndIdx) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 挂载新节点</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (newStartIdx </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> newEndIdx) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 卸载旧节点</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h4>Vue 2 diff 算法的特点与局限</h4>
+<p><strong>优势：</strong></p>
+<ul>
+<li>对于列表在两端增删的场景（最常见），双端对比能迅速收窄范围</li>
+<li>通过头尾交叉检测，能有效优化"倒序"或"首尾互换"场景</li>
+<li>时间复杂度为 O(n)，相比简单 diff 的 O(n²) 大幅优化</li>
+</ul>
+<p><strong>局限：</strong></p>
+<ul>
+<li>处理长列表的复杂乱序时，频繁创建 key 映射表存在额外性能开销</li>
+<li>无法保证 DOM 移动次数是最少的，偶尔会产生多余的移动操作</li>
+<li>全量对比属性，无法精准只对比变化的部分</li>
+</ul>
+<hr>
+<h2>vue3 diff算法</h2>
+<h3>核心思想：快速 Diff + 最长递增子序列（Quick Diff + LIS）</h3>
+<p>Vue 3 借鉴了 inferno 框架的算法思路，引入了<strong>预处理</strong>和**最长递增子序列（LIS）**算法。其核心思想是：先通过预处理缩小需要处理的乱序区间，再对剩余节点使用 LIS 算法找出相对顺序不需要改变的最大集合，只移动不在序列中的节点，从而将 DOM 移动次数降至理论上的最低值。</p>
+<h4>五步优化策略</h4>
+<p><strong>① 预处理前置节点（从前往后比较）</strong></p>
+<p>新旧列表从头部开始逐个比较，直到遇到不同类型的节点。所有匹配的前置节点直接 <code>patch</code> 复用。</p>
+<pre><code>旧列表：[A, B, C, D, E]
+新列表：[A, B, D, C, E]
+         ↑↑ 匹配，i = 2
+</code></pre>
+<p><strong>② 预处理后置节点（从后往前比较）</strong></p>
+<p>跳过前置匹配后，从尾部继续向前比较，直到遇到不同类型节点。</p>
+<pre><code>旧列表：[A, B, C, D, E]
+新列表：[A, B, D, C, E]
+                     ↑ 匹配，E 相同，e1--, e2--
+</code></pre>
+<p><strong>③ 处理仅有新增节点的情况</strong></p>
+<p>若旧节点已遍历完（<code>i > e1</code>），但新节点还有剩余，说明剩余部分为新增节点，批量挂载。</p>
+<p><strong>④ 处理仅有卸载节点的情况</strong></p>
+<p>若新节点已遍历完（<code>i > e2</code>），但旧节点还有剩余，说明剩余部分为多余节点，批量卸载。</p>
+<p><strong>⑤ 处理混合复杂情况（核心 diff）</strong></p>
+<p>当前后预处理后仍有未处理的节点，说明存在乱序、新增、删除、移动的混合场景。此时进入核心 diff 流程：</p>
+<ul>
+<li><strong>建立新节点索引表</strong>（<code>keyToNewIndexMap</code>）：以 key 为键，新列表中的索引为值</li>
+<li><strong>构建新旧位置映射</strong>（<code>newIndexToOldIndexMap</code>）：遍历旧节点，在映射表中查找可复用的节点，记录其在新列表中的位置</li>
+<li><strong>获取最长递增子序列</strong>：对 <code>newIndexToOldIndexMap</code> 求 LIS，得到不需要移动的节点集合</li>
+<li><strong>逆向遍历移动节点</strong>：从后向前遍历新节点列表，不在 LIS 中的节点执行移动操作</li>
+</ul>
+<h4>最长递增子序列（LIS）的作用</h4>
+<p>最长递增子序列是 Vue 3 diff 算法最核心的优化点。其作用是：在乱序节点中，找出一个<strong>相对顺序已经正确</strong>的最大节点集合，这些节点不需要移动，只需要移动不在序列中的节点。</p>
+<p><strong>示例：</strong></p>
+<pre><code>旧列表：[A, B, C, D, E]
+新列表：[A, C, E, B, D]
+
+// 预处理后（A 已匹配）
+剩余旧：[B, C, D, E]
+剩余新：[C, E, B, D]
+
+// 新节点在旧列表中的位置映射
+newIndexToOldIndexMap = [2, 4, 1, 3]  // C(2), E(4), B(1), D(3)
+
+// 最长递增子序列
+LIS = [1, 3]  // 对应 B(1), D(3) 或 C(2), E(4)
+
+// 结果：不在 LIS 中的节点需要移动
+</code></pre>
+<p>LIS 使用<strong>贪心 + 二分查找</strong>算法实现，时间复杂度为 O(n log n)。</p>
+<h4>完整代码流程</h4>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> patchKeyedChildren</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">c1</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">c2</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">container</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">parentAnchor</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> e1</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c1.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> e2</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c2.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> e1p </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> e1, e2p </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> e2;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 1. 同步头部</span></span>
+<span class="line"><span style="color:#F97583">  while</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e1p </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e2p) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">isSameVNodeType</span><span style="color:#E1E4E8">(c1[i], c2[i])) {</span></span>
+<span class="line"><span style="color:#B392F0">      patch</span><span style="color:#E1E4E8">(c1[i], c2[i], container);</span></span>
+<span class="line"><span style="color:#E1E4E8">      i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 2. 同步尾部</span></span>
+<span class="line"><span style="color:#F97583">  while</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e1p </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e2p) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">isSameVNodeType</span><span style="color:#E1E4E8">(c1[e1p], c2[e2p])) {</span></span>
+<span class="line"><span style="color:#B392F0">      patch</span><span style="color:#E1E4E8">(c1[e1p], c2[e2p], container);</span></span>
+<span class="line"><span style="color:#E1E4E8">      e1p</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">      e2p</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 3. 处理仅有新增</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> e1p) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> j </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i; j </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e2p; j</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">      patch</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, c2[j], container, anchor);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 4. 处理仅有卸载</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> e2p) {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> j </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i; j </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e1p; j</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">      unmount</span><span style="color:#E1E4E8">(c1[j]);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 5. 处理未知序列（核心diff）</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> s1</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> i, </span><span style="color:#79B8FF">s2</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> i;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> keyToNewIndexMap</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> s2; i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e2p; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    keyToNewIndexMap.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(c2[i].key, i);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> toBePatched</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> e2p </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> s2 </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> newIndexToOldIndexMap</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Array</span><span style="color:#E1E4E8">(toBePatched).</span><span style="color:#B392F0">fill</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 遍历旧节点，寻找可复用节点</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> s1; i </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> e1p; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> oldVNode</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c1[i];</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> newIndex</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> keyToNewIndexMap.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(oldVNode.key);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (newIndex </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> undefined</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">      unmount</span><span style="color:#E1E4E8">(oldVNode); </span><span style="color:#6A737D">// 旧节点不存在于新列表中</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      newIndexToOldIndexMap[newIndex </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> s2] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// +1 区分0（新增）</span></span>
+<span class="line"><span style="color:#B392F0">      patch</span><span style="color:#E1E4E8">(oldVNode, c2[newIndex], container);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 获取最长递增子序列</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> increasingNewIndexSequence</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getSequence</span><span style="color:#E1E4E8">(newIndexToOldIndexMap);</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> j </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> increasingNewIndexSequence.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 逆向遍历移动节点</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (i </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> toBePatched </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> nextIndex</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> s2 </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> i;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> nextChild</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> c2[nextIndex];</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> anchor</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> nextIndex </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> &#x3C;</span><span style="color:#E1E4E8"> c2.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> c2[nextIndex </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">].el </span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> parentAnchor;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (newIndexToOldIndexMap[i] </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#B392F0">      patch</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, nextChild, container, anchor); </span><span style="color:#6A737D">// 新增节点</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (j </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">!==</span><span style="color:#E1E4E8"> increasingNewIndexSequence[j]) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        container.</span><span style="color:#B392F0">insertBefore</span><span style="color:#E1E4E8">(nextChild.el, anchor); </span><span style="color:#6A737D">// 移动节点</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        j</span><span style="color:#F97583">--</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// 在LIS中，不需要移动</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>Vue 2 与 Vue 3 diff 算法对比</h2>
+<h3>核心差异</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Vue 2</th>
+<th>Vue 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>算法核心</strong></td>
+<td>双端比较（Double-Ended Diff）</td>
+<td>快速 Diff + 最长递增子序列</td>
+</tr>
+<tr>
+<td><strong>对比方式</strong></td>
+<td>四个指针从两端向中间靠拢</td>
+<td>先预处理前缀后缀，再处理中间乱序</td>
+</tr>
+<tr>
+<td><strong>节点移动策略</strong></td>
+<td>头尾交叉检测 + 乱序哈希查找</td>
+<td>LIS 算法找出最小移动集合</td>
+</tr>
+<tr>
+<td><strong>乱序处理</strong></td>
+<td>建立 key→index 映射表逐个查找</td>
+<td>建立映射 + LIS 批量优化</td>
+</tr>
+<tr>
+<td><strong>DOM 移动次数</strong></td>
+<td>非最优，可能有多余移动</td>
+<td>理论最少</td>
+</tr>
+<tr>
+<td><strong>属性对比</strong></td>
+<td>全量对比所有属性</td>
+<td>Patch Flags 精准对比动态属性</td>
+</tr>
+<tr>
+<td><strong>静态节点</strong></td>
+<td>每次渲染都重新生成 VNode</td>
+<td>静态提升，仅生成一次</td>
+</tr>
+<tr>
+<td><strong>时间复杂度</strong></td>
+<td>O(n)</td>
+<td>O(n) ~ O(n log n)</td>
+</tr>
+</tbody>
+</table>
+<h3>为什么 Vue 3 更快？</h3>
+<ol>
+<li>
+<p><strong>更少的 DOM 移动操作</strong>：通过 LIS 算法，Vue 3 能计算出最少的节点移动次数，而 Vue 2 的双端比较在某些复杂乱序场景下会产生多余的移动</p>
+</li>
+<li>
+<p><strong>预处理缩小范围</strong>：Vue 3 的前后置预处理能快速排除不需要处理的节点，而 Vue 2 需要逐一轮询</p>
+</li>
+<li>
+<p><strong>静态节点提升</strong>：Vue 3 在编译阶段将静态节点提升，渲染时直接复用，不参与 diff 比较</p>
+</li>
+<li>
+<p><strong>Patch Flags 靶向更新</strong>：Vue 3 通过编译时标记动态节点，diff 时只对比变化的属性，而非全量对比</p>
+</li>
+</ol>
+<h3>关键概念总结</h3>
+<p><strong>为什么 key 很重要？</strong></p>
+<ul>
+<li><code>key</code> 是节点的唯一标识，帮助算法精准匹配新旧节点</li>
+<li>有 <code>key</code> 时，算法将"销毁-再创建"变为"低开销的移动"</li>
+<li>避免使用 <code>index</code> 作为 <code>key</code>，当列表排序、插入、删除时会导致误判</li>
+</ul>
+<p><strong>Vue 2 的适用场景：</strong></p>
+<ul>
+<li>列表变更主要在两端增删（性能已足够好）</li>
+<li>简单倒序或首尾互换</li>
+</ul>
+<p><strong>Vue 3 的优势场景：</strong></p>
+<ul>
+<li>复杂乱序排列的长列表</li>
+<li>包含大量静态内容的页面（静态提升收益大）</li>
+<li>需要最少 DOM 操作的高频更新场景</li>
+</ul>
+<hr>
+<h2>总结</h2>
+<p>Vue 2 的双端 diff 算法是一种成熟且高效的实现，通过四个指针的巧妙配合，将时间复杂度从 O(n²) 优化到 O(n)，能很好地处理大多数列表更新场景。而 Vue 3 的快速 diff 算法在此基础上引入了最长递增子序列算法，进一步优化了乱序场景下的 DOM 移动次数，配合静态提升和 Patch Flags 等编译期优化，使得 Vue 3 在大型应用中的渲染性能有了显著提升。</p>
+<p>从本质上讲，Vue 2 是在"勤奋"地对比每一处差异，而 Vue 3 是通过"聪明"的编译分析和数学优化，让自己<strong>尽量少干活、只干精准的活</strong>。</p>1f:["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$21"}}]

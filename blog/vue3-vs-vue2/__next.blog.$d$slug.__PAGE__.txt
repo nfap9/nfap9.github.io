@@ -1,0 +1,60 @@
+1:"$Sreact.fragment"
+2:I[23880,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],"default"]
+3:I[26747,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],""]
+8:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"OutletBoundary"]
+9:"$Sreact.suspense"
+4:T18d3,<h1>vue3和vue2的区别</h1>
+<p>1、vue3使用ts重写。</p>
+<p>2、支持composition Api</p>
+<p>3、响应式原理改用proxy实现，可监听动态新增删除属性，以及数组变化。</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// vue2的响应式使用defineProperty实现</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  age: </span><span style="color:#79B8FF">18</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> obj</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> proxyData</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#E1E4E8">  Object.</span><span style="color:#B392F0">keys</span><span style="color:#E1E4E8">(data).</span><span style="color:#B392F0">forEach</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">key</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Object.</span><span style="color:#B392F0">defineProperty</span><span style="color:#E1E4E8">(obj, key, {</span></span>
+<span class="line"><span style="color:#B392F0">      get</span><span style="color:#E1E4E8">(){</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> data[key]</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#B392F0">      set</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8">(newValue </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> data[key]) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> </span></span>
+<span class="line"><span style="color:#E1E4E8">        data[key] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> value</span></span>
+<span class="line"><span style="color:#6A737D">        // 附加响应式逻辑</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#B392F0">proxyData</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// vue3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">'123'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  age: </span><span style="color:#79B8FF">18</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> vm</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Proxy</span><span style="color:#E1E4E8">(data, {</span></span>
+<span class="line"><span style="color:#B392F0">  get</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">target</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">key</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> target[key]</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  set</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">target</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">key</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">value</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8">(target[key] </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> value) </span><span style="color:#F97583">return</span></span>
+<span class="line"><span style="color:#E1E4E8">    target[key] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> value</span></span>
+<span class="line"><span style="color:#6A737D">    // 响应式逻辑</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>4、编译优化，vue2通过编辑静态根节点优化diff，vue3标记和提升所有静态根节点，diff的时候只需要对比动态节点内容</p>
+<p>5、移除了一些不常用的api（inline-template、filter）</p>
+<p>6、生命周期的变化：使用setup代替了之前的beforeCreate和created</p>
+<p>7、vue3的template模板支持多个根标签</p>
+<p>8、Vuex状态管理：创建实例的方式改变，vue2为new Store，vue3为createStore</p>
+<p>9、Route获取页面实例与路由信息：vue2通过<strong>this</strong>获取router实例，vue3通过使用getCurrentInstance/useRoute和useRouter方法获取当前组件实例</p>
+<p>10、Props的使用变化：vue2通过this获取props里面的内容，vue3直接通过defineProps</p>
+<p>11、父子组件传值：vue3向父组件传回数据时，如使用自定义名称需要使用defineEmits</p>0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{}],["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16","children":[["$","header",null,{"className":"glass gradient-border rounded-2xl p-6 sm:p-10 mb-10","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-subtle text-primary-hover mb-5","children":"Vue"}],["$","h1",null,{"className":"text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6","children":"vue3和vue2的区别"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-text-secondary","children":[["$","span",null,{"className":"inline-flex items-center gap-1.5","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-calendar w-4 h-4 text-text-muted","children":[["$","path","1cmpym",{"d":"M8 2v4"}],["$","path","4m81vk",{"d":"M16 2v4"}],["$","rect","1hopcy",{"width":"18","height":"18","x":"3","y":"4","rx":"2"}],["$","path","8toen8",{"d":"M3 10h18"}],"$undefined"]}],["$","time",null,{"dateTime":"2024-03-05T00:00:00.000Z","children":["发布于 ","2024年3月5日"]}]]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-6 pt-6 border-t border-border-default","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-tag w-4 h-4 text-text-muted mt-1","children":[["$","path","vktsd0",{"d":"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"}],["$","circle","kqv944",{"cx":"7.5","cy":"7.5","r":".5","fill":"currentColor"}],"$undefined"]}],[["$","$L3","vue",{"href":"/tags/vue","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","vue"]}],["$","$L3","vue3",{"href":"/tags/vue3","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","vue3"]}],["$","$L3","vue2",{"href":"/tags/vue2","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","vue2"]}],["$","$L3","对比",{"href":"/tags/%E5%AF%B9%E6%AF%94","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","对比"]}]]]}]]}],["$","div",null,{"className":"prose prose-lg max-w-none","children":["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$4"}}]}],"$L5"]}]],["$L6"],"$L7"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"K-oelemjRgBvjIUoHKFxR"}
+5:["$","div",null,{"className":"mt-12 pt-8 border-t border-border-default","children":["$","$L3",null,{"href":"/blog","className":"group inline-flex items-center text-sm font-medium text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-left w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform","children":[["$","path","1l729n",{"d":"m12 19-7-7 7-7"}],["$","path","x3x0zl",{"d":"M19 12H5"}],"$undefined"]}],"返回文章列表"]}]}]
+6:["$","script","script-0",{"src":"/_next/static/chunks/0pcf14d5923zl.js","async":true}]
+7:["$","$L8",null,{"children":["$","$9",null,{"name":"Next.MetadataOutlet","children":"$@a"}]}]
+a:null

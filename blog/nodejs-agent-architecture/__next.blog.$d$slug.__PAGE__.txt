@@ -1,0 +1,535 @@
+1:"$Sreact.fragment"
+2:I[23880,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],"default"]
+3:I[26747,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],""]
+8:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"OutletBoundary"]
+9:"$Sreact.suspense"
+4:T1577f,<blockquote>
+<p>本文基于开源项目 <a href="https://github.com/nfap9/aura-agent">aura-agent</a> 的真实代码，逐层拆解一个 Node.js Agent 运行时的实现。所有代码片段均来自项目源码，不做虚构。</p>
+</blockquote>
+<hr>
+<h2>一、Agent 的本质：一个编排循环</h2>
+<p>Agent 不是魔法，它就是一个<strong>带状态的循环</strong>。</p>
+<pre><code>接收输入 → 注入上下文 → 调用 LLM → 解析响应 → 执行工具 → 把结果喂回去 → 再次调用 LLM
+</code></pre>
+<p>这个循环在 aura-agent 中叫做 <code>runLoop</code>，最大迭代 10 次：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/agent/agent.ts</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> MAX_ITERATIONS</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">private async </span><span style="color:#F97583">*</span><span style="color:#B392F0">runLoop</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  inputMessages: Message[],</span></span>
+<span class="line"><span style="color:#E1E4E8">  options</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> ChatCompletionOptions,</span></span>
+<span class="line"><span style="color:#E1E4E8">  events</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> AgentEvents</span></span>
+<span class="line"><span style="color:#E1E4E8">): AsyncGenerator</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">StreamChunk</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 1. 注入记忆上下文</span></span>
+<span class="line"><span style="color:#B392F0">  if</span><span style="color:#E1E4E8"> (this.memory &#x26;&#x26; inputMessages.length > 0) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> memoryContext</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.memory.</span><span style="color:#B392F0">getRelevantContext</span><span style="color:#E1E4E8">(query);</span></span>
+<span class="line"><span style="color:#6A737D">    // 把记忆塞进第一条用户消息前面</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  this.thread.addMessages(inputMessages);</span></span>
+<span class="line"><span style="color:#E1E4E8">  this.thread.trim(); </span><span style="color:#6A737D">// 截断超长的上下文</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  let continueLoop </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  let iteration </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  while</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">continueLoop</span><span style="color:#E1E4E8"> &#x26;&#x26; </span><span style="color:#FFAB70">iteration</span><span style="color:#E1E4E8"> &#x3C; </span><span style="color:#FFAB70">MAX_ITERATIONS</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    iteration</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> messages</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.thread.</span><span style="color:#B392F0">getMessages</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 2. 匹配技能并注入</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> apiMessages</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">buildMessagesWithSkills</span><span style="color:#E1E4E8">(userQuery, events);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 3. 调用 LLM（流式）</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> stream</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.provider.</span><span style="color:#B392F0">chatStream</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      model: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.model,</span></span>
+<span class="line"><span style="color:#E1E4E8">      messages: apiMessages,</span></span>
+<span class="line"><span style="color:#E1E4E8">      tools: </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.tools.</span><span style="color:#B392F0">getToolSchemas</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> content </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> hasToolCall </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> chunk</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> stream) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "content"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        content </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> chunk.delta;</span></span>
+<span class="line"><span style="color:#F97583">        yield</span><span style="color:#E1E4E8"> chunk; </span><span style="color:#6A737D">// 流式吐给外层</span></span>
+<span class="line"><span style="color:#E1E4E8">      } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "tool_call"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">        hasToolCall </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D">        // 收集工具调用参数</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 4. 把 assistant 的回复加入对话历史</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.thread.</span><span style="color:#B392F0">addMessages</span><span style="color:#E1E4E8">([assistantMessage]);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">hasToolCall) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      continueLoop </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// 没有工具调用，任务结束</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">      // 5. 执行工具，把结果以 tool 角色塞回历史</span></span>
+<span class="line"><span style="color:#F97583">      for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> toolCall</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> toolCalls) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.tools.</span><span style="color:#B392F0">execute</span><span style="color:#E1E4E8">(name, parseArgs);</span></span>
+<span class="line"><span style="color:#79B8FF">        this</span><span style="color:#E1E4E8">.thread.</span><span style="color:#B392F0">addMessages</span><span style="color:#E1E4E8">([</span></span>
+<span class="line"><span style="color:#E1E4E8">          { role: </span><span style="color:#9ECBFF">"tool"</span><span style="color:#E1E4E8">, content: result, tool_call_id: toolCall.id }</span></span>
+<span class="line"><span style="color:#E1E4E8">        ]);</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#6A737D">      // 循环继续，LLM 看到工具结果后再次推理</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>这就是 ReAct 的核心：<strong>LLM 不直接给答案，而是输出 "我要调用某某工具"，Agent 执行工具后把结果还回去，LLM 基于结果再推理下一步</strong>。一轮不够就再来一轮，直到 LLM 说"不用工具了，这就是答案"。</p>
+<hr>
+<h2>二、工具系统：让 LLM 能动手</h2>
+<h3>2.1 工具的组成</h3>
+<p>一个工具 = 定义（告诉 LLM 有什么参数）+ 处理器（实际执行）。</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/tools/types.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> ToolDefinition</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  description</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  parameters</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">    type</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    properties</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#FFAB70">    required</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">[];</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> type</span><span style="color:#B392F0"> ToolHandler</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">args</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p>注册时把两者绑定在一起：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/tools/registry.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> ToolRegistry</span><span style="color:#F97583"> implements</span><span style="color:#B392F0"> ToolSource</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> tools</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">Tool</span><span style="color:#E1E4E8">>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  register</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">definition</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ToolDefinition</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">handler</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ToolHandler</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.tools.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(definition.name, { definition, handler });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  getToolSchemas</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ChatCompletionTool</span><span style="color:#E1E4E8">[] {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> Array.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.tools.</span><span style="color:#B392F0">values</span><span style="color:#E1E4E8">()).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">t</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">"function"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      function: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        name: t.definition.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">        description: t.definition.description,</span></span>
+<span class="line"><span style="color:#E1E4E8">        parameters: t.definition.parameters,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    }));</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> execute</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">args</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tool</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.tools.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(name);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> tool.</span><span style="color:#B392F0">handler</span><span style="color:#E1E4E8">(args);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>getToolSchemas()</code> 返回的格式就是 OpenAI 的 <code>tools</code> 参数，LLM 收到后就知道自己有哪些工具可用。</p>
+<h3>2.2 内置工具示例：bash</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/tools/native/bash.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> bashDefinition</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ToolDefinition</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">"bash"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  description: </span><span style="color:#9ECBFF">"执行 shell 命令..."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  parameters: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      command: { type: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">, description: </span><span style="color:#9ECBFF">"要执行的 shell 命令"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      timeout: { type: </span><span style="color:#9ECBFF">"number"</span><span style="color:#E1E4E8">, description: </span><span style="color:#9ECBFF">"超时时间（毫秒）"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    required: [</span><span style="color:#9ECBFF">"command"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> executeBash</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">args</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">command</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">timeout</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 60000</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> args;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">stdout</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">stderr</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> execAsync</span><span style="color:#E1E4E8">(command, { timeout, maxBuffer: </span><span style="color:#79B8FF">1024</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1024</span><span style="color:#E1E4E8"> });</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> stdout </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> "(命令执行完成，无输出)"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>注册时调用：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">registry.</span><span style="color:#B392F0">register</span><span style="color:#E1E4E8">(bashDefinition, (</span><span style="color:#FFAB70">args</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> executeBash</span><span style="color:#E1E4E8">(args));</span></span></code></pre>
+<hr>
+<h2>三、MCP：连接外部工具生态</h2>
+<p>MCP（Model Context Protocol）是 Anthropic 推出的标准协议，让外部工具服务器和 Agent 之间用统一格式通信。aura-agent 的 MCP 实现支持 stdio 和 HTTP 两种传输方式。</p>
+<h3>3.1 连接 MCP 服务器</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/tools/mcp.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> MCPClientManager</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> connections</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">ServerConnection</span><span style="color:#E1E4E8">> </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Map</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> connect</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> MCPConfig</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> serverConfig</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> config.servers) {</span></span>
+<span class="line"><span style="color:#F97583">      await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">connectServer</span><span style="color:#E1E4E8">(serverConfig);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#F97583"> async</span><span style="color:#B392F0"> connectServer</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">config</span><span style="color:#F97583">:</span><span style="color:#B392F0"> MCPServerConfig</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> client</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Client</span><span style="color:#E1E4E8">({ name: </span><span style="color:#9ECBFF">"agent-mcp-client"</span><span style="color:#E1E4E8">, version: </span><span style="color:#9ECBFF">"1.0.0"</span><span style="color:#E1E4E8"> }, { capabilities: {} });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> transport</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Transport</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (config.transport </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "stdio"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">      transport </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> StdioClientTransport</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">        command: config.command,</span></span>
+<span class="line"><span style="color:#E1E4E8">        args: config.args,</span></span>
+<span class="line"><span style="color:#E1E4E8">      });</span></span>
+<span class="line"><span style="color:#E1E4E8">    } </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      transport </span><span style="color:#F97583">=</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> StreamableHTTPClientTransport</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(config.url</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">));</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">connect</span><span style="color:#E1E4E8">(transport);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 获取服务器暴露的工具列表</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> toolsResult</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> client.</span><span style="color:#B392F0">listTools</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> tools</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ToolDefinition</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> toolsResult.tools.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">t</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: t.name,</span></span>
+<span class="line"><span style="color:#E1E4E8">      description: t.description </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      parameters: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        type: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        properties: t.inputSchema.properties </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> {},</span></span>
+<span class="line"><span style="color:#E1E4E8">        required: t.inputSchema.required </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> [],</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.connections.</span><span style="color:#B392F0">set</span><span style="color:#E1E4E8">(config.name, { config, client, transport, tools });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>3.2 命名空间隔离</h3>
+<p>不同 MCP 服务器可能定义同名工具（比如两个服务器都有 <code>read_file</code>），所以 aura-agent 给工具名加上服务器前缀：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">private </span><span style="color:#B392F0">makeUniqueToolName</span><span style="color:#E1E4E8">(serverName: string, toolName: string): string {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">serverName</span><span style="color:#9ECBFF">}_${</span><span style="color:#E1E4E8">toolName</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">; </span><span style="color:#6A737D">// e.g. "filesystem_read_file"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>LLM 看到的是 <code>filesystem_read_file</code>，调用时由 <code>MCPClientManager</code> 解析出原始服务器名和工具名，转发给对应的服务器。</p>
+<h3>3.3 执行与结果转换</h3>
+<p>MCP 工具返回的结果格式多样（text / resource / image），aura-agent 统一转成字符串：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">private async </span><span style="color:#B392F0">executeTool</span><span style="color:#E1E4E8">(uniqueName: string, args: Record</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">string, any</span><span style="color:#F97583">></span><span style="color:#E1E4E8">): </span><span style="color:#79B8FF">Promise</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">string</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  const result </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> conn.client.</span><span style="color:#B392F0">callTool</span><span style="color:#E1E4E8">({ name: originalToolName, arguments: args });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#9ECBFF">"content"</span><span style="color:#FFAB70"> in</span><span style="color:#FFAB70"> result</span><span style="color:#E1E4E8"> &#x26;&#x26; Array.isArray(result.content)) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> texts</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> result.content</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "text"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.text)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">join</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (texts) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> texts;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> images</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> result.content</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "image"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#9ECBFF"> `[image data: ${</span><span style="color:#E1E4E8">c</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">mimeType</span><span style="color:#9ECBFF">}]`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">join</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (images) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> images;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  return JSON.stringify(result);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>配置一个 MCP 服务器只需要一个 JSON 文件：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"filesystem"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "transport"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"stdio"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@modelcontextprotocol/server-filesystem"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/Users/me/data"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>四、记忆系统：让 Agent 有长期记忆</h2>
+<p>没有记忆的 Agent 每次对话都是白板。aura-agent 的记忆系统基于 <strong>TF-IDF + 余弦相似度</strong> 做检索，纯算法实现，不依赖向量数据库。</p>
+<h3>4.1 记忆的数据结构</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/memory/types.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> MemoryEntry</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  category</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;      </span><span style="color:#6A737D">// 分类，如 "fact", "preference"</span></span>
+<span class="line"><span style="color:#FFAB70">  importance</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;    </span><span style="color:#6A737D">// 1-10，重要性评分</span></span>
+<span class="line"><span style="color:#FFAB70">  createdAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  updatedAt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  accessCount</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;   </span><span style="color:#6A737D">// 被检索次数</span></span>
+<span class="line"><span style="color:#FFAB70">  metadata</span><span style="color:#F97583">?:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">any</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>4.2 检索：TF-IDF + 余弦相似度</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/memory/retriever.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> retrieveMemories</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">  query</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  entries</span><span style="color:#F97583">:</span><span style="color:#B392F0"> MemoryEntry</span><span style="color:#E1E4E8">[],</span></span>
+<span class="line"><span style="color:#FFAB70">  limit</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">  minScore</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 0.05</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> MemoryResult</span><span style="color:#E1E4E8">[] {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryTokens</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> tokenize</span><span style="color:#E1E4E8">(query);        </span><span style="color:#6A737D">// 分词</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> queryTf</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> termFrequency</span><span style="color:#E1E4E8">(queryTokens);  </span><span style="color:#6A737D">// 词频</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 预计算所有文档的 TF</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> docTfs</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entries.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">e</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> termFrequency</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">tokenize</span><span style="color:#E1E4E8">(e.content)));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 计算 IDF（逆文档频率）</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> idf</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> computeIdf</span><span style="color:#E1E4E8">(docTfs);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 加权查询向量</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> weightedQuery</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> applyIdf</span><span style="color:#E1E4E8">(queryTf, idf);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> entries.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> weightedDoc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> applyIdf</span><span style="color:#E1E4E8">(docTfs[i]</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">, idf);</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> score </span><span style="color:#F97583">=</span><span style="color:#B392F0"> cosineSimilarity</span><span style="color:#E1E4E8">(weightedQuery, weightedDoc);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 时间衰减：越老的记忆权重越低（半衰期 30 天）</span></span>
+<span class="line"><span style="color:#E1E4E8">    score </span><span style="color:#F97583">*=</span><span style="color:#B392F0"> timeDecay</span><span style="color:#E1E4E8">(entry.createdAt);</span></span>
+<span class="line"><span style="color:#6A737D">    // 重要性加权</span></span>
+<span class="line"><span style="color:#E1E4E8">    score </span><span style="color:#F97583">*=</span><span style="color:#79B8FF"> 0.5</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> entry.importance </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D">    // 访问频率加权</span></span>
+<span class="line"><span style="color:#E1E4E8">    score </span><span style="color:#F97583">*=</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">log1p</span><span style="color:#E1E4E8">(entry.accessCount) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (score </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> minScore) results.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">({ entry, score });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> results.</span><span style="color:#B392F0">sort</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> b.score </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> a.score).</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, limit);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>分词策略：英文按单词分，中文按字分。这样实现简单，在中小规模记忆库（几百条）上效果足够好。</p>
+<h3>4.3 自动合并与智能清理</h3>
+<p>保存记忆时，如果检测到相似度 > 0.8 的已有记忆，直接合并更新而不是新增：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">async </span><span style="color:#B392F0">saveMemory</span><span style="color:#E1E4E8">(content: string, category </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "fact"</span><span style="color:#E1E4E8">, importance </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">): </span><span style="color:#79B8FF">Promise</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">MemoryEntry</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  const similar </span><span style="color:#F97583">=</span><span style="color:#B392F0"> retrieveMemories</span><span style="color:#E1E4E8">(content, </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.entries, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0.8</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">  if</span><span style="color:#E1E4E8"> (similar.length > 0) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> existing</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> similar[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">.entry;</span></span>
+<span class="line"><span style="color:#E1E4E8">    existing.content </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">mergeContent</span><span style="color:#E1E4E8">(existing.content, content);</span></span>
+<span class="line"><span style="color:#E1E4E8">    existing.updatedAt </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> now;</span></span>
+<span class="line"><span style="color:#E1E4E8">    existing.importance </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">max</span><span style="color:#E1E4E8">(existing.importance, importance);</span></span>
+<span class="line"><span style="color:#E1E4E8">    existing.accessCount</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">persist</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> existing;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#6A737D">  // ... 创建新记忆</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>当记忆超过 500 条时，触发清理。评分公式：</p>
+<pre><code>score = 新鲜度(30%) + 重要性(40%) + 访问频率(30%)
+</code></pre>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">async </span><span style="color:#B392F0">cleanup</span><span style="color:#E1E4E8">(targetCount</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> number): </span><span style="color:#79B8FF">Promise</span><span style="color:#F97583">&#x3C;void></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  const scored </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.entries.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">entry</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> daysOld</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (now </span><span style="color:#F97583">-</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Date</span><span style="color:#E1E4E8">(entry.createdAt).</span><span style="color:#B392F0">getTime</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1000</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 24</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> recencyScore</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">exp</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">daysOld </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 30</span><span style="color:#E1E4E8">);       </span><span style="color:#6A737D">// 指数衰减</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> importanceScore</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> entry.importance </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> accessScore</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">log1p</span><span style="color:#E1E4E8">(entry.accessCount) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> Math.</span><span style="color:#B392F0">log1p</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> totalScore</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> recencyScore </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.3</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> importanceScore </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.4</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> accessScore </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.3</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> { entry, score: totalScore };</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  scored.sort((a, b) => b.score - a.score);</span></span>
+<span class="line"><span style="color:#E1E4E8">  this.entries </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> scored.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, target).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">s</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> s.entry);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>存储层可插拔：默认 <code>InMemoryStorage</code>，生产环境用 <code>FileMemoryStorage</code> 持久化到 JSON 文件。</p>
+<h3>4.4 记忆如何注入对话</h3>
+<p>Agent 在每次循环开始前，用用户查询去检索记忆，把结果塞进第一条用户消息前面：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> memoryContext</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.memory.</span><span style="color:#B392F0">getRelevantContext</span><span style="color:#E1E4E8">(query);</span></span>
+<span class="line"><span style="color:#6A737D">// 结果格式：</span></span>
+<span class="line"><span style="color:#6A737D">// ## 相关历史记忆</span></span>
+<span class="line"><span style="color:#6A737D">// 1. [fact] 用户喜欢使用 Vue 3 Composition API</span></span>
+<span class="line"><span style="color:#6A737D">// 2. [preference] 项目使用 pnpm 管理依赖</span></span></code></pre>
+<p>这样 LLM 在推理时自然能看到相关背景，无需额外机制。</p>
+<hr>
+<h2>五、技能系统：动态注入领域知识</h2>
+<p>Skill 是从 <code>SKILL.md</code> 文件加载的领域知识片段，运行时根据用户查询语义匹配，注入到对话上下文中。</p>
+<h3>5.1 Skill 文件格式</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">---</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">web-search</span></span>
+<span class="line"><span style="color:#85E89D">description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">网络搜索技能，帮助用户查找最新信息</span></span>
+<span class="line"><span style="color:#E1E4E8">---</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF;font-weight:bold">## 使用场景</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">当用户询问实时信息、新闻、股价等需要联网查询的内容时，主动调用搜索工具。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF;font-weight:bold">## 搜索策略</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#FFAB70">1.</span><span style="color:#E1E4E8"> 提取关键词</span></span>
+<span class="line"><span style="color:#FFAB70">2.</span><span style="color:#E1E4E8"> 使用 search_web 工具</span></span>
+<span class="line"><span style="color:#FFAB70">3.</span><span style="color:#E1E4E8"> 综合结果回答用户</span></span></code></pre>
+<h3>5.2 匹配机制</h3>
+<p>基于关键词匹配，简单但有效：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/capabilities/skills/registry.ts</span></span>
+<span class="line"><span style="color:#B392F0">match</span><span style="color:#E1E4E8">(query: string): Skill[] {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> lowerQuery</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> query.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> keywords</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> lowerQuery.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">\s</span><span style="color:#F97583">+</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">w</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> w.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> >=</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#B392F0">isStopWord</span><span style="color:#E1E4E8">(w));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> skill</span><span style="color:#F97583"> of</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.skills.</span><span style="color:#B392F0">values</span><span style="color:#E1E4E8">()) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (skill.metadata.hidden </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> haystack</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> `${</span><span style="color:#E1E4E8">skill</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">} ${</span><span style="color:#E1E4E8">skill</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">description</span><span style="color:#9ECBFF">} ${</span><span style="color:#E1E4E8">skill</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">content</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    let</span><span style="color:#E1E4E8"> score </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> kw</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> keywords) {</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (haystack.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(kw)) score </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (score </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) scored.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">({ skill, score });</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  scored.</span><span style="color:#B392F0">sort</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> b.score </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> a.score);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> scored.</span><span style="color:#B392F0">slice</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">.maxActiveSkills).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">s</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> s.skill); </span><span style="color:#6A737D">// 默认最多 3 个</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>匹配到的 Skill 会作为一条 <code>system</code> 消息注入：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> skillMsg</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Message</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  role: </span><span style="color:#9ECBFF">"system"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  content: </span><span style="color:#9ECBFF">`[Skills]</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">## web-search</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">网络搜索技能...</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">## 使用场景</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">...`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<p>放在已有 system prompt 之后，这样 LLM 既能看到全局指令，也能看到当前场景下的特定技能指导。</p>
+<hr>
+<h2>六、流式传输：实时响应</h2>
+<h3>6.1 LLM 层：流式调用</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/llm/openai.ts</span></span>
+<span class="line"><span style="color:#E1E4E8">async </span><span style="color:#F97583">*</span><span style="color:#B392F0">chatStream</span><span style="color:#E1E4E8">(params: { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }): AsyncGenerator</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">StreamChunk</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  const requestOptions </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    model: params.model,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: params.messages,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tools: params.tools,</span></span>
+<span class="line"><span style="color:#E1E4E8">    tool_choice: params.options?.tool_choice </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> "auto"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    stream: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// 关键</span></span>
+<span class="line"><span style="color:#E1E4E8">  };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  const stream </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.client.chat.completions.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">(requestOptions);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  for </span><span style="color:#B392F0">await</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">const</span><span style="color:#FFAB70"> chunk</span><span style="color:#FFAB70"> of</span><span style="color:#FFAB70"> stream</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> delta</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> chunk.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]?.delta;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (delta?.content) {</span></span>
+<span class="line"><span style="color:#F97583">      yield</span><span style="color:#E1E4E8"> { type: </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">, delta: delta.content };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (delta?.reasoning_content) {</span></span>
+<span class="line"><span style="color:#F97583">      yield</span><span style="color:#E1E4E8"> { type: </span><span style="color:#9ECBFF">"reasoning"</span><span style="color:#E1E4E8">, delta: delta.reasoning_content };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (delta?.tool_calls) {</span></span>
+<span class="line"><span style="color:#F97583">      for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> tc</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> delta.tool_calls) {</span></span>
+<span class="line"><span style="color:#F97583">        yield</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">          type: </span><span style="color:#9ECBFF">"tool_call"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          delta: </span><span style="color:#9ECBFF">""</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">          toolCall: { index: tc.index </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">, id: tc.id, name: tc.function?.name, arguments: tc.function?.arguments },</span></span>
+<span class="line"><span style="color:#E1E4E8">        };</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>6.2 Agent 层：逐块转发</h3>
+<p>Agent 不缓存完整内容，而是把流式块逐块 yield 出去：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> chunk</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> stream) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "content"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    content </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> chunk.delta;</span></span>
+<span class="line"><span style="color:#E1E4E8">    events?.</span><span style="color:#B392F0">onContentChunk</span><span style="color:#E1E4E8">?.(chunk.delta); </span><span style="color:#6A737D">// 触发外部事件</span></span>
+<span class="line"><span style="color:#F97583">    yield</span><span style="color:#E1E4E8"> chunk; </span><span style="color:#6A737D">// 继续流给更外层</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "tool_call"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    hasToolCall </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D">    // 累加工具调用参数（流式拼接）</span></span>
+<span class="line"><span style="color:#F97583">    yield</span><span style="color:#E1E4E8"> chunk;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>6.3 CLI 层：实时展示</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// apps/cli/src/interfaces/cli/index.ts</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> chunk</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> chat.</span><span style="color:#B392F0">chatStream</span><span style="color:#E1E4E8">(userInput, preset, events)) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "reasoning"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    io.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#79B8FF">C</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">gray</span><span style="color:#9ECBFF">}  💭 `</span><span style="color:#E1E4E8">);  </span><span style="color:#6A737D">// 灰色思考前缀</span></span>
+<span class="line"><span style="color:#E1E4E8">    io.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(chunk.delta);</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "content"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    io.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#79B8FF">C</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">brightCyan</span><span style="color:#9ECBFF">}● AI:${</span><span style="color:#79B8FF">C</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">reset</span><span style="color:#9ECBFF">} `</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    io.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(chunk.delta); </span><span style="color:#6A737D">// 逐字输出</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (chunk.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "tool_call"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    io.</span><span style="color:#B392F0">output</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`${</span><span style="color:#79B8FF">C</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">gray</span><span style="color:#9ECBFF">}  🔧 准备调用工具...${</span><span style="color:#79B8FF">C</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">reset</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>三层流式：<code>OpenAI SDK</code> → <code>Provider</code> → <code>Agent</code> → <code>CLI</code>，每一层都是 <code>AsyncGenerator</code>，没有中间缓存，用户感受到的是逐字输出。</p>
+<hr>
+<h2>七、Thread：对话历史与上下文截断</h2>
+<p><code>Thread</code> 只负责一件事：管理消息列表和 Token 估算。</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// packages/core/src/agent/thread.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> Thread</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> messages</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Message</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  private</span><span style="color:#FFAB70"> maxContextTokens</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  addSystemPrompt</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">content</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#B392F0">  addMessages</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">messages</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Message</span><span style="color:#E1E4E8">[])</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#B392F0">  getMessages</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Message</span><span style="color:#E1E4E8">[] { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#B392F0">  trim</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> } </span><span style="color:#6A737D">// 截断超长上下文</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Token 估算采用混合策略：有精确 tokenizer 就用，没有则按字符数估算（中文字符算 1 token，其他字符算 0.25 token）。</p>
+<p>截断策略：保留 system prompt，从最早的消息开始删，但至少保留最近 2 条。这样避免上下文爆炸导致 API 费用飙升。</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">(): </span><span style="color:#F97583">void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> totalTokens </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> msg</span><span style="color:#F97583"> of</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.messages) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    totalTokens </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">estimateMessageTokens</span><span style="color:#E1E4E8">(msg);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (totalTokens </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.maxContextTokens) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> startIndex</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.messages[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]?.role </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "system"</span><span style="color:#F97583"> ?</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> :</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> minKeepCount</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  while</span><span style="color:#E1E4E8"> (totalTokens </span><span style="color:#F97583">></span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.maxContextTokens </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.messages.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> startIndex </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> minKeepCount) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> removed</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.messages[startIndex]</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    totalTokens </span><span style="color:#F97583">-=</span><span style="color:#79B8FF"> this</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">estimateMessageTokens</span><span style="color:#E1E4E8">(removed);</span></span>
+<span class="line"><span style="color:#79B8FF">    this</span><span style="color:#E1E4E8">.messages.</span><span style="color:#B392F0">splice</span><span style="color:#E1E4E8">(startIndex, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// 从头部删除</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>八、架构总览</h2>
+<pre><code>CLI 交互层
+  └─ chatStream() → 消费 StreamChunk，实时渲染
+
+Agent 编排层
+  ├─ runLoop() → ReAct 循环，最多 10 轮
+  ├─ buildMessagesWithSkills() → 动态注入技能
+  ├─ Thread → 消息历史 + Token 截断
+  └─ MemorySource → 检索相关记忆注入上下文
+
+能力层
+  ├─ ToolRegistry → 本地工具注册与执行
+  ├─ MCPClientManager → 外部 MCP 服务器连接
+  ├─ MemoryManager → TF-IDF 检索 + 自动合并/清理
+  └─ SkillRegistry → 关键词匹配 + 动态注入
+
+模型层
+  └─ Provider → OpenAI / Anthropic / Gemini 统一抽象
+</code></pre>
+<hr>
+<h2>九、关键设计决策</h2>
+<table>
+<thead>
+<tr>
+<th>决策</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TF-IDF 而非向量数据库</td>
+<td>无需外部依赖，几百条记忆上效果足够，代码自包含</td>
+</tr>
+<tr>
+<td>纯 AsyncGenerator 流式</td>
+<td>无中间缓存，内存友好，三层直通</td>
+</tr>
+<tr>
+<td>工具名加服务器前缀</td>
+<td>避免 MCP 工具命名冲突，逻辑清晰</td>
+</tr>
+<tr>
+<td>记忆合并阈值 0.8</td>
+<td>平衡去重与保留细节，避免记忆膨胀</td>
+</tr>
+<tr>
+<td>Skill 关键词匹配</td>
+<td>实现简单，运行时零依赖，效果在多数场景够用</td>
+</tr>
+<tr>
+<td>Thread 头部截断</td>
+<td>保留 system + 最近消息，丢失的是 oldest 而非 newest</td>
+</tr>
+<tr>
+<td>最大 10 轮迭代</td>
+<td>防止无限循环，同时覆盖绝大多数多步任务</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>十、如何运行</h2>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> clone</span><span style="color:#9ECBFF"> https://github.com/nfap9/aura-agent.git</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> aura-agent</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 配置环境变量</span></span>
+<span class="line"><span style="color:#B392F0">cp</span><span style="color:#9ECBFF"> .env.example</span><span style="color:#9ECBFF"> .env</span></span>
+<span class="line"><span style="color:#6A737D"># 编辑 .env 填入 API_KEY 和 BASE_URL</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> dev:cli</span></span></code></pre>
+<p>输入问题，看 Agent 如何一步步思考、调用工具、返回结果。</p>
+<hr>
+<blockquote>
+<p>本文所有代码均来自 <a href="https://github.com/nfap9/aura-agent">aura-agent</a> 仓库，可直接对照阅读。Agent 的实现不需要框架，理解循环、工具、记忆、流式这几个核心概念后，用几十行代码就能搭出一个最小可用版本。</p>
+</blockquote>0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{}],["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16","children":[["$","header",null,{"className":"glass gradient-border rounded-2xl p-6 sm:p-10 mb-10","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-subtle text-primary-hover mb-5","children":"工程化"}],["$","h1",null,{"className":"text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6","children":"用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-text-secondary","children":[["$","span",null,{"className":"inline-flex items-center gap-1.5","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-calendar w-4 h-4 text-text-muted","children":[["$","path","1cmpym",{"d":"M8 2v4"}],["$","path","4m81vk",{"d":"M16 2v4"}],["$","rect","1hopcy",{"width":"18","height":"18","x":"3","y":"4","rx":"2"}],["$","path","8toen8",{"d":"M3 10h18"}],"$undefined"]}],["$","time",null,{"dateTime":"2026-06-18T00:00:00.000Z","children":["发布于 ","2026年6月18日"]}]]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-6 pt-6 border-t border-border-default","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-tag w-4 h-4 text-text-muted mt-1","children":[["$","path","vktsd0",{"d":"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"}],["$","circle","kqv944",{"cx":"7.5","cy":"7.5","r":".5","fill":"currentColor"}],"$undefined"]}],[["$","$L3","nodejs",{"href":"/tags/nodejs","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","nodejs"]}],["$","$L3","agent",{"href":"/tags/agent","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","agent"]}],["$","$L3","ai",{"href":"/tags/ai","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","ai"]}],["$","$L3","mcp",{"href":"/tags/mcp","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","mcp"]}],["$","$L3","react",{"href":"/tags/react","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","react"]}],["$","$L3","architecture",{"href":"/tags/architecture","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","architecture"]}]]]}]]}],["$","div",null,{"className":"prose prose-lg max-w-none","children":["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$4"}}]}],"$L5"]}]],["$L6"],"$L7"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"K-oelemjRgBvjIUoHKFxR"}
+5:["$","div",null,{"className":"mt-12 pt-8 border-t border-border-default","children":["$","$L3",null,{"href":"/blog","className":"group inline-flex items-center text-sm font-medium text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-left w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform","children":[["$","path","1l729n",{"d":"m12 19-7-7 7-7"}],["$","path","x3x0zl",{"d":"M19 12H5"}],"$undefined"]}],"返回文章列表"]}]}]
+6:["$","script","script-0",{"src":"/_next/static/chunks/0pcf14d5923zl.js","async":true}]
+7:["$","$L8",null,{"children":["$","$9",null,{"name":"Next.MetadataOutlet","children":"$@a"}]}]
+a:null
