@@ -5,12 +5,13 @@
 
 ## 概览
 
-- **文章总数**：16（博客 14 篇 + 笔记 2 条）
+- **文章总数**：17（博客 15 篇 + 笔记 2 条）
 - **主要分类**：工程化、AI Coding、工具、Vue、JavaScript、网络
-- **标签体系**：nodejs、agent、ai、mcp、react、architecture、docker、docker-compose、容器化、部署、运维、工程化、claude-code、ai-coding、工具、ccswitch、国产模型、ui-guidelines、frontend、skill、设计规范、vue、typescript、element-plus、代码规范、设计系统、团队开发、browser、cicd、git、commit、github-actions、源码、架构、vue3、虚拟DOM、diff、渲染器、Javascript、面试、问题汇总、响应式、原理、vue2、对比、算法、cors、跨域、同源策略、javascript、数据类型
+- **标签体系**：mcp、npm、typescript、claude、ai、nodejs、agent、react、architecture、docker、docker-compose、容器化、部署、运维、工程化、claude-code、ai-coding、工具、ccswitch、国产模型、ui-guidelines、frontend、skill、设计规范、vue、element-plus、代码规范、设计系统、团队开发、browser、cicd、git、commit、github-actions、源码、架构、vue3、虚拟DOM、diff、渲染器、Javascript、面试、问题汇总、响应式、原理、vue2、对比、算法、cors、跨域、同源策略、javascript、数据类型
 
 ## 最新内容
 
+- [如何使用 npm 搭建一个 MCP 服务并接入 Claude Code](https://nfap9.github.io/blog/npm-mcp-guide/) — 视觉处理 MCP 项目实战经验总结。从零开始用 npm + TypeScript 构建一个 MCP（Model Context Protocol）服务，发布到 npm，并在 Claude Code / Claude Desktop 中调用它。 (博客 · 工程化 · 2026-07-02)
 - [用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解](https://nfap9.github.io/blog/nodejs-agent-architecture/) — 基于真实开源项目 aura-agent，拆解 Agent 的六大核心要素：ReAct 循环、工具系统、记忆系统、MCP 协议、技能注入、流式传输。不讲故事，直接看代码。 (博客 · 工程化 · 2026-06-18)
 - [Docker 与 Docker Compose 实战指南](https://nfap9.github.io/blog/docker-compose-guide/) — 以 tenant-hub 项目为例，讲解 Docker 容器化与 Docker Compose 多容器编排的实际应用 (博客 · 工程化 · 2026-06-17)
 - [Claude Code 实战笔记](https://nfap9.github.io/notes/claude-code-guide/) — Claude Code 接入国产模型、工程化配置与高效使用指南 (笔记 · 工程化 · 2026-06-17)
@@ -25,12 +26,12 @@
 - [vue响应式原理](https://nfap9.github.io/blog/vue-reactivity/) — 从零实现一个简易 Vue，深入理解 Vue 响应式系统的核心原理 (博客 · Vue · 2024-03-10)
 - [vue3和vue2的区别](https://nfap9.github.io/blog/vue3-vs-vue2/) — 全面解析 Vue3 与 Vue2 的差异，包括响应式原理、Composition API、编译优化等 (博客 · Vue · 2024-03-05)
 - [Vue2和Vue3中diff算法对比](https://nfap9.github.io/blog/vue-diff/) — 详细对比 Vue2 和 Vue3 的 diff 算法实现原理 (博客 · Vue · 2024-03-01)
-- [跨域](https://nfap9.github.io/blog/cross_origin_guide/) — 深入理解浏览器的同源策略及多种跨域解决方案 (博客 · 网络 · 2024-01-20)
 
 ## 按分类索引
 
 ### 工程化
 
+- [如何使用 npm 搭建一个 MCP 服务并接入 Claude Code](https://nfap9.github.io/blog/npm-mcp-guide/) — 视觉处理 MCP 项目实战经验总结。从零开始用 npm + TypeScript 构建一个 MCP（Model Context Protocol）服务，发布到 npm，并在 Claude Code / Claude Desktop 中调用它。
 - [用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解](https://nfap9.github.io/blog/nodejs-agent-architecture/) — 基于真实开源项目 aura-agent，拆解 Agent 的六大核心要素：ReAct 循环、工具系统、记忆系统、MCP 协议、技能注入、流式传输。不讲故事，直接看代码。
 - [Docker 与 Docker Compose 实战指南](https://nfap9.github.io/blog/docker-compose-guide/) — 以 tenant-hub 项目为例，讲解 Docker 容器化与 Docker Compose 多容器编排的实际应用
 - [Claude Code 实战笔记](https://nfap9.github.io/notes/claude-code-guide/) — Claude Code 接入国产模型、工程化配置与高效使用指南
@@ -65,10 +66,13 @@
 
 ## 按标签索引
 
-- **nodejs**：用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解
+- **mcp**：如何使用 npm 搭建一个 MCP 服务并接入 Claude Code、用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解、agent-browser Skill 速查
+- **npm**：如何使用 npm 搭建一个 MCP 服务并接入 Claude Code
+- **typescript**：如何使用 npm 搭建一个 MCP 服务并接入 Claude Code、Vue 项目代码与 UI 规范：从团队约定到可落地实践
+- **claude**：如何使用 npm 搭建一个 MCP 服务并接入 Claude Code
+- **ai**：如何使用 npm 搭建一个 MCP 服务并接入 Claude Code、用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解
+- **nodejs**：如何使用 npm 搭建一个 MCP 服务并接入 Claude Code、用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解
 - **agent**：用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解、agent-browser Skill 速查
-- **ai**：用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解
-- **mcp**：用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解、agent-browser Skill 速查
 - **react**：用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解
 - **architecture**：用 Node.js 从零构建一个 Agent 运行时：基于 aura-agent 的架构拆解
 - **docker**：Docker 与 Docker Compose 实战指南
@@ -87,7 +91,6 @@
 - **skill**：AI Coding：前端 UI 规范笔记、agent-browser Skill 速查
 - **设计规范**：AI Coding：前端 UI 规范笔记
 - **vue**：Vue 项目代码与 UI 规范：从团队约定到可落地实践、Vue 源码中的工程化设计：五个可复用的团队开发范式、关于vue的问题、vue响应式原理、vue3和vue2的区别、Vue2和Vue3中diff算法对比
-- **typescript**：Vue 项目代码与 UI 规范：从团队约定到可落地实践
 - **element-plus**：Vue 项目代码与 UI 规范：从团队约定到可落地实践
 - **代码规范**：Vue 项目代码与 UI 规范：从团队约定到可落地实践
 - **设计系统**：Vue 项目代码与 UI 规范：从团队约定到可落地实践

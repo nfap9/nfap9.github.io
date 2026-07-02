@@ -1,10 +1,704 @@
 # nfap9 个人知识库全文聚合
 
-> 生成时间：2026-06-30T02:26:47.904Z
+> 生成时间：2026-07-02T03:21:34.853Z
 > 站点：https://nfap9.github.io
 > 本文档包含所有博客文章和笔记的完整 Markdown 内容，供 LLM 检索和分析使用。
-> 文章总数：16（博客 14 篇 + 笔记 2 条）
+> 文章总数：17（博客 15 篇 + 笔记 2 条）
 
+
+---
+
+# 如何使用 npm 搭建一个 MCP 服务并接入 Claude Code
+
+> **类型**：博客
+> **URL**：https://nfap9.github.io/blog/npm-mcp-guide/
+> **分类**：工程化
+> **标签**：mcp, npm, typescript, claude, ai, nodejs
+> **发布日期**：2026-07-02
+> **描述**：视觉处理 MCP 项目实战经验总结。从零开始用 npm + TypeScript 构建一个 MCP（Model Context Protocol）服务，发布到 npm，并在 Claude Code / Claude Desktop 中调用它。
+
+
+# 如何使用 npm 搭建一个 MCP 服务并接入 Claude Code
+
+> 视觉处理MCP项目实战经验总结。通过这个教程，你将学会从零开始用 npm + TypeScript 构建一个 MCP（Model Context Protocol）服务，发布到 npm，并在 Claude Code / Claude Desktop 中调用它。
+
+[源码链接](https://github.com/shen866/vision-bridge-mcp)
+
+---
+
+## 目录
+
+1. [什么是 MCP](#什么是-mcp)
+2. [项目目标与架构](#项目目标与架构)
+3. [初始化 npm 项目](#初始化-npm-项目)
+4. [安装 MCP SDK](#安装-mcp-sdk)
+5. [实现 MCP 服务器](#实现-mcp-服务器)
+   - [入口文件](#入口文件)
+   - [服务器核心](#服务器核心)
+   - [定义工具（Tools）](#定义工具tools)
+   - [处理工具调用](#处理工具调用)
+6. [处理图片输入](#处理图片输入)
+7. [多 Provider 适配](#多-provider-适配)
+8. [构建与测试](#构建与测试)
+9. [发布到 npm](#发布到-npm)
+10. [接入 Claude Code](#接入-claude-code)
+11. [常见问题排查](#常见问题排查)
+
+---
+
+## 什么是 MCP
+
+MCP（Model Context Protocol）是 Anthropic 提出的一种开放协议，用于让 AI 客户端（如 Claude Code、Claude Desktop）与外部工具和服务通信。
+
+简单来说：
+
+- **客户端**：Claude Code / Claude Desktop
+- **服务器**：你写的 MCP 服务（一个本地或远程程序）
+- **通信方式**：JSON-RPC 2.0，通常通过 **stdio**（标准输入输出）进行
+
+通过 MCP，你可以让 Claude 调用自定义工具，比如：
+
+- 查询数据库
+- 读取本地文件
+- 调用图像识别 API
+- 执行任意业务逻辑
+
+---
+
+## 项目目标与架构
+
+我们要做一个**视觉桥接 MCP 服务**：
+
+当 Claude Code 使用的模型无法直接理解图片时，通过这个 MCP 工具将图片发送给多模态大模型（如 Claude 3.5 Sonnet、GPT-4o、Gemini），把图片内容转换为文字描述，再返回给 Claude。
+
+核心架构：
+
+```
+Claude Code  <--stdio-->  MCP Server  --HTTP-->  Multi-modal LLM API
+                              |
+                              v
+                        describe_image
+                        extract_image_text
+                        ask_about_image
+```
+
+---
+
+## 初始化 npm 项目
+
+```bash
+mkdir vision-bridge-mcp
+cd vision-bridge-mcp
+npm init -y
+```
+
+修改生成的 `package.json`，添加关键字段：
+
+```json
+{
+  "name": "@yourname/vision-bridge-mcp",
+  "version": "0.1.0",
+  "description": "一个视觉桥接 MCP 服务",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "vision-bridge-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "test": "node --test test/*.test.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
+```
+
+关键说明：
+
+- `"type": "module"`：使用 ES Module
+- `"bin"`：让 `npx` 可以直接运行这个包
+- `"files"`：发布到 npm 时只包含 `dist/`、`README.md` 和 `LICENSE`
+- `"prepublishOnly"`：发布前自动构建和测试
+
+---
+
+## 安装 MCP SDK
+
+```bash
+npm install @modelcontextprotocol/sdk
+npm install -D typescript @types/node
+```
+
+创建 `tsconfig.json`：
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "include": ["src/**/*"]
+}
+```
+
+---
+
+## 实现 MCP 服务器
+
+### 入口文件
+
+`src/index.ts`：
+
+```typescript
+#!/usr/bin/env node
+import { runServer } from "./server.js";
+
+function main() {
+  runServer().catch((err) => {
+    console.error("MCP 服务器错误:", err);
+    process.exit(1);
+  });
+}
+
+main();
+```
+
+`#!/usr/bin/env node` 是必须的，这样 `npx` 才能直接执行。
+
+### 服务器核心
+
+`src/server.ts`：
+
+```typescript
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+  type Tool,
+} from "@modelcontextprotocol/sdk/types.js";
+
+const tools: Tool[] = [
+  {
+    name: "describe_image",
+    description: "描述图片内容",
+    inputSchema: {
+      type: "object",
+      properties: {
+        image_url: { type: "string", description: "图片 URL" },
+      },
+      required: ["image_url"],
+    },
+  },
+];
+
+export function createServer(): Server {
+  const server = new Server(
+    { name: "vision-bridge-mcp", version: "0.1.0" },
+    { capabilities: { tools: {} } }
+  );
+
+  // 客户端请求可用工具列表时返回
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools }));
+
+  // 客户端调用工具时执行
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const { name, arguments: args = {} } = request.params;
+
+    if (name === "describe_image") {
+      const { image_url } = args as { image_url: string };
+      const description = await fetchDescription(image_url);
+      return {
+        content: [{ type: "text", text: description }],
+        isError: false,
+      };
+    }
+
+    throw new Error(`Unknown tool: ${name}`);
+  });
+
+  return server;
+}
+
+export async function runServer(): Promise<void> {
+  const server = createServer();
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+async function fetchDescription(imageUrl: string): Promise<string> {
+  // 调用多模态 API 获取图片描述
+  return `图片 ${imageUrl} 的描述内容`;
+}
+```
+
+### 定义工具（Tools）
+
+每个 Tool 包含：
+
+- `name`：工具名，Claude 会根据这个名字调用
+- `description`：**非常重要**，Claude 通过描述决定什么时候调用这个工具
+- `inputSchema`：JSON Schema，定义工具需要哪些参数
+
+例如 OCR 工具：
+
+```typescript
+{
+  name: "extract_image_text",
+  description: "提取图片中的所有文字",
+  inputSchema: {
+    type: "object",
+    properties: {
+      image_url: { type: "string" },
+      image_path: { type: "string" },
+      image_base64: { type: "string" },
+    },
+    anyOf: [
+      { required: ["image_url"] },
+      { required: ["image_path"] },
+      { required: ["image_base64"] },
+    ],
+  },
+}
+```
+
+`anyOf` 表示用户只需提供其中一种图片输入方式。
+
+### 处理工具调用
+
+`CallToolRequestSchema` 处理函数返回的格式：
+
+```typescript
+{
+  content: [{ type: "text", text: "返回给 Claude 的文本" }],
+  isError: false,
+}
+```
+
+如果出错：
+
+```typescript
+{
+  content: [{ type: "text", text: errorMessage }],
+  isError: true,
+}
+```
+
+---
+
+## 处理图片输入
+
+实际场景中，图片可能来自 URL、本地路径或 Base64。统一处理成 `{ data: base64, mimeType: string }`：
+
+```typescript
+import { readFile } from "node:fs/promises";
+
+export interface ImageData {
+  data: string;
+  mimeType: string;
+}
+
+export async function fetchImageURL(url: string): Promise<ImageData> {
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  const data = Buffer.from(arrayBuffer);
+  const mimeType = response.headers.get("content-type")?.split(";")[0] ?? "image/png";
+  return { data: data.toString("base64"), mimeType };
+}
+
+export async function resolveImageData(args: Record<string, unknown>): Promise<ImageData> {
+  if (typeof args.image_url === "string") {
+    return fetchImageURL(args.image_url);
+  }
+
+  if (typeof args.image_path === "string") {
+    const data = await readFile(args.image_path);
+    return { data: data.toString("base64"), mimeType: detectMimeType(data) };
+  }
+
+  if (typeof args.image_base64 === "string") {
+    return {
+      data: args.image_base64,
+      mimeType: typeof args.mime_type === "string" ? args.mime_type : "image/png",
+    };
+  }
+
+  throw new Error("必须提供 image_url、image_path 或 image_base64 之一");
+}
+
+function detectMimeType(buffer: Buffer): string {
+  const header = buffer.subarray(0, 12).toString("hex");
+  if (header.startsWith("89504e47")) return "image/png";
+  if (header.startsWith("ffd8ff")) return "image/jpeg";
+  if (header.startsWith("47494638")) return "image/gif";
+  return "image/png";
+}
+```
+
+---
+
+## 多 Provider 适配
+
+不同 LLM API 的请求格式不同。用 Strategy 模式封装：
+
+```typescript
+// src/providers/index.ts
+export interface Provider {
+  name: string;
+  buildRequest(prompt: string, img: ImageData, model: string): Promise<{
+    url: string;
+    body: string;
+    headers: Record<string, string>;
+  }>;
+  parseResponse(body: string): Promise<string>;
+}
+
+export function createProvider(): Provider {
+  const provider = process.env.PROVIDER ?? "anthropic";
+  switch (provider) {
+    case "anthropic": return new AnthropicMessagesProvider();
+    case "openai": return new OpenAIChatProvider();
+    case "gemini": return new GeminiNativeProvider();
+    default: throw new Error(`不支持的 provider: ${provider}`);
+  }
+}
+```
+
+以 Anthropic Messages API 为例：
+
+```typescript
+export class AnthropicMessagesProvider implements Provider {
+  async buildRequest(prompt: string, img: ImageData, model: string) {
+    const body = {
+      model,
+      max_tokens: 4096,
+      messages: [{
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: img.mimeType,
+              data: img.data,
+            },
+          },
+        ],
+      }],
+    };
+
+    return {
+      url: `${process.env.BASE_URL}/v1/messages`,
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.API_KEY!,
+        "anthropic-version": "2023-06-01",
+      },
+    };
+  }
+
+  async parseResponse(raw: string): Promise<string> {
+    const resp = JSON.parse(raw);
+    return resp.content
+      .filter((c: any) => c.type === "text")
+      .map((c: any) => c.text)
+      .join("")
+      .trim();
+  }
+}
+```
+
+---
+
+## 构建与测试
+
+### 构建
+
+```bash
+npm run build
+```
+
+会生成 `dist/` 目录，包含编译后的 JS 和类型声明。
+
+### 测试 MCP 服务器
+
+用 Node 原生测试框架：
+
+```javascript
+// test/smoke.test.js
+import { spawn } from "node:child_process";
+import test from "node:test";
+import assert from "node:assert";
+
+const bin = new URL("../dist/index.js", import.meta.url).pathname;
+
+function send(proc, msg) {
+  proc.stdin.write(JSON.stringify(msg) + "\n");
+}
+
+test("MCP server responds to initialize and tools/list", async () => {
+  const proc = spawn("node", [bin], {
+    env: { ...process.env, API_KEY: "dummy" },
+  });
+
+  const responses = [];
+  let buffer = "";
+
+  const pending = new Promise((resolve, reject) => {
+    proc.stdout.on("data", (data) => {
+      buffer += data.toString();
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        responses.push(JSON.parse(line));
+      }
+      if (responses.length >= 2) resolve(responses);
+    });
+    proc.stderr.on("data", (data) => reject(new Error(data.toString())));
+  });
+
+  send(proc, {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "initialize",
+    params: {
+      protocolVersion: "2024-11-05",
+      capabilities: {},
+      clientInfo: { name: "test", version: "0.1" },
+    },
+  });
+
+  send(proc, { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
+
+  const [init, list] = await pending;
+  proc.kill();
+
+  assert.strictEqual(init.result.serverInfo.name, "vision-bridge-mcp");
+  assert.ok(list.result.tools.length > 0);
+});
+```
+
+运行：
+
+```bash
+npm test
+```
+
+---
+
+## 发布到 npm
+
+### 1. 确认包名可用
+
+```bash
+npm view @yourname/vision-bridge-mcp
+```
+
+如果返回 404，说明名字可用。
+
+### 2. 登录 npm
+
+```bash
+npm login
+```
+
+如果启用了 2FA，需要使用 access token：
+
+```bash
+npm config set //registry.npmjs.org/:_authToken=你的TOKEN
+npm publish --access public
+```
+
+或者使用 OTP：
+
+```bash
+npm publish --access public --otp=123456
+```
+
+### 3. 发布
+
+```bash
+npm publish --access public
+```
+
+成功后会看到：
+
+```text
++ @yourname/vision-bridge-mcp@0.1.0
+```
+
+### 4. 后续更新
+
+```bash
+npm version patch   # 0.1.0 -> 0.1.1
+npm publish --access public
+```
+
+---
+
+## 接入 Claude Code
+
+### 全局安装
+
+```bash
+npm install -g @yourname/vision-bridge-mcp
+```
+
+### 配置 Claude Code
+
+编辑 Claude Code 的配置文件（通常在 `~/.claude/settings.json` 或项目内的 `.claude/CLAUDE.md` 上下文）：
+
+```json
+{
+  "mcpServers": {
+    "vision_bridge": {
+      "command": "npx",
+      "args": ["-y", "@yourname/vision-bridge-mcp"],
+      "env": {
+        "API_KEY": "your-api-key",
+        "BASE_URL": "https://api.anthropic.com",
+        "MODEL": "claude-3-5-sonnet-20241022"
+      }
+    }
+  }
+}
+```
+
+如果是 OpenAI：
+
+```json
+{
+  "mcpServers": {
+    "vision_bridge": {
+      "command": "npx",
+      "args": ["-y", "@yourname/vision-bridge-mcp"],
+      "env": {
+        "PROVIDER": "openai",
+        "API_KEY": "your-api-key",
+        "BASE_URL": "https://api.openai.com/v1",
+        "MODEL": "gpt-4o"
+      }
+    }
+  }
+}
+```
+
+### 本地开发版本
+
+如果你正在本地修改代码，不想通过 npm：
+
+```json
+{
+  "mcpServers": {
+    "vision_bridge": {
+      "command": "node",
+      "args": ["/absolute/path/to/your/dist/index.js"],
+      "env": {
+        "API_KEY": "your-api-key",
+        "BASE_URL": "https://api.anthropic.com",
+        "MODEL": "claude-3-5-sonnet-20241022"
+      }
+    }
+  }
+}
+```
+
+### 提示 Claude 使用工具
+
+如果 Claude Code 经常直接把图片传给模型导致报错，可以在项目根目录创建 `.claude/CLAUDE.md`：
+
+```markdown
+当前模型不支持图片输入。当用户发送图片时，必须调用 vision_bridge MCP 工具处理，不要直接传给模型。
+```
+
+---
+
+## 常见问题排查
+
+### 1. `npx` 找不到包
+
+确认包已发布：
+
+```bash
+npm view @yourname/vision-bridge-mcp
+```
+
+### 2. MCP 服务器启动失败
+
+手动运行测试：
+
+```bash
+API_KEY=dummy node dist/index.js
+```
+
+如果没有错误输出，说明服务器能正常启动。
+
+### 3. Claude 不调用工具
+
+- 检查工具 `description` 是否清晰
+- 检查 `inputSchema` 是否正确
+- 在 `.claude/CLAUDE.md` 中明确提示何时调用工具
+
+### 4. API 返回 401
+
+- Anthropic：确认 `x-api-key` 和 `anthropic-version` 头
+- OpenAI：确认 `Authorization: Bearer` 头
+- Gemini：确认 key 作为 URL query parameter
+
+### 5. 发布到 npm 时 403
+
+- 包名已被占用：改用 scope（`@yourname/xxx`）
+- 2FA 限制：使用 access token 或 `--otp`
+- 未登录：先 `npm login`
+
+---
+
+## 总结
+
+通过这个教程，你学会了：
+
+1. 用 npm 初始化 TypeScript 项目
+2. 安装和使用 `@modelcontextprotocol/sdk`
+3. 实现基于 stdio 的 MCP 服务器
+4. 定义 Tools、处理 Tool Calls
+5. 处理多来源图片输入
+6. 适配多个 LLM Provider
+7. 编写 MCP 集成测试
+8. 发布到 npm
+9. 接入 Claude Code
+
+现在你可以基于这个模式，扩展更多 MCP 工具，比如代码分析、数据库查询、文件操作等。
+
+---
+
+## 参考
+
+- [MCP 官方文档](https://modelcontextprotocol.io/)
+- [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
+- [Claude Code MCP 配置](https://docs.anthropic.com/en/docs/claude-code/mcp)
 
 ---
 

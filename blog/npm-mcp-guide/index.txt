@@ -1,0 +1,559 @@
+1:"$Sreact.fragment"
+2:I[59919,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+3:I[2971,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+4:I[76073,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+5:I[60135,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default"]
+6:I[26747,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],""]
+13:I[56881,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"default",1]
+:HL["/_next/static/chunks/2bqyy2s-o99vn.css","style"]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap","style"]
+0:{"P":null,"c":["","blog","npm-mcp-guide",""],"q":"","i":false,"f":[[["",{"children":["blog",{"children":[["slug","npm-mcp-guide","d",null],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2bqyy2s-o99vn.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/0551z_430tgpd.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/3n3yvff_6qsfw.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","suppressHydrationWarning":true,"children":[["$","head",null,{"children":[["$","link",null,{"rel":"icon","type":"image/svg+xml","href":"/favicon.svg"}],["$","link",null,{"rel":"preconnect","href":"https://fonts.googleapis.com"}],["$","link",null,{"rel":"preconnect","href":"https://fonts.gstatic.com","crossOrigin":"anonymous"}],["$","link",null,{"href":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap","rel":"stylesheet"}]]}],["$","body",null,{"className":"geist_d214ea34-module__gpj08a__variable min-h-screen flex flex-col","children":["$","$L2",null,{"children":[["$","$L3",null,{}],["$","main",null,{"className":"flex-1","children":["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-[60vh] flex items-center justify-center px-4","children":["$","div",null,{"className":"text-center glass gradient-border rounded-3xl p-10 sm:p-16 max-w-md","children":[["$","h1",null,{"className":"text-7xl sm:text-8xl font-bold text-text-primary mb-4 font-display","children":"404"}],["$","p",null,{"className":"text-xl text-text-secondary mb-8","children":"页面找不到了"}],["$","$L6",null,{"href":"/","className":"inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-medium shadow-lg shadow-primary-glow hover:bg-primary-hover hover:-translate-y-0.5 transition-all duration-200","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-house w-4 h-4","children":[["$","path","5wwlr5",{"d":"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"}],["$","path","1d0kgt",{"d":"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"}],"$undefined"]}],"返回首页"]}]]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","footer",null,{"className":"relative mt-auto","children":[["$","div",null,{"className":"absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border-strong to-transparent"}],["$","div",null,{"className":"glass border-t-0","children":["$","div",null,{"className":"max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8","children":["$","div",null,{"className":"flex flex-col sm:flex-row items-center justify-between gap-6","children":[["$","div",null,{"className":"flex flex-col sm:flex-row items-center gap-4 sm:gap-6","children":[["$","p",null,{"className":"text-sm text-text-muted","children":["© ",2026," shen. 个人博客"]}],["$","div",null,{"className":"flex items-center gap-3","children":[["$","$L6","/llms.txt",{"href":"/llms.txt","className":"inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-file-text w-3.5 h-3.5","children":[["$","path","1rqfz7",{"d":"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"}],["$","path","tnqrlb",{"d":"M14 2v4a2 2 0 0 0 2 2h4"}],["$","path","b1mrlr",{"d":"M10 9H8"}],["$","path","t4e002",{"d":"M16 13H8"}],["$","path","z1uh3a",{"d":"M16 17H8"}],"$undefined"]}],"/llms.txt"]}],["$","$L6","/llms-full.txt",{"href":"/llms-full.txt","className":"inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-bot w-3.5 h-3.5","children":["$L7","$L8","$L9","$La","$Lb","$Lc","$undefined"]}],"/llms-full.txt"]}]]}]]}],"$Ld"]}]}]}]]}]]}]}]]}]]}],{"children":["$Le",{"children":["$Lf",{"children":["$L10",{},null,false,null]},null,false,"$@11"]},null,false,"$@11"]},null,false,null],"$L12",false]],"m":"$undefined","G":["$13",["$L14"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"TOEcvI1zB84pEEpqTNZ8m"}
+16:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"OutletBoundary"]
+17:"$Sreact.suspense"
+1a:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"ViewportBoundary"]
+1c:I[25355,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"MetadataBoundary"]
+7:["$","path","hb8ula",{"d":"M12 8V4H8"}]
+8:["$","rect","enze0r",{"width":"16","height":"12","x":"4","y":"8","rx":"2"}]
+9:["$","path","vft8re",{"d":"M2 14h2"}]
+a:["$","path","4cs60a",{"d":"M20 14h2"}]
+b:["$","path","1xurst",{"d":"M15 13v2"}]
+c:["$","path","rq6x2g",{"d":"M9 13v2"}]
+d:["$","a",null,{"href":"https://github.com/nfap9","target":"_blank","rel":"noopener noreferrer","className":"flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-github w-4 h-4","children":[["$","path","tonef",{"d":"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}],["$","path","9comsn",{"d":"M9 18c-4.51 2-5-2-7-2"}],"$undefined"]}],["$","span",null,{"children":"GitHub"}]]}]
+e:["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+f:["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+10:["$","$1","c",{"children":["$L15",[["$","script","script-0",{"src":"/_next/static/chunks/0pcf14d5923zl.js","async":true,"nonce":"$undefined"}]],["$","$L16",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]]}]
+19:[]
+11:"$W19"
+12:["$","$1","h",{"children":[null,["$","$L1a",null,{"children":"$L1b"}],["$","div",null,{"hidden":true,"children":["$","$L1c",null,{"children":["$","$17",null,{"name":"Next.Metadata","children":"$L1d"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+14:["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2bqyy2s-o99vn.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+1b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+1e:I[23880,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js","/_next/static/chunks/0pcf14d5923zl.js"],"default"]
+22:I[39780,["/_next/static/chunks/0551z_430tgpd.js","/_next/static/chunks/3n3yvff_6qsfw.js"],"IconMark"]
+15:[["$","$L1e",null,{}],["$","article",null,{"className":"max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16","children":[["$","header",null,{"className":"glass gradient-border rounded-2xl p-6 sm:p-10 mb-10","children":[["$","span",null,{"className":"inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-subtle text-primary-hover mb-5","children":"工程化"}],["$","h1",null,{"className":"text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-6","children":"如何使用 npm 搭建一个 MCP 服务并接入 Claude Code"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4 text-sm text-text-secondary","children":[["$","span",null,{"className":"inline-flex items-center gap-1.5","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-calendar w-4 h-4 text-text-muted","children":[["$","path","1cmpym",{"d":"M8 2v4"}],["$","path","4m81vk",{"d":"M16 2v4"}],["$","rect","1hopcy",{"width":"18","height":"18","x":"3","y":"4","rx":"2"}],["$","path","8toen8",{"d":"M3 10h18"}],"$undefined"]}],["$","time",null,{"dateTime":"2026-07-02T00:00:00.000Z","children":["发布于 ","2026年7月2日"]}]]}],"$undefined"]}],["$","div",null,{"className":"flex flex-wrap gap-2 mt-6 pt-6 border-t border-border-default","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-tag w-4 h-4 text-text-muted mt-1","children":[["$","path","vktsd0",{"d":"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"}],["$","circle","kqv944",{"cx":"7.5","cy":"7.5","r":".5","fill":"currentColor"}],"$undefined"]}],[["$","$L6","mcp",{"href":"/tags/mcp","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","mcp"]}],["$","$L6","npm",{"href":"/tags/npm","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","npm"]}],["$","$L6","typescript",{"href":"/tags/typescript","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","typescript"]}],["$","$L6","claude",{"href":"/tags/claude","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","claude"]}],["$","$L6","ai",{"href":"/tags/ai","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","ai"]}],["$","$L6","nodejs",{"href":"/tags/nodejs","className":"inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-bg-elevated text-text-secondary border border-border-default hover:border-primary/30 hover:text-primary transition-colors","children":["#","nodejs"]}]]]}]]}],["$","div",null,{"className":"prose prose-lg max-w-none","children":"$L1f"}],["$","div",null,{"className":"mt-12 pt-8 border-t border-border-default","children":["$","$L6",null,{"href":"/blog","className":"group inline-flex items-center text-sm font-medium text-text-secondary hover:text-primary transition-colors","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-left w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform","children":["$L20","$L21","$undefined"]}],"返回文章列表"]}]}]]}]]
+18:null
+1d:[["$","title","0",{"children":"如何使用 npm 搭建一个 MCP 服务并接入 Claude Code | shen 的博客"}],["$","meta","1",{"name":"description","content":"视觉处理 MCP 项目实战经验总结。从零开始用 npm + TypeScript 构建一个 MCP（Model Context Protocol）服务，发布到 npm，并在 Claude Code / Claude Desktop 中调用它。"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L22","3",{}]]
+20:["$","path","1l729n",{"d":"m12 19-7-7 7-7"}]
+21:["$","path","x3x0zl",{"d":"M19 12H5"}]
+23:T11ee5,<h1>如何使用 npm 搭建一个 MCP 服务并接入 Claude Code</h1>
+<blockquote>
+<p>视觉处理MCP项目实战经验总结。通过这个教程，你将学会从零开始用 npm + TypeScript 构建一个 MCP（Model Context Protocol）服务，发布到 npm，并在 Claude Code / Claude Desktop 中调用它。</p>
+</blockquote>
+<p><a href="https://github.com/shen866/vision-bridge-mcp">源码链接</a></p>
+<hr>
+<h2>目录</h2>
+<ol>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF-mcp">什么是 MCP</a></li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E7%9B%AE%E6%A0%87%E4%B8%8E%E6%9E%B6%E6%9E%84">项目目标与架构</a></li>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96-npm-%E9%A1%B9%E7%9B%AE">初始化 npm 项目</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85-mcp-sdk">安装 MCP SDK</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0-mcp-%E6%9C%8D%E5%8A%A1%E5%99%A8">实现 MCP 服务器</a>
+<ul>
+<li><a href="#%E5%85%A5%E5%8F%A3%E6%96%87%E4%BB%B6">入口文件</a></li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A0%B8%E5%BF%83">服务器核心</a></li>
+<li><a href="#%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7tools">定义工具（Tools）</a></li>
+<li><a href="#%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8">处理工具调用</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A4%84%E7%90%86%E5%9B%BE%E7%89%87%E8%BE%93%E5%85%A5">处理图片输入</a></li>
+<li><a href="#%E5%A4%9A-provider-%E9%80%82%E9%85%8D">多 Provider 适配</a></li>
+<li><a href="#%E6%9E%84%E5%BB%BA%E4%B8%8E%E6%B5%8B%E8%AF%95">构建与测试</a></li>
+<li><a href="#%E5%8F%91%E5%B8%83%E5%88%B0-npm">发布到 npm</a></li>
+<li><a href="#%E6%8E%A5%E5%85%A5-claude-code">接入 Claude Code</a></li>
+<li><a href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5">常见问题排查</a></li>
+</ol>
+<hr>
+<h2>什么是 MCP</h2>
+<p>MCP（Model Context Protocol）是 Anthropic 提出的一种开放协议，用于让 AI 客户端（如 Claude Code、Claude Desktop）与外部工具和服务通信。</p>
+<p>简单来说：</p>
+<ul>
+<li><strong>客户端</strong>：Claude Code / Claude Desktop</li>
+<li><strong>服务器</strong>：你写的 MCP 服务（一个本地或远程程序）</li>
+<li><strong>通信方式</strong>：JSON-RPC 2.0，通常通过 <strong>stdio</strong>（标准输入输出）进行</li>
+</ul>
+<p>通过 MCP，你可以让 Claude 调用自定义工具，比如：</p>
+<ul>
+<li>查询数据库</li>
+<li>读取本地文件</li>
+<li>调用图像识别 API</li>
+<li>执行任意业务逻辑</li>
+</ul>
+<hr>
+<h2>项目目标与架构</h2>
+<p>我们要做一个<strong>视觉桥接 MCP 服务</strong>：</p>
+<p>当 Claude Code 使用的模型无法直接理解图片时，通过这个 MCP 工具将图片发送给多模态大模型（如 Claude 3.5 Sonnet、GPT-4o、Gemini），把图片内容转换为文字描述，再返回给 Claude。</p>
+<p>核心架构：</p>
+<pre><code>Claude Code  &#x3C;--stdio-->  MCP Server  --HTTP-->  Multi-modal LLM API
+                              |
+                              v
+                        describe_image
+                        extract_image_text
+                        ask_about_image
+</code></pre>
+<hr>
+<h2>初始化 npm 项目</h2>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">mkdir</span><span style="color:#9ECBFF"> vision-bridge-mcp</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> vision-bridge-mcp</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> init</span><span style="color:#79B8FF"> -y</span></span></code></pre>
+<p>修改生成的 <code>package.json</code>，添加关键字段：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"@yourname/vision-bridge-mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"0.1.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"一个视觉桥接 MCP 服务"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"module"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "main"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"dist/index.js"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "types"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"dist/index.d.ts"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "bin"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "vision-bridge-mcp"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"dist/index.js"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "files"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "dist/"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "README.md"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "LICENSE"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "scripts"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "build"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tsc"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "start"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"node dist/index.js"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "dev"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tsc --watch"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"node --test test/*.test.js"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "prepublishOnly"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npm run build &#x26;&#x26; npm test"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "engines"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "node"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">">=18.0.0"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "license"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"MIT"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>关键说明：</p>
+<ul>
+<li><code>"type": "module"</code>：使用 ES Module</li>
+<li><code>"bin"</code>：让 <code>npx</code> 可以直接运行这个包</li>
+<li><code>"files"</code>：发布到 npm 时只包含 <code>dist/</code>、<code>README.md</code> 和 <code>LICENSE</code></li>
+<li><code>"prepublishOnly"</code>：发布前自动构建和测试</li>
+</ul>
+<hr>
+<h2>安装 MCP SDK</h2>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> @modelcontextprotocol/sdk</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -D</span><span style="color:#9ECBFF"> typescript</span><span style="color:#9ECBFF"> @types/node</span></span></code></pre>
+<p>创建 <code>tsconfig.json</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "compilerOptions"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "target"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ES2022"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "module"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"NodeNext"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "moduleResolution"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"NodeNext"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "outDir"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"./dist"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "rootDir"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"./src"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "strict"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "esModuleInterop"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "skipLibCheck"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "declaration"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "declarationMap"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "sourceMap"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "include"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"src/**/*"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>实现 MCP 服务器</h2>
+<h3>入口文件</h3>
+<p><code>src/index.ts</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env node</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { runServer } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "./server.js"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">  runServer</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">err</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    console.</span><span style="color:#B392F0">error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"MCP 服务器错误:"</span><span style="color:#E1E4E8">, err);</span></span>
+<span class="line"><span style="color:#E1E4E8">    process.</span><span style="color:#B392F0">exit</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">main</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<p><code>#!/usr/bin/env node</code> 是必须的，这样 <code>npx</code> 才能直接执行。</p>
+<h3>服务器核心</h3>
+<p><code>src/server.ts</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { Server } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@modelcontextprotocol/sdk/server/index.js"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { StdioServerTransport } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@modelcontextprotocol/sdk/server/stdio.js"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  CallToolRequestSchema,</span></span>
+<span class="line"><span style="color:#E1E4E8">  ListToolsRequestSchema,</span></span>
+<span class="line"><span style="color:#F97583">  type</span><span style="color:#E1E4E8"> Tool,</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@modelcontextprotocol/sdk/types.js"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> tools</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Tool</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#9ECBFF">"describe_image"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    description: </span><span style="color:#9ECBFF">"描述图片内容"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    inputSchema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      type: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">        image_url: { type: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">, description: </span><span style="color:#9ECBFF">"图片 URL"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">      required: [</span><span style="color:#9ECBFF">"image_url"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createServer</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Server</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> server</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Server</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    { name: </span><span style="color:#9ECBFF">"vision-bridge-mcp"</span><span style="color:#E1E4E8">, version: </span><span style="color:#9ECBFF">"0.1.0"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { capabilities: { tools: {} } }</span></span>
+<span class="line"><span style="color:#E1E4E8">  );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 客户端请求可用工具列表时返回</span></span>
+<span class="line"><span style="color:#E1E4E8">  server.</span><span style="color:#B392F0">setRequestHandler</span><span style="color:#E1E4E8">(ListToolsRequestSchema, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({ tools }));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 客户端调用工具时执行</span></span>
+<span class="line"><span style="color:#E1E4E8">  server.</span><span style="color:#B392F0">setRequestHandler</span><span style="color:#E1E4E8">(CallToolRequestSchema, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">request</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">name</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">arguments</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">args</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {} } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request.params;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (name </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "describe_image"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#E1E4E8"> { </span><span style="color:#79B8FF">image_url</span><span style="color:#E1E4E8"> } </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> args </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">image_url</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> };</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> description</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetchDescription</span><span style="color:#E1E4E8">(image_url);</span></span>
+<span class="line"><span style="color:#F97583">      return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: [{ type: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">, text: description }],</span></span>
+<span class="line"><span style="color:#E1E4E8">        isError: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      };</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`Unknown tool: ${</span><span style="color:#E1E4E8">name</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> server;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> runServer</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> server</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> createServer</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> transport</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> StdioServerTransport</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> server.</span><span style="color:#B392F0">connect</span><span style="color:#E1E4E8">(transport);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> fetchDescription</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">imageUrl</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#6A737D">  // 调用多模态 API 获取图片描述</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#9ECBFF"> `图片 ${</span><span style="color:#E1E4E8">imageUrl</span><span style="color:#9ECBFF">} 的描述内容`</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>定义工具（Tools）</h3>
+<p>每个 Tool 包含：</p>
+<ul>
+<li><code>name</code>：工具名，Claude 会根据这个名字调用</li>
+<li><code>description</code>：<strong>非常重要</strong>，Claude 通过描述决定什么时候调用这个工具</li>
+<li><code>inputSchema</code>：JSON Schema，定义工具需要哪些参数</li>
+</ul>
+<p>例如 OCR 工具：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"extract_image_text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"提取图片中的所有文字"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">  inputSchema</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#B392F0">    type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    properties</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#B392F0">      image_url</span><span style="color:#E1E4E8">: { </span><span style="color:#B392F0">type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#B392F0">      image_path</span><span style="color:#E1E4E8">: { </span><span style="color:#B392F0">type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#B392F0">      image_base64</span><span style="color:#E1E4E8">: { </span><span style="color:#B392F0">type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#B392F0">    anyOf</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      { required: [</span><span style="color:#9ECBFF">"image_url"</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { required: [</span><span style="color:#9ECBFF">"image_path"</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#E1E4E8">      { required: [</span><span style="color:#9ECBFF">"image_base64"</span><span style="color:#E1E4E8">] },</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>anyOf</code> 表示用户只需提供其中一种图片输入方式。</p>
+<h3>处理工具调用</h3>
+<p><code>CallToolRequestSchema</code> 处理函数返回的格式：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">  content</span><span style="color:#E1E4E8">: [{ type: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">, text: </span><span style="color:#9ECBFF">"返回给 Claude 的文本"</span><span style="color:#E1E4E8"> }],</span></span>
+<span class="line"><span style="color:#B392F0">  isError</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>如果出错：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#B392F0">  content</span><span style="color:#E1E4E8">: [{ type: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">, text: errorMessage }],</span></span>
+<span class="line"><span style="color:#B392F0">  isError</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>处理图片输入</h2>
+<p>实际场景中，图片可能来自 URL、本地路径或 Base64。统一处理成 <code>{ data: base64, mimeType: string }</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { readFile } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "node:fs/promises"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> ImageData</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  data</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  mimeType</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> fetchImageURL</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">url</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ImageData</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> response</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(url);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> arrayBuffer</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> response.</span><span style="color:#B392F0">arrayBuffer</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Buffer.</span><span style="color:#B392F0">from</span><span style="color:#E1E4E8">(arrayBuffer);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> mimeType</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response.headers.</span><span style="color:#B392F0">get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"content-type"</span><span style="color:#E1E4E8">)?.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">";"</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">??</span><span style="color:#9ECBFF"> "image/png"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { data: data.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"base64"</span><span style="color:#E1E4E8">), mimeType };</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> resolveImageData</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">args</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">unknown</span><span style="color:#E1E4E8">>)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#B392F0">ImageData</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> args.image_url </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "string"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#B392F0"> fetchImageURL</span><span style="color:#E1E4E8">(args.image_url);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> args.image_path </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "string"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> readFile</span><span style="color:#E1E4E8">(args.image_path);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> { data: data.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"base64"</span><span style="color:#E1E4E8">), mimeType: </span><span style="color:#B392F0">detectMimeType</span><span style="color:#E1E4E8">(data) };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> args.image_base64 </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "string"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      data: args.image_base64,</span></span>
+<span class="line"><span style="color:#E1E4E8">      mimeType: </span><span style="color:#F97583">typeof</span><span style="color:#E1E4E8"> args.mime_type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "string"</span><span style="color:#F97583"> ?</span><span style="color:#E1E4E8"> args.mime_type </span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> "image/png"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"必须提供 image_url、image_path 或 image_base64 之一"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> detectMimeType</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">buffer</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Buffer</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> header</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> buffer.</span><span style="color:#B392F0">subarray</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">12</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"hex"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (header.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"89504e47"</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">return</span><span style="color:#9ECBFF"> "image/png"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (header.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"ffd8ff"</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">return</span><span style="color:#9ECBFF"> "image/jpeg"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (header.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"47494638"</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">return</span><span style="color:#9ECBFF"> "image/gif"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#9ECBFF"> "image/png"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>多 Provider 适配</h2>
+<p>不同 LLM API 的请求格式不同。用 Strategy 模式封装：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// src/providers/index.ts</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> interface</span><span style="color:#B392F0"> Provider</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#B392F0">  buildRequest</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">prompt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">img</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ImageData</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">model</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;{</span></span>
+<span class="line"><span style="color:#FFAB70">    url</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    body</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">    headers</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }>;</span></span>
+<span class="line"><span style="color:#B392F0">  parseResponse</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">body</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">>;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> createProvider</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Provider</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> provider</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> process.env.</span><span style="color:#79B8FF">PROVIDER</span><span style="color:#F97583"> ??</span><span style="color:#9ECBFF"> "anthropic"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">  switch</span><span style="color:#E1E4E8"> (provider) {</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#9ECBFF"> "anthropic"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> AnthropicMessagesProvider</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#9ECBFF"> "openai"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> OpenAIChatProvider</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    case</span><span style="color:#9ECBFF"> "gemini"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">return</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> GeminiNativeProvider</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    default</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`不支持的 provider: ${</span><span style="color:#E1E4E8">provider</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>以 Anthropic Messages API 为例：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> class</span><span style="color:#B392F0"> AnthropicMessagesProvider</span><span style="color:#F97583"> implements</span><span style="color:#B392F0"> Provider</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> buildRequest</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">prompt</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">img</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ImageData</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">model</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> body</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      model,</span></span>
+<span class="line"><span style="color:#E1E4E8">      max_tokens: </span><span style="color:#79B8FF">4096</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      messages: [{</span></span>
+<span class="line"><span style="color:#E1E4E8">        role: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        content: [</span></span>
+<span class="line"><span style="color:#E1E4E8">          { type: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">, text: prompt },</span></span>
+<span class="line"><span style="color:#E1E4E8">          {</span></span>
+<span class="line"><span style="color:#E1E4E8">            type: </span><span style="color:#9ECBFF">"image"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            source: {</span></span>
+<span class="line"><span style="color:#E1E4E8">              type: </span><span style="color:#9ECBFF">"base64"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">              media_type: img.mimeType,</span></span>
+<span class="line"><span style="color:#E1E4E8">              data: img.data,</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#E1E4E8">      }],</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      url: </span><span style="color:#9ECBFF">`${</span><span style="color:#E1E4E8">process</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">env</span><span style="color:#9ECBFF">.</span><span style="color:#79B8FF">BASE_URL</span><span style="color:#9ECBFF">}/v1/messages`</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      body: </span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(body),</span></span>
+<span class="line"><span style="color:#E1E4E8">      headers: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Content-Type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"application/json"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "x-api-key"</span><span style="color:#E1E4E8">: process.env.</span><span style="color:#79B8FF">API_KEY</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "anthropic-version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2023-06-01"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  async</span><span style="color:#B392F0"> parseResponse</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">raw</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> resp</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(raw);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> resp.content</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> "text"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">c</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> c.text)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">join</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">""</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">      .</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2>构建与测试</h2>
+<h3>构建</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> build</span></span></code></pre>
+<p>会生成 <code>dist/</code> 目录，包含编译后的 JS 和类型声明。</p>
+<h3>测试 MCP 服务器</h3>
+<p>用 Node 原生测试框架：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#6A737D">// test/smoke.test.js</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { spawn } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "node:child_process"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> test </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "node:test"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> assert </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "node:assert"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> bin</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> URL</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"../dist/index.js"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">import</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">meta</span><span style="color:#E1E4E8">.url).pathname;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> send</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">proc</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">msg</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  proc.stdin.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">stringify</span><span style="color:#E1E4E8">(msg) </span><span style="color:#F97583">+</span><span style="color:#9ECBFF"> "</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"MCP server responds to initialize and tools/list"</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> proc</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> spawn</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">, [bin], {</span></span>
+<span class="line"><span style="color:#E1E4E8">    env: { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8">process.env, API_KEY: </span><span style="color:#9ECBFF">"dummy"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> responses</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [];</span></span>
+<span class="line"><span style="color:#F97583">  let</span><span style="color:#E1E4E8"> buffer </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> pending</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#79B8FF"> Promise</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">resolve</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">reject</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    proc.stdout.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"data"</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      buffer </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">      const</span><span style="color:#79B8FF"> lines</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> buffer.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      buffer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lines.</span><span style="color:#B392F0">pop</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">||</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">      for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> line</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> lines) {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">line.</span><span style="color:#B392F0">trim</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">continue</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">        responses.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">JSON</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">parse</span><span style="color:#E1E4E8">(line));</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#F97583">      if</span><span style="color:#E1E4E8"> (responses.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> >=</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">resolve</span><span style="color:#E1E4E8">(responses);</span></span>
+<span class="line"><span style="color:#E1E4E8">    });</span></span>
+<span class="line"><span style="color:#E1E4E8">    proc.stderr.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"data"</span><span style="color:#E1E4E8">, (</span><span style="color:#FFAB70">data</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#B392F0"> reject</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(data.</span><span style="color:#B392F0">toString</span><span style="color:#E1E4E8">())));</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  send</span><span style="color:#E1E4E8">(proc, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    jsonrpc: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    id: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">"initialize"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    params: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      protocolVersion: </span><span style="color:#9ECBFF">"2024-11-05"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">      capabilities: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">      clientInfo: { name: </span><span style="color:#9ECBFF">"test"</span><span style="color:#E1E4E8">, version: </span><span style="color:#9ECBFF">"0.1"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  send</span><span style="color:#E1E4E8">(proc, { jsonrpc: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">, id: </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, method: </span><span style="color:#9ECBFF">"tools/list"</span><span style="color:#E1E4E8">, params: {} });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#E1E4E8"> [</span><span style="color:#79B8FF">init</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">list</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> pending;</span></span>
+<span class="line"><span style="color:#E1E4E8">  proc.</span><span style="color:#B392F0">kill</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  assert.</span><span style="color:#B392F0">strictEqual</span><span style="color:#E1E4E8">(init.result.serverInfo.name, </span><span style="color:#9ECBFF">"vision-bridge-mcp"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">  assert.</span><span style="color:#B392F0">ok</span><span style="color:#E1E4E8">(list.result.tools.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>运行：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> test</span></span></code></pre>
+<hr>
+<h2>发布到 npm</h2>
+<h3>1. 确认包名可用</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> view</span><span style="color:#9ECBFF"> @yourname/vision-bridge-mcp</span></span></code></pre>
+<p>如果返回 404，说明名字可用。</p>
+<h3>2. 登录 npm</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> login</span></span></code></pre>
+<p>如果启用了 2FA，需要使用 access token：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> config</span><span style="color:#9ECBFF"> set</span><span style="color:#9ECBFF"> //registry.npmjs.org/:_authToken=你的TOKEN</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> publish</span><span style="color:#79B8FF"> --access</span><span style="color:#9ECBFF"> public</span></span></code></pre>
+<p>或者使用 OTP：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> publish</span><span style="color:#79B8FF"> --access</span><span style="color:#9ECBFF"> public</span><span style="color:#79B8FF"> --otp=123456</span></span></code></pre>
+<h3>3. 发布</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> publish</span><span style="color:#79B8FF"> --access</span><span style="color:#9ECBFF"> public</span></span></code></pre>
+<p>成功后会看到：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span>+ @yourname/vision-bridge-mcp@0.1.0</span></span></code></pre>
+<h3>4. 后续更新</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> version</span><span style="color:#9ECBFF"> patch</span><span style="color:#6A737D">   # 0.1.0 -> 0.1.1</span></span>
+<span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> publish</span><span style="color:#79B8FF"> --access</span><span style="color:#9ECBFF"> public</span></span></code></pre>
+<hr>
+<h2>接入 Claude Code</h2>
+<h3>全局安装</h3>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -g</span><span style="color:#9ECBFF"> @yourname/vision-bridge-mcp</span></span></code></pre>
+<h3>配置 Claude Code</h3>
+<p>编辑 Claude Code 的配置文件（通常在 <code>~/.claude/settings.json</code> 或项目内的 <code>.claude/CLAUDE.md</code> 上下文）：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "vision_bridge"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@yourname/vision-bridge-mcp"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "env"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "API_KEY"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"your-api-key"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "BASE_URL"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://api.anthropic.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "MODEL"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"claude-3-5-sonnet-20241022"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>如果是 OpenAI：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "vision_bridge"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@yourname/vision-bridge-mcp"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "env"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "PROVIDER"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"openai"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "API_KEY"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"your-api-key"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "BASE_URL"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://api.openai.com/v1"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "MODEL"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"gpt-4o"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>本地开发版本</h3>
+<p>如果你正在本地修改代码，不想通过 npm：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "vision_bridge"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"node"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"/absolute/path/to/your/dist/index.js"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "env"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "API_KEY"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"your-api-key"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "BASE_URL"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://api.anthropic.com"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "MODEL"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"claude-3-5-sonnet-20241022"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3>提示 Claude 使用工具</h3>
+<p>如果 Claude Code 经常直接把图片传给模型导致报错，可以在项目根目录创建 <code>.claude/CLAUDE.md</code>：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">当前模型不支持图片输入。当用户发送图片时，必须调用 vision_bridge MCP 工具处理，不要直接传给模型。</span></span></code></pre>
+<hr>
+<h2>常见问题排查</h2>
+<h3>1. <code>npx</code> 找不到包</h3>
+<p>确认包已发布：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> view</span><span style="color:#9ECBFF"> @yourname/vision-bridge-mcp</span></span></code></pre>
+<h3>2. MCP 服务器启动失败</h3>
+<p>手动运行测试：</p>
+<pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">API_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">dummy</span><span style="color:#B392F0"> node</span><span style="color:#9ECBFF"> dist/index.js</span></span></code></pre>
+<p>如果没有错误输出，说明服务器能正常启动。</p>
+<h3>3. Claude 不调用工具</h3>
+<ul>
+<li>检查工具 <code>description</code> 是否清晰</li>
+<li>检查 <code>inputSchema</code> 是否正确</li>
+<li>在 <code>.claude/CLAUDE.md</code> 中明确提示何时调用工具</li>
+</ul>
+<h3>4. API 返回 401</h3>
+<ul>
+<li>Anthropic：确认 <code>x-api-key</code> 和 <code>anthropic-version</code> 头</li>
+<li>OpenAI：确认 <code>Authorization: Bearer</code> 头</li>
+<li>Gemini：确认 key 作为 URL query parameter</li>
+</ul>
+<h3>5. 发布到 npm 时 403</h3>
+<ul>
+<li>包名已被占用：改用 scope（<code>@yourname/xxx</code>）</li>
+<li>2FA 限制：使用 access token 或 <code>--otp</code></li>
+<li>未登录：先 <code>npm login</code></li>
+</ul>
+<hr>
+<h2>总结</h2>
+<p>通过这个教程，你学会了：</p>
+<ol>
+<li>用 npm 初始化 TypeScript 项目</li>
+<li>安装和使用 <code>@modelcontextprotocol/sdk</code></li>
+<li>实现基于 stdio 的 MCP 服务器</li>
+<li>定义 Tools、处理 Tool Calls</li>
+<li>处理多来源图片输入</li>
+<li>适配多个 LLM Provider</li>
+<li>编写 MCP 集成测试</li>
+<li>发布到 npm</li>
+<li>接入 Claude Code</li>
+</ol>
+<p>现在你可以基于这个模式，扩展更多 MCP 工具，比如代码分析、数据库查询、文件操作等。</p>
+<hr>
+<h2>参考</h2>
+<ul>
+<li><a href="https://modelcontextprotocol.io/">MCP 官方文档</a></li>
+<li><a href="https://www.npmjs.com/package/@modelcontextprotocol/sdk">@modelcontextprotocol/sdk</a></li>
+<li><a href="https://docs.anthropic.com/en/docs/claude-code/mcp">Claude Code MCP 配置</a></li>
+</ul>1f:["$","div",null,{"className":"prose prose-lg max-w-none","dangerouslySetInnerHTML":{"__html":"$23"}}]
